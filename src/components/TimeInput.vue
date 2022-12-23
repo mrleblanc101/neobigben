@@ -1,16 +1,14 @@
 <template>
-    <input ref="timeInput" type="text" ondblclick="this.select()" />
+    <input ref="timeInput" class="form-control form-input form-input-bordered w-full" type="text" ondblclick="this.select()" placeholder="HH:MM" />
 </template>
 
 <script setup lang="ts">
-
 const timeInput = ref<HTMLElement | null>(null);
 const { $inputmask } = useNuxtApp();
 
 onMounted(() => {
     new Inputmask("datetime", {
         inputFormat: "HH:MM",
-        clearMaskOnLostFocus: false,
     }).mask(timeInput.value!);
 })
 </script>

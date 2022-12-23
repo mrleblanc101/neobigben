@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <TimeInput />
-    <TimeInput />
-  </div>
+    <NuxtLayout>
+        <TimeEntry />
+    </NuxtLayout>
 </template>

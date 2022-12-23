@@ -1,0 +1,22 @@
+.form-control {
+    @apply h-9 placeholder-gray-400 dark:placeholder-gray-600;
+    line-height: normal;
+    box-sizing: border-box;
+}
+.form-input,
+.form-select {
+    @apply appearance-none;
+    @apply bg-white dark:bg-gray-900 border border-white px-3 text-gray-600 dark:text-gray-400 rounded;
+    @apply dark:focus:bg-gray-900 focus:outline-none focus:ring ring-primary-100 dark:ring-gray-700;
+    @apply text-sm;
+}
+.form-input-bordered,
+.form-select-bordered {
+    @apply border border-gray-300 focus:border-primary-300;
+    @apply dark:border-gray-700 dark:focus:border-gray-500;
+}
+.dark .form-input,
+.dark .form-select,
+.dark input[type='search'] {
+  color-scheme: dark;
+}
