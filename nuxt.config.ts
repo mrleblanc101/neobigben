@@ -6,6 +6,8 @@ export default defineNuxtConfig({
         '@nuxtjs/tailwindcss',
         '@nuxtjs/color-mode',
         '@nuxtjs/google-fonts',
+        '@pinia/nuxt',
+        '@pinia-plugin-persistedstate/nuxt',
     ],
 
     googleFonts: {
@@ -13,21 +15,20 @@ export default defineNuxtConfig({
         families: {
             'DM+Sans': {
                 wght: [400, 700],
-                ital: [400]
+                ital: [400],
             },
         },
     },
 
     colorMode: {
         classSuffix: '',
-        dataValue: 'theme'
+        dataValue: 'theme',
     },
 
     postcss: {
         plugins: {
             autoprefixer: {},
             'postcss-import': {},
-        }
-    }
-
-})
+        },
+    },
+});

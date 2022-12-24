@@ -6,7 +6,7 @@
         </div>
     </header>
     <main class="pt-16">
-        <div class="p-4 lg:px-8">
+        <div class="p-4 lg:p-8">
             <slot />
         </div>
     </main>

@@ -1,32 +1,105 @@
 <template>
-    <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded flex flex-col gap-2 max-w-5xl">
-        <div class="flex gap-2">
-            <div class="grow">
+    <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded flex flex-col gap-2 w-full">
+        <div class="grid gap-2 grid-cols-2 md:grid-cols-4">
+            <div>
                 <label>De:</label>
-                <TimeInput />
+                <TimeInput v-model="start_time" />
             </div>
-            <div class="grow">
+            <div>
                 <label>À:</label>
-                <TimeInput />
+                <TimeInput v-model="end_time" />
             </div>
-            <div class="grow">
+            <div>
                 <label>Durée:</label>
-                <TimeInput />
+                <TimeInput v-model="duration" format="HH:MM:ss" />
             </div>
-            <div class="grow">
+            <div>
                 <label>Date:</label>
-                <input
-                    v-model="date"
-                    :class="{ 'has-value': date }"
-                    type="date"
-                    class="form-control form-input form-input-bordered w-full"
-                    placeholder="test"
-                />
+                <input v-model="date" type="date" class="form-control form-input form-input-bordered w-full" />
             </div>
+        </div>
+        <div>
+            <label>Projet</label>
+            <Multiselect
+                v-model="project"
+                :options="projects"
+                track-by="name"
+                label="name"
+                value-prop="id"
+                placeholder="Choisir..."
+                :classes="{
+                    container:
+                        'relative h-9 mx-auto w-full flex items-center justify-end box-border cursor-pointer rounded text-sm leading-snug outline-none bg-white dark:bg-gray-900 dark:focus:bg-gray-900 border border-gray-300 dark:border-gray-700 dark:focus:border-gray-500',
+                    containerDisabled: 'cursor-default bg-gray-100',
+                    containerOpen: 'rounded-b-none',
+                    containerOpenTop: 'rounded-t-none',
+                    containerActive: 'ring ring-primary-200 dark:ring-gray-600',
+                    singleLabel:
+                        'flex items-center h-full max-w-full absolute left-0 top-0 pointer-events-none bg-transparent leading-snug pl-3.5 pr-16 box-border',
+                    singleLabelText: 'overflow-ellipsis overflow-hidden block whitespace-nowrap max-w-full',
+                    multipleLabel:
+                        'flex items-center h-full absolute left-0 top-0 pointer-events-none bg-transparent leading-snug pl-3.5',
+                    search: 'w-full absolute inset-0 outline-none appearance-none box-border border-0 text-sm font-sans rounded pl-3.5 bg-transparent',
+                    tags: 'flex-grow flex-shrink flex flex-wrap items-center mt-1 pl-2 ',
+                    tag: 'bg-primary-500 text-white text-sm font-semibold py-0.5 pl-2 rounded mr-1 mb-1 flex items-center whitespace-nowrap',
+                    tagDisabled: 'pr-2 opacity-50',
+                    tagRemove:
+                        'flex items-center justify-center p-1 mx-0.5 rounded-sm hover:bg-black hover:bg-opacity-10 group',
+                    tagRemoveIcon:
+                        'bg-multiselect-remove bg-center bg-no-repeat opacity-30 inline-block w-3 h-3 group-hover:opacity-60',
+                    tagsSearchWrapper: 'inline-block relative mx-1 mb-1 flex-grow flex-shrink h-full',
+                    tagsSearch:
+                        'absolute inset-0 border-0 outline-none appearance-none p-0 text-base font-sans box-border w-full',
+                    tagsSearchCopy: 'invisible whitespace-pre-wrap inline-block h-px',
+                    placeholder:
+                        'flex items-center h-full absolute left-0 top-0 pointer-events-none bg-transparent leading-snug pl-3.5 text-gray-400 dark:text-gray-600',
+                    caret: 'bg-multiselect-caret bg-center bg-no-repeat w-2.5 h-4 py-px box-content mr-3.5 relative z-10 flex-shrink-0 flex-grow-0 transition-transform transform pointer-events-none',
+                    caretOpen: 'rotate-180 pointer-events-auto',
+                    clear: 'pr-3.5 relative z-10 transition duration-300 flex-shrink-0 flex-grow-0 flex hover:opacity-80',
+                    clearIcon: 'bg-multiselect-remove bg-center bg-no-repeat w-2.5 h-4 py-px box-content inline-block',
+                    spinner:
+                        'bg-multiselect-spinner bg-center bg-no-repeat w-4 h-4 z-10 mr-3.5 animate-spin flex-shrink-0 flex-grow-0',
+                    inifite: 'flex items-center justify-center w-full',
+                    inifiteSpinner:
+                        'bg-multiselect-spinner bg-center bg-no-repeat w-4 h-4 z-10 animate-spin flex-shrink-0 flex-grow-0 m-3.5',
+                    dropdown:
+                        'max-h-60 absolute -left-px -right-px bottom-0 transform translate-y-full border border-white border-gray-300 dark:border-gray-700 dark:focus:border-gray-500 -mt-px overflow-y-scroll z-50 bg-white dark:bg-gray-900 flex flex-col rounded-b',
+                    dropdownTop: '-translate-y-full top-px bottom-auto rounded-b-none rounded-t',
+                    dropdownHidden: 'hidden',
+                    options: 'flex flex-col p-0 m-0 list-none',
+                    optionsTop: '',
+                    group: 'p-0 m-0',
+                    groupLabel:
+                        'flex text-sm box-border items-center justify-start text-left py-1 px-3 font-semibold bg-gray-200 cursor-default leading-normal',
+                    groupLabelPointable: 'cursor-pointer',
+                    groupLabelPointed: 'bg-gray-300 text-gray-700',
+                    groupLabelSelected: 'bg-primary-600 text-white',
+                    groupLabelDisabled: 'bg-gray-100 text-gray-300 cursor-not-allowed',
+                    groupLabelSelectedPointed: 'bg-primary-600 text-white opacity-90',
+                    groupLabelSelectedDisabled: 'text-green-100 bg-primary-600 bg-opacity-50 cursor-not-allowed',
+                    groupOptions: 'p-0 m-0',
+                    option: 'flex items-center justify-start box-border text-left cursor-pointer text-sm leading-snug py-2 px-3',
+                    optionPointed: 'text-white bg-primary-500',
+                    optionSelected: 'text-primary-500 font-bold',
+                    optionDisabled: 'text-gray-300 cursor-not-allowed',
+                    optionSelectedPointed: 'text-white bg-primary-500 opacity-90 font-bold',
+                    optionSelectedDisabled: 'text-green-100 bg-primary-500 bg-opacity-50 cursor-not-allowed',
+                    noOptions: 'py-2 px-3 text-gray-600 bg-white dark:bg-gray-900 text-left',
+                    noResults: 'py-2 px-3 text-gray-600 bg-white dark:bg-gray-900 text-left',
+                    fakeInput:
+                        'bg-transparent absolute left-0 right-0 -bottom-px w-full h-px border-0 p-0 appearance-none outline-none text-transparent',
+                    spacer: 'h-9 py-px box-content',
+                }"
+                :appendNewOption="false"
+                searchable
+                createOption
+                @option="addProject"
+            />
         </div>
         <div>
             <label>Description:</label>
             <textarea
+                v-model="description"
                 class="block w-full form-control form-input form-input-bordered py-3 h-auto"
                 rows="2"
                 placeholder="Description..."
@@ -44,28 +117,34 @@
 </template>
 
 <script setup lang="ts">
-const date = ref();
+import Multiselect from '@vueform/multiselect';
+import { useStore } from '@/stores/index';
+
+const store = useStore();
+const { projects, addProject } = store;
+
+let start_time = ref('');
+let end_time = ref('');
+let duration = ref('');
+let date = ref(new Date().toISOString().split('T')[0]);
+let description = ref('');
+let project = ref('');
+
+// const entry_duration = computed(() => {
+//     return;
+// });
+
+// onMounted(() => {
+//     setInterval(() => {
+//         duration.value = '00:00:00';
+//     }, 1000);
+// });
 </script>
+
+<style src="@vueform/multiselect/themes/default.css"></style>
 
 <style lang="postcss" scoped>
 label {
     @apply uppercase font-bold text-xs;
-}
-
-/* placeholder text style */
-input[type='date']::-webkit-datetime-edit-text,
-input[type='date']::-webkit-datetime-edit-month-field,
-input[type='date']::-webkit-datetime-edit-day-field,
-input[type='date']::-webkit-datetime-edit-year-field {
-    --tw-placeholder-opacity: 1;
-    color: rgb(75 85 99 / var(--tw-placeholder-opacity));
-}
-
-/* regular text style */
-input[type='date'].has-value::-webkit-datetime-edit-text,
-input[type='date'].has-value::-webkit-datetime-edit-month-field,
-input[type='date'].has-value::-webkit-datetime-edit-day-field,
-input[type='date'].has-value::-webkit-datetime-edit-year-field {
-    color: inherit;
 }
 </style>

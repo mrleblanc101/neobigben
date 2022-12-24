@@ -10,6 +10,9 @@
     @apply dark:focus:bg-gray-900 focus:outline-none focus:ring ring-primary-100 dark:ring-gray-700;
     @apply text-sm;
 }
+.form-select {
+    @apply pl-3 pr-8;
+}
 .form-input-bordered,
 .form-select-bordered {
     @apply border border-gray-300 focus:border-primary-300;
@@ -19,4 +22,7 @@
 .dark .form-select,
 .dark input[type='search'] {
     color-scheme: dark;
+}
+textarea[rows='2'] {
+    min-height: 66px;
 }

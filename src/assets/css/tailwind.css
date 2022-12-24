@@ -2,5 +2,6 @@
 @import 'tailwindcss/components';
 
 @import 'form';
+@import 'multiselect';
 
 @import 'tailwindcss/utilities';
