@@ -13,7 +13,8 @@
     "@nuxtjs/tailwindcss": "^6.2.0",
     "@types/inputmask": "^5.0.3",
     "nuxt": "3.0.0",
-    "postcss-import": "^15.1.0"
+    "postcss-import": "^15.1.0",
+    "prettier": "^2.8.1"
   },
   "dependencies": {
     "inputmask": "^5.0.7"

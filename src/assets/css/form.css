@@ -18,5 +18,5 @@
 .dark .form-input,
 .dark .form-select,
 .dark input[type='search'] {
-  color-scheme: dark;
+    color-scheme: dark;
 }

@@ -1,9 +1,9 @@
-import Inputmask from "inputmask";
+import Inputmask from 'inputmask';
 
-export default defineNuxtPlugin(nuxtApp => {
+export default defineNuxtPlugin((nuxtApp) => {
     return {
         provide: {
             inputmask: Inputmask,
-        }
-    }
-})
+        },
+    };
+});

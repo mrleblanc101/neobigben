@@ -15,15 +15,30 @@
             </div>
             <div class="grow">
                 <label>Date:</label>
-                <input v-model="date" :class="{'date-input--has-value': date}" type="date" class="form-control form-input form-input-bordered w-full" placeholder="test" />
+                <input
+                    v-model="date"
+                    :class="{ 'has-value': date }"
+                    type="date"
+                    class="form-control form-input form-input-bordered w-full"
+                    placeholder="test"
+                />
             </div>
         </div>
         <div>
             <label>Description:</label>
-            <textarea class="block w-full form-control form-input form-input-bordered py-3 h-auto" rows="2" placeholder="Description..."></textarea>
+            <textarea
+                class="block w-full form-control form-input form-input-bordered py-3 h-auto"
+                rows="2"
+                placeholder="Description..."
+            ></textarea>
         </div>
         <div class="text-right">
-            <button type="button" class="shadow relative bg-primary-500 hover:bg-primary-400 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3">Sauvegarder</button>
+            <button
+                type="button"
+                class="shadow relative bg-primary-500 hover:bg-primary-400 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3"
+            >
+                Sauvegarder
+            </button>
         </div>
     </div>
 </template>
@@ -38,19 +53,19 @@ label {
 }
 
 /* placeholder text style */
-input[type="date"]::-webkit-datetime-edit-text,
-input[type="date"]::-webkit-datetime-edit-month-field,
-input[type="date"]::-webkit-datetime-edit-day-field,
-input[type="date"]::-webkit-datetime-edit-year-field {
+input[type='date']::-webkit-datetime-edit-text,
+input[type='date']::-webkit-datetime-edit-month-field,
+input[type='date']::-webkit-datetime-edit-day-field,
+input[type='date']::-webkit-datetime-edit-year-field {
     --tw-placeholder-opacity: 1;
-    color: rgb(75 85 99 / var(--tw-placeholder-opacity))
+    color: rgb(75 85 99 / var(--tw-placeholder-opacity));
 }
 
 /* regular text style */
-input[type="date"].date-input--has-value::-webkit-datetime-edit-text,
-input[type="date"].date-input--has-value::-webkit-datetime-edit-month-field,
-input[type="date"].date-input--has-value::-webkit-datetime-edit-day-field,
-input[type="date"].date-input--has-value::-webkit-datetime-edit-year-field {
-  color: inherit;
+input[type='date'].has-value::-webkit-datetime-edit-text,
+input[type='date'].has-value::-webkit-datetime-edit-month-field,
+input[type='date'].has-value::-webkit-datetime-edit-day-field,
+input[type='date'].has-value::-webkit-datetime-edit-year-field {
+    color: inherit;
 }
 </style>
