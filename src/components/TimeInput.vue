@@ -3,13 +3,16 @@
         ref="timeInput"
         class="form-control form-input form-input-bordered w-full"
         type="text"
-        v-model="value"
+        :value="value"
         :placeholder="format"
         ondblclick="this.select()"
+        @blur="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     />
 </template>
 
 <script setup lang="ts">
+// TODO: Increment value using Arrow Up/Down
+// TODO: Increment by 10 using Shift + Arrow Up/Down
 const timeInput = ref<HTMLElement | null>(null);
 const { $inputmask } = useNuxtApp();
 

@@ -11,7 +11,7 @@
             </div>
             <div>
                 <label>Durée:</label>
-                <TimeInput v-model="duration" format="HH:MM:ss" />
+                <TimeInput v-model="durationComputed" format="HH:MM" />
             </div>
             <div>
                 <label>Date:</label>
@@ -119,6 +119,7 @@
 <script setup lang="ts">
 import Multiselect from '@vueform/multiselect';
 import { useStore } from '@/stores/index';
+const { $moment } = useNuxtApp();
 
 const store = useStore();
 const { projects, addProject } = store;
@@ -130,10 +131,31 @@ let date = ref(new Date().toISOString().split('T')[0]);
 let description = ref('');
 let project = ref('');
 
-// const entry_duration = computed(() => {
-//     return;
-// });
+const durationComputed = computed({
+    get() {
+        const start = $moment(date.value + ' ' + start_time.value, 'YYYY-M-D HH:mm');
+        const end = $moment(date.value + ' ' + end_time.value, 'YYYY-M-D HH:mm');
 
+        if ($moment(start_time.value, 'HH:mm', true).isValid() && $moment(end_time.value, 'HH:mm', true).isValid()) {
+            const duration = $moment.duration(end.diff(start)).format('HH:mm');
+            return duration;
+        }
+    },
+    set(newValue) {
+        const start = $moment(date.value + ' ' + start_time.value, 'YYYY-M-D HH:mm');
+        const end = start.add($moment.duration(newValue)).format('HH:mm');
+
+        if ($moment(newValue, 'HH:mm', true).isValid() && $moment(start_time.value, 'HH:mm', true).isValid()) {
+            end_time.value = end;
+        }
+    },
+});
+
+watch(durationComputed, (value) => {
+    duration.value = value || '';
+});
+
+// TODO: Fonction de Live Clocking comme dans Bigben
 // onMounted(() => {
 //     setInterval(() => {
 //         duration.value = '00:00:00';
