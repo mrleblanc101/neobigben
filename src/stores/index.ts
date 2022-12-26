@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 export const useStore = defineStore('store', {
     state: () => {
         return {
+            viewedDay: new Date().toLocaleDateString('en-CA'),
             weeklyHours: '40:00',
             projects: [] as Project[],
             entries: [] as Entry[],
@@ -12,6 +13,12 @@ export const useStore = defineStore('store', {
         };
     },
     getters: {
+        todaysEntries(): Entry[] {
+            const { $moment } = useNuxtApp();
+            const entries = this.entries.filter((e) => $moment(this.viewedDay).isSame(e.date, 'day'));
+
+            return entries;
+        },
         remainingTime(): string {
             const { $moment } = useNuxtApp();
 

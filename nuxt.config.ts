@@ -17,7 +17,7 @@ export default defineNuxtConfig({
         download: true,
         families: {
             'DM+Sans': {
-                wght: [400, 700],
+                wght: [400, 500, 700],
                 ital: [400],
             },
         },

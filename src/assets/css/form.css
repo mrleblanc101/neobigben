@@ -19,8 +19,7 @@
     @apply dark:border-gray-700 dark:focus:border-gray-500;
 }
 .dark .form-input,
-.dark .form-select,
-.dark input[type='search'] {
+.dark .form-select {
     color-scheme: dark;
 }
 textarea[rows='2'] {
