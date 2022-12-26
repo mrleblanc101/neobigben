@@ -94,7 +94,12 @@
             </div>
             <div>
                 <label>Durée:</label>
-                <TimeInput v-model="durationComputed" format="HH:MM" />
+                <TimeInput
+                    v-model="durationComputed"
+                    format="HH:MM"
+                    :placeholder="is_live_clocking ? placeholder : undefined"
+                    :readonly="!is_live_clocking"
+                />
             </div>
             <div>
                 <label>Date:</label>
@@ -112,11 +117,11 @@
         </div>
         <div class="text-right">
             <button
-                v-if="!start_time && !end_time"
+                v-if="!start_time || !end_time"
                 type="submit"
                 class="shadow relative bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
             >
-                Démarrer
+                {{ !is_live_clocking ? 'Démarrer' : 'Arrêter' }}
             </button>
             <button
                 v-else
@@ -176,35 +181,42 @@
 </template>
 
 <script setup lang="ts">
-import IEdit from '@/assets/svg/edit.svg';
-import IDelete from '@/assets/svg/delete.svg';
+import IEdit from '@/assets/svg/edit.svg?component';
+import IDelete from '@/assets/svg/delete.svg?component';
 
 import Multiselect from '@vueform/multiselect';
+import { storeToRefs } from 'pinia';
 import { useStore } from '@/stores/index';
 
 const { $moment } = useNuxtApp();
 
 const store = useStore();
-const { projects, addProject, addEntry, updateEntry, deleteEntry } = store;
+const { addProject, addEntry, updateEntry, deleteEntry } = store;
+const { projects } = storeToRefs(store);
 
-const { entry } = defineProps({
+const props = defineProps({
     entry: {
         type: Object,
         default: () =>
             reactive({
                 id: '',
                 is_editing: true,
+                is_live_clocking: false,
                 start_time: '',
                 end_time: '',
                 duration: '',
-                date: new Date().toISOString().split('T')[0],
+                date: new Date().toLocaleDateString('en-CA'),
                 description: '',
                 project: {},
             }),
     },
 });
 
-const { id, is_editing, start_time, end_time, duration, date, description, project } = toRefs(entry);
+const { id, is_editing, is_live_clocking, start_time, end_time, duration, date, description, project } = toRefs(
+    props.entry,
+);
+
+const placeholder = ref('00:00:00');
 
 const durationComputed = computed({
     get() {
@@ -212,7 +224,9 @@ const durationComputed = computed({
         const end = $moment(date.value + ' ' + end_time.value, 'YYYY-M-D HH:mm');
 
         if ($moment(start_time.value, 'HH:mm', true).isValid() && $moment(end_time.value, 'HH:mm', true).isValid()) {
-            const duration = $moment.duration(end.diff(start)).format('HH:mm');
+            const duration = $moment.duration(end.diff(start)).format('HH:mm', {
+                trim: false,
+            });
             return duration;
         }
     },
@@ -231,16 +245,40 @@ watch(durationComputed, (value) => {
 });
 
 function onSave() {
-    is_editing.value = false;
-    !id.value ? addEntry(entry as Entry) : updateEntry(entry as Entry);
+    if (!start_time.value && !end_time.value) {
+        // Démarrer
+        is_live_clocking.value = true;
+        start_time.value = $moment().format('HH:mm');
+        startTimer();
+    } else if (is_live_clocking.value) {
+        // Arrêter
+        end_time.value = $moment().format('HH:mm');
+        is_live_clocking.value = false;
+
+        const start = $moment(date.value + ' ' + start_time.value, 'YYYY-M-D HH:mm');
+        const end = $moment();
+    } else if (!id.value) {
+        // Ajouter
+        is_editing.value = false;
+        addEntry(props.entry as any);
+    } else {
+        // Modifier
+        is_editing.value = false;
+        updateEntry(props.entry as any);
+    }
 }
 
-// TODO: Fonction de Live Clocking comme dans Bigben
-// onMounted(() => {
-//     setInterval(() => {
-//         duration.value = '00:00:00';
-//     }, 1000);
-// });
+function startTimer() {
+    setInterval(() => {
+        const start = $moment(date.value + ' ' + start_time.value, 'YYYY-M-D HH:mm');
+        const end = $moment();
+
+        const duration = $moment.duration(end.diff(start)).format('HH:mm:ss', {
+            trim: false,
+        });
+        placeholder.value = duration;
+    }, 100);
+}
 </script>
 
 <style src="@vueform/multiselect/themes/default.css"></style>

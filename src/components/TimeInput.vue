@@ -4,7 +4,7 @@
         class="form-control form-input form-input-bordered w-full"
         type="text"
         :value="value"
-        :placeholder="format"
+        :placeholder="placeholder"
         ondblclick="this.select()"
         @blur="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     />
@@ -22,6 +22,10 @@ const props = defineProps({
         default: null,
     },
     format: {
+        type: String,
+        default: 'HH:MM',
+    },
+    placeholder: {
         type: String,
         default: 'HH:MM',
     },

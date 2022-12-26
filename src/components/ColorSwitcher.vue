@@ -14,9 +14,9 @@
 </template>
 
 <script setup lang="ts">
-import IMoon from '@/assets/svg/moon.svg';
-import ISun from '@/assets/svg/sun.svg';
-import IComputer from '@/assets/svg/computer.svg';
+import IMoon from '@/assets/svg/moon.svg?component';
+import ISun from '@/assets/svg/sun.svg?component';
+import IComputer from '@/assets/svg/computer.svg?component';
 
 const colorMode = useColorMode();
 const onClick = () => {

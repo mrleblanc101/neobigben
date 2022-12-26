@@ -14,7 +14,6 @@ export const useStore = defineStore('store', {
                 ...entry,
                 id: uuidv4(),
             });
-            console.log(this.entries);
         },
         updateEntry(entry: Entry) {
             let item = this.entries.find((e) => e.id === entry.id);
