@@ -1,7 +1,9 @@
 <template>
     <header class="fixed top-0 z-40 w-full border-b dark:border-gray-800 bg-white dark:bg-gray-900">
         <div class="flex items-center justify-between h-16 px-4 lg:px-8">
-            <h1 class="text-2xl font-black">NeoBigben</h1>
+            <button type="button" class="text-2xl font-black" @click="viewedDay = $moment().format('YYYY-MM-DD')">
+                NeoBigben
+            </button>
             <div class="flex items-center gap-6">
                 <div class="flex gap-2 items-center font-bold text-xl">
                     <IClock />
@@ -25,5 +27,5 @@ import { useStore } from '@/stores/index';
 
 const store = useStore();
 
-const { remainingTime } = storeToRefs(store);
+const { remainingTime, viewedDay } = storeToRefs(store);
 </script>
