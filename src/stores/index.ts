@@ -1,39 +1,29 @@
 import { defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 
-type Entry = {
-    readonly id: '';
-    project_id: '';
-    is_live_clocking: false;
-    date: '';
-    start_time: '';
-    end_time: '';
-    duration: '';
-    description: '';
-};
-
-type Project = {
-    readonly id: string;
-    name: string;
-};
-
 export const useStore = defineStore('store', {
     state: () => {
         return {
-            projects: [
-                {
-                    id: uuidv4(),
-                    name: 'Project 1',
-                },
-                {
-                    id: uuidv4(),
-                    name: 'Projet Deux',
-                },
-            ] as Project[],
-            entries: [{}] as Entry[],
+            projects: [] as Project[],
+            entries: [] as Entry[],
         };
     },
     actions: {
+        addEntry(entry: Entry) {
+            this.entries.push({
+                ...entry,
+                id: uuidv4(),
+            });
+            console.log(this.entries);
+        },
+        updateEntry(entry: Entry) {
+            let item = this.entries.find((e) => e.id === entry.id);
+            item = entry;
+        },
+        deleteEntry(entry: Entry) {
+            let index = this.entries.findIndex((e) => e.id === entry.id);
+            this.entries.splice(index, 1);
+        },
         addProject(option: Project) {
             const project = {
                 id: uuidv4(),
@@ -42,6 +32,7 @@ export const useStore = defineStore('store', {
             this.projects.push(project);
             return project;
         },
+        removeEntry(id: string) {},
     },
     persist: {
         storage: persistedState.cookies,

@@ -1,5 +1,9 @@
 <template>
-    <div v-if="is_editing" class="p-4 bg-gray-100 dark:bg-gray-800 rounded flex flex-col gap-2 w-full">
+    <form
+        v-if="is_editing"
+        class="p-4 bg-gray-100 dark:bg-gray-800 rounded flex flex-col gap-2 w-full"
+        @submit.prevent="onSave"
+    >
         <div>
             <label>Projet</label>
             <Multiselect
@@ -108,20 +112,27 @@
         </div>
         <div class="text-right">
             <button
-                type="button"
-                class="shadow relative bg-primary-500 hover:bg-primary-400 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
-                :disabled="!(start_time && end_time && duration && date && project)"
-                @click="is_editing = false"
+                v-if="!start_time && !end_time"
+                type="submit"
+                class="shadow relative bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
             >
-                Sauvegarder
+                Démarrer
+            </button>
+            <button
+                v-else
+                type="submit"
+                class="shadow relative bg-primary-500 hover:bg-primary-400 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
+                :disabled="!(entry.start_time && entry.end_time && entry.duration && entry.date && entry.project)"
+            >
+                {{ !id ? 'Ajouter' : 'Modifier' }}
             </button>
         </div>
-    </div>
+    </form>
     <div v-else class="p-4 bg-gray-100 dark:bg-gray-800 rounded flex flex-col gap-2 w-full">
-        <div class="flex items-start justify-between">
+        <div class="flex items-start justify-between gap-2">
             <div>
                 <label>Projet</label>
-                <strong class="block">{{ project }}</strong>
+                <strong class="block">{{ project?.name }}</strong>
             </div>
             <div class="flex gap-2">
                 <button
@@ -132,7 +143,8 @@
                 </button>
                 <button
                     type="button"
-                    class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 text-sm"
+                    class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-red-500 hover:bg-red-400 active:bg-red-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 text-sm"
+                    @click="deleteEntry(entry as Entry)"
                 >
                     <IDelete />
                 </button>
@@ -173,15 +185,26 @@ import { useStore } from '@/stores/index';
 const { $moment } = useNuxtApp();
 
 const store = useStore();
-const { projects, addProject } = store;
+const { projects, addProject, addEntry, updateEntry, deleteEntry } = store;
 
-let is_editing = ref(true);
-let start_time = ref('');
-let end_time = ref('');
-let duration = ref('');
-let date = ref(new Date().toISOString().split('T')[0]);
-let description = ref('');
-let project = ref({});
+const { entry } = defineProps({
+    entry: {
+        type: Object,
+        default: () =>
+            reactive({
+                id: '',
+                is_editing: true,
+                start_time: '',
+                end_time: '',
+                duration: '',
+                date: new Date().toISOString().split('T')[0],
+                description: '',
+                project: {},
+            }),
+    },
+});
+
+const { id, is_editing, start_time, end_time, duration, date, description, project } = toRefs(entry);
 
 const durationComputed = computed({
     get() {
@@ -207,6 +230,11 @@ watch(durationComputed, (value) => {
     duration.value = value || '';
 });
 
+function onSave() {
+    is_editing.value = false;
+    !id.value ? addEntry(entry as Entry) : updateEntry(entry as Entry);
+}
+
 // TODO: Fonction de Live Clocking comme dans Bigben
 // onMounted(() => {
 //     setInterval(() => {
@@ -219,6 +247,6 @@ watch(durationComputed, (value) => {
 
 <style lang="postcss" scoped>
 label {
-    @apply uppercase font-bold text-xs;
+    @apply uppercase text-xs;
 }
 </style>
