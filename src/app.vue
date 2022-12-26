@@ -4,7 +4,8 @@
             <TimeEntry v-for="entry in entries" />
             <button
                 type="button"
-                class="shadow relative bg-primary-500 hover:bg-primary-400 text-white dark:text-gray-900 cursor-pointer rounded text-lg font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-12 px-3 w-full"
+                class="shadow relative bg-primary-500 hover:bg-primary-400 text-white dark:text-gray-900 cursor-pointer rounded text-lg font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-12 px-3 w-full disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
+                :disabled="true"
             >
                 Ajouter
             </button>

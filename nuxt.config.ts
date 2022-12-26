@@ -1,4 +1,7 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
+import ViteSvgLoader from 'vite-svg-loader';
+
+import svgoConfig from './svgo.config.js';
+
 export default defineNuxtConfig({
     srcDir: 'src/',
 
@@ -30,5 +33,13 @@ export default defineNuxtConfig({
             autoprefixer: {},
             'postcss-import': {},
         },
+    },
+
+    vite: {
+        plugins: [
+            ViteSvgLoader({
+                svgoConfig,
+            }),
+        ],
     },
 });

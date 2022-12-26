@@ -5,3 +5,7 @@
 @import 'multiselect';
 
 @import 'tailwindcss/utilities';
+
+svg {
+    fill: currentColor;
+}

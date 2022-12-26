@@ -34,8 +34,13 @@ export const useStore = defineStore('store', {
         };
     },
     actions: {
-        addProject(project: Project) {
+        addProject(option: Project) {
+            const project = {
+                id: uuidv4(),
+                name: option.name,
+            };
             this.projects.push(project);
+            return project;
         },
     },
     persist: {

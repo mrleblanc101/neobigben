@@ -1,23 +1,5 @@
 <template>
-    <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded flex flex-col gap-2 w-full">
-        <div class="grid gap-2 grid-cols-2 md:grid-cols-4">
-            <div>
-                <label>De:</label>
-                <TimeInput v-model="start_time" />
-            </div>
-            <div>
-                <label>À:</label>
-                <TimeInput v-model="end_time" />
-            </div>
-            <div>
-                <label>Durée:</label>
-                <TimeInput v-model="durationComputed" format="HH:MM" />
-            </div>
-            <div>
-                <label>Date:</label>
-                <input v-model="date" type="date" class="form-control form-input form-input-bordered w-full" />
-            </div>
-        </div>
+    <div v-if="is_editing" class="p-4 bg-gray-100 dark:bg-gray-800 rounded flex flex-col gap-2 w-full">
         <div>
             <label>Projet</label>
             <Multiselect
@@ -26,6 +8,7 @@
                 track-by="name"
                 label="name"
                 value-prop="id"
+                :object="true"
                 placeholder="Choisir..."
                 :classes="{
                     container:
@@ -93,8 +76,26 @@
                 :appendNewOption="false"
                 searchable
                 createOption
-                @option="addProject"
+                @create="addProject"
             />
+        </div>
+        <div class="grid gap-2 grid-cols-2 md:grid-cols-4">
+            <div>
+                <label>De:</label>
+                <TimeInput v-model="start_time" />
+            </div>
+            <div>
+                <label>À:</label>
+                <TimeInput v-model="end_time" />
+            </div>
+            <div>
+                <label>Durée:</label>
+                <TimeInput v-model="durationComputed" format="HH:MM" />
+            </div>
+            <div>
+                <label>Date:</label>
+                <input v-model="date" type="date" class="form-control form-input form-input-bordered w-full" />
+            </div>
         </div>
         <div>
             <label>Description:</label>
@@ -108,28 +109,79 @@
         <div class="text-right">
             <button
                 type="button"
-                class="shadow relative bg-primary-500 hover:bg-primary-400 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3"
+                class="shadow relative bg-primary-500 hover:bg-primary-400 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
+                :disabled="!(start_time && end_time && duration && date && project)"
+                @click="is_editing = false"
             >
                 Sauvegarder
             </button>
         </div>
     </div>
+    <div v-else class="p-4 bg-gray-100 dark:bg-gray-800 rounded flex flex-col gap-2 w-full">
+        <div class="flex items-start justify-between">
+            <div>
+                <label>Projet</label>
+                <strong class="block">{{ project }}</strong>
+            </div>
+            <div class="flex gap-2">
+                <button
+                    type="button"
+                    class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 text-sm"
+                >
+                    <IEdit />
+                </button>
+                <button
+                    type="button"
+                    class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 text-sm"
+                >
+                    <IDelete />
+                </button>
+            </div>
+        </div>
+        <div class="grid gap-2 grid-cols-2 md:grid-cols-4">
+            <div>
+                <label>De:</label>
+                <strong class="block">{{ start_time }}</strong>
+            </div>
+            <div>
+                <label>À:</label>
+                <strong class="block">{{ end_time }}</strong>
+            </div>
+            <div>
+                <label>Durée:</label>
+                <strong class="block">{{ duration }}</strong>
+            </div>
+            <div>
+                <label>Date:</label>
+                <strong class="block">{{ date }}</strong>
+            </div>
+        </div>
+        <div v-if="description">
+            <label>Description:</label>
+            <strong class="block">{{ description }}</strong>
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
+import IEdit from '@/assets/svg/edit.svg';
+import IDelete from '@/assets/svg/delete.svg';
+
 import Multiselect from '@vueform/multiselect';
 import { useStore } from '@/stores/index';
+
 const { $moment } = useNuxtApp();
 
 const store = useStore();
 const { projects, addProject } = store;
 
+let is_editing = ref(true);
 let start_time = ref('');
 let end_time = ref('');
 let duration = ref('');
 let date = ref(new Date().toISOString().split('T')[0]);
 let description = ref('');
-let project = ref('');
+let project = ref({});
 
 const durationComputed = computed({
     get() {
