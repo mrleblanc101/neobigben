@@ -85,15 +85,15 @@
         </div>
         <div class="grid gap-2 grid-cols-2 md:grid-cols-4">
             <div>
-                <label>De:</label>
+                <label>De</label>
                 <TimeInput v-model="start_time" />
             </div>
             <div>
-                <label>À:</label>
+                <label>À</label>
                 <TimeInput v-model="end_time" />
             </div>
             <div>
-                <label>Durée:</label>
+                <label>Durée</label>
                 <TimeInput
                     v-model="durationComputed"
                     format="HH:MM"
@@ -102,12 +102,12 @@
                 />
             </div>
             <div>
-                <label>Date:</label>
+                <label>Date</label>
                 <input v-model="date" type="date" class="form-control form-input form-input-bordered w-full" />
             </div>
         </div>
         <div>
-            <label>Description:</label>
+            <label>Description</label>
             <textarea
                 v-model="description"
                 class="block w-full form-control form-input form-input-bordered py-3 h-auto"
@@ -157,24 +157,24 @@
         </div>
         <div class="grid gap-2 grid-cols-2 md:grid-cols-4">
             <div>
-                <label>De:</label>
+                <label>De</label>
                 <strong class="block">{{ start_time }}</strong>
             </div>
             <div>
-                <label>À:</label>
+                <label>À</label>
                 <strong class="block">{{ end_time }}</strong>
             </div>
             <div>
-                <label>Durée:</label>
+                <label>Durée</label>
                 <strong class="block">{{ duration }}</strong>
             </div>
             <div>
-                <label>Date:</label>
+                <label>Date</label>
                 <strong class="block">{{ date }}</strong>
             </div>
         </div>
         <div v-if="description">
-            <label>Description:</label>
+            <label>Description</label>
             <strong class="block">{{ description }}</strong>
         </div>
     </div>
@@ -207,7 +207,7 @@ const props = defineProps({
                 duration: '',
                 date: new Date().toLocaleDateString('en-CA'),
                 description: '',
-                project: {},
+                project: null,
             }),
     },
 });
