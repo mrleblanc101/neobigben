@@ -1,13 +1,13 @@
 type Entry = {
-    readonly id?: String;
-    project: Object;
-    is_live_clocking: Boolean;
-    is_editing: Boolean;
-    date: String;
-    start_time: String;
-    end_time: String;
-    duration: String;
-    description: String;
+    readonly id?: string;
+    project: object;
+    is_live_clocking: boolean;
+    is_editing: boolean;
+    date: string;
+    start_time: string;
+    end_time: string;
+    duration: string;
+    description: string;
 };
 
 type Project = {
