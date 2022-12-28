@@ -128,16 +128,16 @@
                     type="submit"
                     class="shadow relative bg-green-500 hover:bg-green-400 active:bg-green-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2"
                 >
-                    <IPlay class="h-3 w-4" />
                     Démarrer
+                    <IPlay class="h-3 w-4" />
                 </button>
                 <button
                     v-else
                     type="submit"
                     class="shadow relative bg-rose-500 hover:bg-rose-400 active:bg-rose-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2"
                 >
-                    <IStop class="h-3 w-4" />
                     Arrêter
+                    <IStop class="h-3 w-4" />
                 </button>
             </template>
             <button
@@ -145,8 +145,8 @@
                 class="shadow relative bg-primary-500 hover:bg-primary-400 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2"
                 :disabled="!(entry.start_time && entry.end_time && entry.duration && entry.project)"
             >
-                <ISave class="h-4 w-4" />
                 {{ !id ? 'Ajouter' : 'Sauvegarder' }}
+                <ISave class="h-4 w-4" />
             </button>
         </div>
     </form>

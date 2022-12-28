@@ -87,7 +87,6 @@ export const useStore = defineStore('store', {
             this.projects.push(project);
             return project;
         },
-        removeEntry(id: string) {},
     },
     persist: {
         storage: persistedState.cookies,
