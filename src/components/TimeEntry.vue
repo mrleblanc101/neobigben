@@ -1,17 +1,17 @@
 <template>
     <form
-        v-if="is_creating || is_editing"
+        v-if="model.is_creating || model.is_editing"
         class="p-4 bg-gray-100 dark:bg-gray-800 rounded flex flex-col gap-2 w-full"
         @submit.prevent="onSave"
     >
         <div class="grid gap-2 grid-cols-2 md:grid-cols-4">
             <div>
                 <label>Début<span class="text-red-500">*</span></label>
-                <TimeInput v-model="start_time" />
+                <TimeInput v-model="model.start_time" />
             </div>
             <div>
                 <label>Fin<span class="text-red-500">*</span></label>
-                <TimeInput v-model="end_time" />
+                <TimeInput v-model="model.end_time" />
             </div>
             <div>
                 <label>Durée<span class="text-red-500">*</span></label>
@@ -19,15 +19,15 @@
                     v-model="computedDuration"
                     class="read-only:pointer-events-none"
                     format="HH:MM"
-                    :placeholder="is_live_clocking ? placeholder : undefined"
-                    :readonly="is_live_clocking"
+                    :placeholder="model.is_live_clocking ? placeholder : undefined"
+                    :readonly="model.is_live_clocking"
                 />
             </div>
             <div>
                 <label>Date</label>
                 <input
-                    v-model="date"
-                    :class="{ 'has-value': date }"
+                    v-model="model.date"
+                    :class="{ 'has-value': model.date }"
                     type="date"
                     class="form-control form-input form-input-bordered w-full"
                 />
@@ -36,7 +36,7 @@
         <div>
             <label>Projet<span class="text-red-500">*</span></label>
             <Multiselect
-                v-model="project"
+                v-model="model.project"
                 :options="projects"
                 track-by="name"
                 label="name"
@@ -115,16 +115,16 @@
         <div>
             <label>Description</label>
             <textarea
-                v-model="description"
+                v-model="model.description"
                 class="block w-full form-control form-input form-input-bordered py-3 h-auto"
                 rows="2"
                 placeholder="Description..."
             ></textarea>
         </div>
         <div class="flex gap-2 justify-end">
-            <template v-if="!start_time || !end_time">
+            <template v-if="isToday && (!model.start_time || !model.end_time)">
                 <button
-                    v-if="!is_live_clocking"
+                    v-if="!model.is_live_clocking"
                     type="submit"
                     class="shadow bg-green-500 hover:bg-green-400 active:bg-green-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2"
                 >
@@ -141,19 +141,27 @@
                 </button>
             </template>
             <button
-                v-else
-                type="submit"
+                v-else-if="model.is_creating"
+                type="button"
                 class="appearance-none bg-transparent font-bold text-gray-400 hover:text-gray-300 active:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:active:text-gray-600 dark:hover:bg-gray-800 text-sm px-2"
                 @click="deleteEntry(entry as Entry)"
             >
                 Annuler
             </button>
             <button
+                v-if="model.is_editing"
+                type="button"
+                class="appearance-none bg-transparent font-bold text-gray-400 hover:text-gray-300 active:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:active:text-gray-600 dark:hover:bg-gray-800 text-sm px-2"
+                @click="onCancelEdits"
+            >
+                Annuler
+            </button>
+            <button
                 type="submit"
                 class="shadow bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2"
-                :disabled="!(entry.start_time && entry.end_time && entry.duration && entry.project)"
+                :disabled="!(model.start_time && model.end_time && model.duration && model.project)"
             >
-                {{ is_creating ? 'Ajouter' : 'Sauvegarder' }}
+                {{ model.is_creating ? 'Ajouter' : 'Sauvegarder' }}
                 <ISave class="h-4 w-4" />
             </button>
         </div>
@@ -162,13 +170,13 @@
         <div class="flex items-start justify-between gap-2">
             <div>
                 <label>Projet</label>
-                <strong class="block">{{ project?.name }}</strong>
+                <strong class="block">{{ model.project?.name }}</strong>
             </div>
             <div class="flex gap-2">
                 <button
                     type="button"
                     class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 text-sm"
-                    @click="is_editing = true"
+                    @click="model.is_editing = true"
                 >
                     <IEdit class="h-5" />
                 </button>
@@ -184,24 +192,24 @@
         <div class="grid gap-2 grid-cols-2 md:grid-cols-4">
             <div>
                 <label>Début</label>
-                <strong class="block">{{ start_time }}</strong>
+                <strong class="block">{{ model.start_time }}</strong>
             </div>
             <div>
                 <label>Fin</label>
-                <strong class="block">{{ end_time }}</strong>
+                <strong class="block">{{ model.end_time }}</strong>
             </div>
             <div>
                 <label>Durée</label>
-                <strong class="block">{{ duration }}</strong>
+                <strong class="block">{{ model.duration }}</strong>
             </div>
             <div>
                 <label>Date</label>
-                <strong class="block">{{ date }}</strong>
+                <strong class="block">{{ model.date }}</strong>
             </div>
         </div>
-        <div v-if="description">
+        <div v-if="model.description">
             <label>Description</label>
-            <strong class="block">{{ description }}</strong>
+            <strong class="block">{{ model.description }}</strong>
         </div>
     </div>
 </template>
@@ -221,43 +229,44 @@ const { $moment } = useNuxtApp();
 
 const store = useStore();
 const { addProject, addEntry, updateEntry, deleteEntry } = store;
-const { projects } = storeToRefs(store);
+const { projects, viewedDay } = storeToRefs(store);
 
 const props = defineProps({
     entry: {
         type: Object,
-        default: () =>
-            reactive({
-                id: '',
-                is_creating: true,
-                is_editing: false,
-                is_live_clocking: false,
-                start_time: '',
-                end_time: '',
-                duration: '',
-                date: null,
-                description: '',
-                project: null,
-            }),
+        default: () => ({
+            id: '',
+            is_creating: true,
+            is_editing: false,
+            is_live_clocking: false,
+            start_time: '',
+            end_time: '',
+            duration: '',
+            date: null,
+            description: '',
+            project: null,
+        }),
     },
 });
 
-const { id, is_creating, is_editing, is_live_clocking, start_time, end_time, duration, date, description, project } =
-    toRefs(props.entry);
+let model = ref(Object.assign({}, props.entry));
 
 const placeholder = ref('00:00:00');
 
 const computedDate = computed(() => {
-    return date.value ?? new Date().toLocaleDateString('en-CA');
+    return model.value.date ?? new Date().toLocaleDateString('en-CA');
 });
 
 const computedDuration = computed({
     get() {
         const now = new Date().toLocaleDateString('en-CA');
-        const start = $moment(computedDate.value + ' ' + start_time.value, 'YYYY-M-D HH:mm');
-        const end = $moment(now + ' ' + end_time.value, 'YYYY-M-D HH:mm');
+        const start = $moment(computedDate.value + ' ' + model.value.start_time, 'YYYY-M-D HH:mm');
+        const end = $moment(now + ' ' + model.value.end_time, 'YYYY-M-D HH:mm');
 
-        if ($moment(start_time.value, 'HH:mm', true).isValid() && $moment(end_time.value, 'HH:mm', true).isValid()) {
+        if (
+            $moment(model.value.start_time, 'HH:mm', true).isValid() &&
+            $moment(model.value.end_time, 'HH:mm', true).isValid()
+        ) {
             const duration = $moment.duration(end.diff(start));
             if (duration.asMilliseconds() > 0) {
                 return duration.format('HH:mm', {
@@ -267,41 +276,52 @@ const computedDuration = computed({
         }
     },
     set(newValue) {
-        const start = $moment(computedDate.value + ' ' + start_time.value, 'YYYY-M-D HH:mm');
+        const start = $moment(computedDate.value + ' ' + model.value.start_time, 'YYYY-M-D HH:mm');
         const end = start.add($moment.duration(newValue)).format('HH:mm');
 
-        if ($moment(newValue, 'HH:mm', true).isValid() && $moment(start_time.value, 'HH:mm', true).isValid()) {
-            end_time.value = end;
+        if ($moment(newValue, 'HH:mm', true).isValid() && $moment(model.value.start_time, 'HH:mm', true).isValid()) {
+            model.value.end_time = end;
         }
     },
 });
 
+const isToday = computed(() => {
+    return $moment(viewedDay.value).isSame($moment(), 'day');
+});
+
+onMounted(() => {
+    if (model.value.is_creating) {
+        startTimer();
+    }
+});
+
 watch(computedDuration, (value) => {
-    duration.value = value || '';
+    model.value.duration = value || '';
 });
 
 function onSave() {
-    if ((!start_time.value || !end_time.value) && !is_live_clocking.value) {
+    if ((!model.value.start_time || !model.value.end_time) && !model.value.is_live_clocking) {
         // Démarrer
-        if (!start_time.value) {
-            start_time.value = $moment().format('HH:mm');
+        if (!model.value.start_time) {
+            model.value.start_time = $moment().format('HH:mm');
         }
-        is_live_clocking.value = true;
+        model.value.is_live_clocking = true;
         startTimer();
-        onAddEntry(props.entry as Entry);
-    } else if (is_live_clocking.value) {
+        onAddEntry(model.value as Entry);
+    } else if (model.value.is_live_clocking) {
         // Arrêter
-        end_time.value = $moment().format('HH:mm');
-        is_live_clocking.value = false;
-        updateEntry(props.entry as Entry);
-    } else if (!id.value) {
+        model.value.end_time = $moment().format('HH:mm');
+        model.value.is_live_clocking = false;
+        updateEntry(model.value as Entry);
+    } else if (!model.value.id) {
         // Ajouter
-        is_creating.value = false;
-        onAddEntry(props.entry as Entry);
+        model.value.is_creating = false;
+        onAddEntry(model.value as Entry);
     } else {
         // Modifier
-        is_editing.value = false;
-        updateEntry(props.entry as Entry);
+        model.value.is_creating = false;
+        model.value.is_editing = false;
+        updateEntry(model.value as Entry);
     }
 }
 
@@ -312,15 +332,9 @@ function onAddEntry(entry: Entry) {
     });
 }
 
-onMounted(() => {
-    if (is_creating.value) {
-        startTimer();
-    }
-});
-
 function startTimer() {
     setInterval(() => {
-        const start = $moment(computedDate.value + ' ' + start_time.value, 'YYYY-M-D HH:mm');
+        const start = $moment(computedDate.value + ' ' + model.value.start_time, 'YYYY-M-D HH:mm');
         const end = $moment();
 
         const duration = $moment.duration(end.diff(start)).format('HH:mm:ss', {
@@ -328,6 +342,11 @@ function startTimer() {
         });
         placeholder.value = duration;
     }, 100);
+}
+
+function onCancelEdits() {
+    console.log('cancel edits');
+    model.value = props.entry;
 }
 </script>
 

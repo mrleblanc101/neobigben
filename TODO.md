@@ -7,3 +7,4 @@ Présentation:
 - Add warning for empty timeslots (Heure de diner)
 
 Si le clock s'étend sur 2 jours, split en 2 clock lors de la sauvegarde
+Click outside to close Weekly Summary

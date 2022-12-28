@@ -27,7 +27,7 @@ export const useStore = defineStore('store', {
             const { $moment } = useNuxtApp();
 
             const total = this.entries
-                .filter((e) => !e.is_live_clocking)
+                .filter((e) => !e.is_creating)
                 .reduce((acc, e: Entry) => {
                     acc = $moment
                         .duration(acc)
@@ -45,7 +45,7 @@ export const useStore = defineStore('store', {
             const { $moment } = useNuxtApp();
 
             return this.entries
-                .filter((e) => !e.is_live_clocking)
+                .filter((e) => !e.is_creating)
                 .reduce(
                     (acc: string[], e: Entry) => {
                         const day = $moment(e.date).day();
@@ -70,8 +70,8 @@ export const useStore = defineStore('store', {
             });
         },
         updateEntry(entry: Entry) {
-            let item = this.entries.find((e) => e.id === entry.id);
-            item = entry;
+            let index = this.entries.findIndex((e) => e.id === entry.id);
+            this.entries[index] = entry;
         },
         deleteEntry(entry: Entry) {
             if (confirm('Are you sure you want to delete this entry ?')) {
