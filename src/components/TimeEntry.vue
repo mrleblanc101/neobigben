@@ -251,10 +251,12 @@ const computedDuration = computed({
         const end = $moment(now + ' ' + end_time.value, 'YYYY-M-D HH:mm');
 
         if ($moment(start_time.value, 'HH:mm', true).isValid() && $moment(end_time.value, 'HH:mm', true).isValid()) {
-            const duration = $moment.duration(end.diff(start)).format('HH:mm', {
-                trim: false,
-            });
-            return duration;
+            const duration = $moment.duration(end.diff(start));
+            if (duration.asMilliseconds() > 0) {
+                return duration.format('HH:mm', {
+                    trim: false,
+                });
+            }
         }
     },
     set(newValue) {
