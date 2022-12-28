@@ -22,6 +22,14 @@
 .dark .form-select {
     color-scheme: dark;
 }
+/* placeholder text style */
+input[type='date']::-webkit-datetime-edit {
+    @apply text-gray-600;
+}
+/* regular text style */
+input[type='date'].has-value::-webkit-datetime-edit {
+    color: inherit;
+}
 textarea[rows='2'] {
     min-height: 66px;
 }

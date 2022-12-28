@@ -1,0 +1,10 @@
+<svg width="20px" height="20px" viewBox="0 0 1080 1080" version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>stop</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="stop" fill="#000000" fill-rule="nonzero">
+            <path d="M202.44,-5.68434189e-14 L877.56,-5.68434189e-14 C989.36,-5.68434189e-14 1080,111.8 1080,202.44 L1080,877.56 C1080,989.36 989.363,1080 877.56,1080 L202.44,1080 C90.64,1080 -5.68434189e-14,968.2 -5.68434189e-14,877.56 L-5.68434189e-14,202.44 C-5.68434189e-14,90.64 90.637,-5.68434189e-14 202.44,-5.68434189e-14 Z" id="Path"></path>
+        </g>
+    </g>
+</svg>

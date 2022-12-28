@@ -6,9 +6,9 @@
         @click="onClick"
     >
         <ColorScheme placeholder="...">
-            <ISun v-if="colorMode.preference === 'dark'" inline src="" />
-            <IMoon v-else-if="colorMode.preference === 'light'" inline src="" />
-            <IComputer v-else inline src="" />
+            <ISun class="h-5" v-if="colorMode.preference === 'dark'" />
+            <IMoon class="h-5" v-else-if="colorMode.preference === 'light'" />
+            <IComputer class="h-5" v-else />
         </ColorScheme>
     </button>
 </template>

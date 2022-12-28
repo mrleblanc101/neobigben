@@ -7,7 +7,7 @@
                     class="flex-shrink-0 rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring border border-gray-100 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 inline-flex items-center justify-center h-10 w-10"
                     @click="changeDay('prev')"
                 >
-                    <IArrowLeft />
+                    <IArrowLeft class="h-3" />
                 </button>
                 <label
                     class="relative flex-shrink-0 rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring border border-gray-100 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 inline-flex items-center justify-center h-10 px-5 cursor-pointer font-medium"
@@ -25,7 +25,7 @@
                     class="flex-shrink-0 rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring border border-gray-100 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 inline-flex items-center justify-center h-10 w-10"
                     @click="changeDay('next')"
                 >
-                    <IArrowRight />
+                    <IArrowRight class="h-3" />
                 </button>
             </div>
             <div class="w-full flex flex-col items-center max-w-5xl gap-4 mx-auto">

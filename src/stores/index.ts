@@ -8,30 +8,58 @@ export const useStore = defineStore('store', {
             weeklyHours: '40:00',
             projects: [] as Project[],
             entries: [] as Entry[],
-            // TODO: Sort by start_time
-            // TODO: Add space between not subsequent timeslot
         };
     },
     getters: {
         todaysEntries(): Entry[] {
             const { $moment } = useNuxtApp();
-            const entries = this.entries.filter((e) => $moment(this.viewedDay).isSame(e.date, 'day'));
+            const entries = this.entries
+                .sort((a, b) => {
+                    const startA = $moment(a.date + ' ' + a.start_time, 'YYYY-M-D HH:mm');
+                    const startB = $moment(b.date + ' ' + b.start_time, 'YYYY-M-D HH:mm');
+                    return startB.isBefore(startA) ? 1 : -1;
+                })
+                .filter((e) => $moment(this.viewedDay).isSame(e.date, 'day'));
 
             return entries;
         },
         remainingTime(): string {
             const { $moment } = useNuxtApp();
 
-            const total = this.entries.reduce((acc, e: Entry) => {
-                acc = $moment
-                    .duration(acc)
-                    .add($moment.duration(e.duration as string))
-                    .format('HH:mm');
+            const total = this.entries
+                .filter((e) => !e.is_live_clocking)
+                .reduce((acc, e: Entry) => {
+                    acc = $moment
+                        .duration(acc)
+                        .add($moment.duration(e.duration as string))
+                        .format('HH:mm', {
+                            trim: false,
+                        });
 
-                return acc;
-            }, '00:00');
+                    return acc;
+                }, '00:00');
 
             return $moment.duration(this.weeklyHours).subtract(total).format('HH:mm');
+        },
+        weeklySummary(): object {
+            const { $moment } = useNuxtApp();
+
+            return this.entries
+                .filter((e) => !e.is_live_clocking)
+                .reduce(
+                    (acc: string[], e: Entry) => {
+                        const day = $moment(e.date).day();
+                        acc[day] = $moment
+                            .duration(acc[day])
+                            .add($moment.duration(e.duration as string))
+                            .format('HH:mm', {
+                                trim: false,
+                            });
+
+                        return acc;
+                    },
+                    ['00:00', '00:00', '00:00', '00:00', '00:00', '00:00', '00:00'],
+                );
         },
     },
     actions: {
@@ -46,8 +74,10 @@ export const useStore = defineStore('store', {
             item = entry;
         },
         deleteEntry(entry: Entry) {
-            let index = this.entries.findIndex((e) => e.id === entry.id);
-            this.entries.splice(index, 1);
+            if (confirm('Are you sure you want to delete this entry ?')) {
+                let index = this.entries.findIndex((e) => e.id === entry.id);
+                this.entries.splice(index, 1);
+            }
         },
         addProject(option: Project) {
             const project = {

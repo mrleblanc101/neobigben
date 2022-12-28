@@ -3,7 +3,6 @@ module.exports = {
         { name: 'prefixIds' },
         { name: 'removeTitle' },
         { name: 'removeDesc' },
-        { name: 'removeViewBox', active: false },
         { name: 'removeDimensions' },
         {
             name: 'removeAttrs',

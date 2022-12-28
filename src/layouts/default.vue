@@ -1,9 +1,7 @@
 <template>
     <AppHeader />
-    <main class="pt-16">
-        <div class="p-4 lg:p-8">
-            <slot />
-        </div>
+    <main class="p-4 lg:p-8">
+        <slot />
     </main>
 </template>
 

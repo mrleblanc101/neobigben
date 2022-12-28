@@ -4,8 +4,37 @@
         class="p-4 bg-gray-100 dark:bg-gray-800 rounded flex flex-col gap-2 w-full"
         @submit.prevent="onSave"
     >
+        <div class="grid gap-2 grid-cols-2 md:grid-cols-4">
+            <div>
+                <label>Début<span class="text-red-500">*</span></label>
+                <TimeInput v-model="start_time" />
+            </div>
+            <div>
+                <label>Fin<span class="text-red-500">*</span></label>
+                <TimeInput v-model="end_time" />
+            </div>
+            <div>
+                <label>Durée<span class="text-red-500">*</span></label>
+                <TimeInput
+                    v-model="computedDuration"
+                    class="read-only:pointer-events-none"
+                    format="HH:MM"
+                    :placeholder="is_live_clocking ? placeholder : undefined"
+                    :readonly="is_live_clocking"
+                />
+            </div>
+            <div>
+                <label>Date</label>
+                <input
+                    v-model="date"
+                    :class="{ 'has-value': date }"
+                    type="date"
+                    class="form-control form-input form-input-bordered w-full"
+                />
+            </div>
+        </div>
         <div>
-            <label>Projet</label>
+            <label>Projet<span class="text-red-500">*</span></label>
             <Multiselect
                 v-model="project"
                 :options="projects"
@@ -83,30 +112,6 @@
                 @create="addProject"
             />
         </div>
-        <div class="grid gap-2 grid-cols-2 md:grid-cols-4">
-            <div>
-                <label>De</label>
-                <TimeInput v-model="start_time" />
-            </div>
-            <div>
-                <label>À</label>
-                <TimeInput v-model="end_time" />
-            </div>
-            <div>
-                <label>Durée</label>
-                <TimeInput
-                    v-model="durationComputed"
-                    class="read-only:pointer-events-none"
-                    format="HH:MM"
-                    :placeholder="is_live_clocking ? placeholder : undefined"
-                    :readonly="is_live_clocking"
-                />
-            </div>
-            <div>
-                <label>Date</label>
-                <input v-model="date" type="date" class="form-control form-input form-input-bordered w-full" />
-            </div>
-        </div>
         <div>
             <label>Description</label>
             <textarea
@@ -116,21 +121,32 @@
                 placeholder="Description..."
             ></textarea>
         </div>
-        <div class="text-right">
+        <div class="flex gap-2 justify-end">
+            <template v-if="!start_time || !end_time">
+                <button
+                    v-if="!is_live_clocking"
+                    type="submit"
+                    class="shadow relative bg-green-500 hover:bg-green-400 active:bg-green-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2"
+                >
+                    <IPlay class="h-3 w-4" />
+                    Démarrer
+                </button>
+                <button
+                    v-else
+                    type="submit"
+                    class="shadow relative bg-rose-500 hover:bg-rose-400 active:bg-rose-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2"
+                >
+                    <IStop class="h-3 w-4" />
+                    Arrêter
+                </button>
+            </template>
             <button
-                v-if="!start_time || !end_time"
                 type="submit"
-                class="shadow relative bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
+                class="shadow relative bg-primary-500 hover:bg-primary-400 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2"
+                :disabled="!(entry.start_time && entry.end_time && entry.duration && entry.project)"
             >
-                {{ !is_live_clocking ? 'Démarrer' : 'Arrêter' }}
-            </button>
-            <button
-                v-else
-                type="submit"
-                class="shadow relative bg-primary-500 hover:bg-primary-400 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
-                :disabled="!(entry.start_time && entry.end_time && entry.duration && entry.date && entry.project)"
-            >
-                {{ !id ? 'Ajouter' : 'Modifier' }}
+                <ISave class="h-4 w-4" />
+                {{ !id ? 'Ajouter' : 'Sauvegarder' }}
             </button>
         </div>
     </form>
@@ -146,24 +162,24 @@
                     class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 text-sm"
                     @click="is_editing = true"
                 >
-                    <IEdit />
+                    <IEdit class="h-5" />
                 </button>
                 <button
                     type="button"
                     class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-red-500 hover:bg-red-400 active:bg-red-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 text-sm"
                     @click="deleteEntry(entry as Entry)"
                 >
-                    <IDelete />
+                    <IDelete class="h-5" />
                 </button>
             </div>
         </div>
         <div class="grid gap-2 grid-cols-2 md:grid-cols-4">
             <div>
-                <label>De</label>
+                <label>Début</label>
                 <strong class="block">{{ start_time }}</strong>
             </div>
             <div>
-                <label>À</label>
+                <label>Fin</label>
                 <strong class="block">{{ end_time }}</strong>
             </div>
             <div>
@@ -183,18 +199,22 @@
 </template>
 
 <script setup lang="ts">
+import IPlay from '@/assets/svg/play.svg?component';
+import IStop from '@/assets/svg/stop.svg?component';
 import IEdit from '@/assets/svg/edit.svg?component';
+import ISave from '@/assets/svg/save.svg?component';
 import IDelete from '@/assets/svg/delete.svg?component';
 
 import Multiselect from '@vueform/multiselect';
 import { storeToRefs } from 'pinia';
 import { useStore } from '@/stores/index';
+import { start } from 'repl';
 
 const { $moment } = useNuxtApp();
 
 const store = useStore();
 const { addProject, addEntry, updateEntry, deleteEntry } = store;
-const { projects } = storeToRefs(store);
+const { projects, viewedDay } = storeToRefs(store);
 
 const props = defineProps({
     entry: {
@@ -207,7 +227,7 @@ const props = defineProps({
                 start_time: '',
                 end_time: '',
                 duration: '',
-                date: new Date().toLocaleDateString('en-CA'),
+                date: null,
                 description: '',
                 project: null,
             }),
@@ -220,10 +240,15 @@ const { id, is_editing, is_live_clocking, start_time, end_time, duration, date, 
 
 const placeholder = ref('00:00:00');
 
-const durationComputed = computed({
+const computedDate = computed(() => {
+    return date.value ?? new Date().toLocaleDateString('en-CA');
+});
+
+const computedDuration = computed({
     get() {
-        const start = $moment(date.value + ' ' + start_time.value, 'YYYY-M-D HH:mm');
-        const end = $moment(date.value + ' ' + end_time.value, 'YYYY-M-D HH:mm');
+        const now = new Date().toLocaleDateString('en-CA');
+        const start = $moment(computedDate.value + ' ' + start_time.value, 'YYYY-M-D HH:mm');
+        const end = $moment(now + ' ' + end_time.value, 'YYYY-M-D HH:mm');
 
         if ($moment(start_time.value, 'HH:mm', true).isValid() && $moment(end_time.value, 'HH:mm', true).isValid()) {
             const duration = $moment.duration(end.diff(start)).format('HH:mm', {
@@ -233,7 +258,7 @@ const durationComputed = computed({
         }
     },
     set(newValue) {
-        const start = $moment(date.value + ' ' + start_time.value, 'YYYY-M-D HH:mm');
+        const start = $moment(computedDate.value + ' ' + start_time.value, 'YYYY-M-D HH:mm');
         const end = start.add($moment.duration(newValue)).format('HH:mm');
 
         if ($moment(newValue, 'HH:mm', true).isValid() && $moment(start_time.value, 'HH:mm', true).isValid()) {
@@ -242,7 +267,7 @@ const durationComputed = computed({
     },
 });
 
-watch(durationComputed, (value) => {
+watch(computedDuration, (value) => {
     duration.value = value || '';
 });
 
@@ -254,24 +279,39 @@ function onSave() {
         }
         is_live_clocking.value = true;
         startTimer();
+        onAddEntry(props.entry as Entry);
     } else if (is_live_clocking.value) {
         // Arrêter
         end_time.value = $moment().format('HH:mm');
         is_live_clocking.value = false;
+        updateEntry(props.entry as Entry);
     } else if (!id.value) {
         // Ajouter
         is_editing.value = false;
-        addEntry(props.entry as any);
+        onAddEntry(props.entry as Entry);
     } else {
         // Modifier
         is_editing.value = false;
-        updateEntry(props.entry as any);
+        updateEntry(props.entry as Entry);
     }
 }
 
+function onAddEntry(entry: Entry) {
+    addEntry({
+        ...entry,
+        date: computedDate.value,
+    });
+}
+
+onMounted(() => {
+    if (is_editing.value) {
+        startTimer();
+    }
+});
+
 function startTimer() {
     setInterval(() => {
-        const start = $moment(date.value + ' ' + start_time.value, 'YYYY-M-D HH:mm');
+        const start = $moment(computedDate.value + ' ' + start_time.value, 'YYYY-M-D HH:mm');
         const end = $moment();
 
         const duration = $moment.duration(end.diff(start)).format('HH:mm:ss', {
