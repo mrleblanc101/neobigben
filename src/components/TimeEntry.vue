@@ -96,9 +96,10 @@
                 <label>Durée</label>
                 <TimeInput
                     v-model="durationComputed"
+                    class="read-only:pointer-events-none"
                     format="HH:MM"
                     :placeholder="is_live_clocking ? placeholder : undefined"
-                    :readonly="!is_live_clocking"
+                    :readonly="is_live_clocking"
                 />
             </div>
             <div>
@@ -143,6 +144,7 @@
                 <button
                     type="button"
                     class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 text-sm"
+                    @click="is_editing = true"
                 >
                     <IEdit />
                 </button>
@@ -245,18 +247,17 @@ watch(durationComputed, (value) => {
 });
 
 function onSave() {
-    if (!start_time.value && !end_time.value) {
+    if ((!start_time.value || !end_time.value) && !is_live_clocking.value) {
         // Démarrer
+        if (!start_time.value) {
+            start_time.value = $moment().format('HH:mm');
+        }
         is_live_clocking.value = true;
-        start_time.value = $moment().format('HH:mm');
         startTimer();
     } else if (is_live_clocking.value) {
         // Arrêter
         end_time.value = $moment().format('HH:mm');
         is_live_clocking.value = false;
-
-        const start = $moment(date.value + ' ' + start_time.value, 'YYYY-M-D HH:mm');
-        const end = $moment();
     } else if (!id.value) {
         // Ajouter
         is_editing.value = false;

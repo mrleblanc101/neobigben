@@ -4,13 +4,13 @@
             <div class="flex justify-between w-full">
                 <button
                     type="button"
-                    class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring border border-gray-800 hover:bg-gray-800 inline-flex items-center justify-center h-10 w-10"
+                    class="flex-shrink-0 rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring border border-gray-100 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 inline-flex items-center justify-center h-10 w-10"
                     @click="changeDay('prev')"
                 >
                     <IArrowLeft />
                 </button>
                 <label
-                    class="relative flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring border border-gray-800 hover:bg-gray-800 inline-flex items-center justify-center h-10 px-4"
+                    class="relative flex-shrink-0 rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring border border-gray-100 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 inline-flex items-center justify-center h-10 px-5 cursor-pointer font-medium"
                 >
                     {{ $moment(viewedDay).format('LL') }}
                     <input
@@ -22,7 +22,7 @@
                 </label>
                 <button
                     type="button"
-                    class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring border border-gray-800 hover:bg-gray-800 inline-flex items-center justify-center h-10 w-10"
+                    class="flex-shrink-0 rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring border border-gray-100 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 inline-flex items-center justify-center h-10 w-10"
                     @click="changeDay('next')"
                 >
                     <IArrowRight />
