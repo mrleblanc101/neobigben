@@ -5,3 +5,5 @@ Quand on soumet la semaine:
 Présentation:
 - Add warning for overlaping timeslot
 - Add warning for empty timeslots (Heure de diner)
+
+Si le clock s'étend sur 2 jours, split en 2 clock lors de la sauvegarde

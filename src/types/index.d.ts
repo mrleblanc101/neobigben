@@ -2,6 +2,7 @@ type Entry = {
     readonly id?: string;
     project: object;
     is_live_clocking: boolean;
+    is_creating: boolean;
     is_editing: boolean;
     date: string;
     start_time: string;

@@ -1,6 +1,6 @@
 <template>
     <form
-        v-if="is_editing"
+        v-if="is_creating || is_editing"
         class="p-4 bg-gray-100 dark:bg-gray-800 rounded flex flex-col gap-2 w-full"
         @submit.prevent="onSave"
     >
@@ -126,7 +126,7 @@
                 <button
                     v-if="!is_live_clocking"
                     type="submit"
-                    class="shadow relative bg-green-500 hover:bg-green-400 active:bg-green-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2"
+                    class="shadow bg-green-500 hover:bg-green-400 active:bg-green-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2"
                 >
                     Démarrer
                     <IPlay class="h-3 w-4" />
@@ -134,18 +134,26 @@
                 <button
                     v-else
                     type="submit"
-                    class="shadow relative bg-rose-500 hover:bg-rose-400 active:bg-rose-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2"
+                    class="shadow bg-rose-500 hover:bg-rose-400 active:bg-rose-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2"
                 >
                     Arrêter
                     <IStop class="h-3 w-4" />
                 </button>
             </template>
             <button
+                v-else
                 type="submit"
-                class="shadow relative bg-primary-500 hover:bg-primary-400 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2"
+                class="appearance-none bg-transparent font-bold text-gray-400 hover:text-gray-300 active:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:active:text-gray-600 dark:hover:bg-gray-800 text-sm px-2"
+                @click="deleteEntry(entry as Entry)"
+            >
+                Annuler
+            </button>
+            <button
+                type="submit"
+                class="shadow bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2"
                 :disabled="!(entry.start_time && entry.end_time && entry.duration && entry.project)"
             >
-                {{ !id ? 'Ajouter' : 'Sauvegarder' }}
+                {{ is_creating ? 'Ajouter' : 'Sauvegarder' }}
                 <ISave class="h-4 w-4" />
             </button>
         </div>
@@ -208,13 +216,12 @@ import IDelete from '@/assets/svg/delete.svg?component';
 import Multiselect from '@vueform/multiselect';
 import { storeToRefs } from 'pinia';
 import { useStore } from '@/stores/index';
-import { start } from 'repl';
 
 const { $moment } = useNuxtApp();
 
 const store = useStore();
 const { addProject, addEntry, updateEntry, deleteEntry } = store;
-const { projects, viewedDay } = storeToRefs(store);
+const { projects } = storeToRefs(store);
 
 const props = defineProps({
     entry: {
@@ -222,7 +229,8 @@ const props = defineProps({
         default: () =>
             reactive({
                 id: '',
-                is_editing: true,
+                is_creating: true,
+                is_editing: false,
                 is_live_clocking: false,
                 start_time: '',
                 end_time: '',
@@ -234,9 +242,8 @@ const props = defineProps({
     },
 });
 
-const { id, is_editing, is_live_clocking, start_time, end_time, duration, date, description, project } = toRefs(
-    props.entry,
-);
+const { id, is_creating, is_editing, is_live_clocking, start_time, end_time, duration, date, description, project } =
+    toRefs(props.entry);
 
 const placeholder = ref('00:00:00');
 
@@ -289,7 +296,7 @@ function onSave() {
         updateEntry(props.entry as Entry);
     } else if (!id.value) {
         // Ajouter
-        is_editing.value = false;
+        is_creating.value = false;
         onAddEntry(props.entry as Entry);
     } else {
         // Modifier
@@ -306,7 +313,7 @@ function onAddEntry(entry: Entry) {
 }
 
 onMounted(() => {
-    if (is_editing.value) {
+    if (is_creating.value) {
         startTimer();
     }
 });
