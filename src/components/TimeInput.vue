@@ -5,7 +5,7 @@
         type="text"
         :value="value"
         :placeholder="placeholder"
-        ondblclick="this.select()"
+        onclick="this.select()"
         @blur="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     />
 </template>
@@ -20,10 +20,6 @@ const props = defineProps({
     modelValue: {
         type: String,
         default: null,
-    },
-    format: {
-        type: String,
-        default: 'HH:MM',
     },
     placeholder: {
         type: String,
@@ -43,7 +39,7 @@ const value = computed({
 
 onMounted(() => {
     new $inputmask('datetime', {
-        inputFormat: props.format,
+        inputFormat: 'HH:MM',
     }).mask(timeInput.value!);
 });
 </script>

@@ -254,14 +254,14 @@ let model = ref(Object.assign({}, props.entry));
 const placeholder = ref('00:00:00');
 
 const computedDate = computed(() => {
-    return model.value.date ?? new Date().toLocaleDateString('en-CA');
+    return model.value.date ?? viewedDay.value;
 });
 
 const computedDuration = computed({
     get() {
-        const now = new Date().toLocaleDateString('en-CA');
+        const date = !model.value.is_live_clocking ? computedDate.value : new Date().toLocaleDateString('en-CA');
         const start = $moment(computedDate.value + ' ' + model.value.start_time, 'YYYY-M-D HH:mm');
-        const end = $moment(now + ' ' + model.value.end_time, 'YYYY-M-D HH:mm');
+        const end = $moment(date + ' ' + model.value.end_time, 'YYYY-M-D HH:mm');
 
         if (
             $moment(model.value.start_time, 'HH:mm', true).isValid() &&
@@ -345,7 +345,6 @@ function startTimer() {
 }
 
 function onCancelEdits() {
-    console.log('cancel edits');
     model.value = props.entry;
 }
 </script>

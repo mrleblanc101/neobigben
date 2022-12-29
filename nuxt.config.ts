@@ -33,6 +33,10 @@ export default defineNuxtConfig({
         },
     },
 
+    build: {
+        transpile: ['moment'],
+    },
+
     vite: {
         plugins: [
             ViteSvgLoader({

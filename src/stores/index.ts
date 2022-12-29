@@ -74,7 +74,7 @@ export const useStore = defineStore('store', {
             this.entries[index] = entry;
         },
         deleteEntry(entry: Entry) {
-            if (confirm('Are you sure you want to delete this entry ?')) {
+            if (confirm('Êtes vous certain de vouloir supprimer cette entrée ?')) {
                 let index = this.entries.findIndex((e) => e.id === entry.id);
                 this.entries.splice(index, 1);
             }

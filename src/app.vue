@@ -12,7 +12,7 @@
                 <label
                     class="relative flex-shrink-0 rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring border border-gray-100 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 inline-flex items-center justify-center h-10 px-5 cursor-pointer font-medium"
                 >
-                    {{ $moment(viewedDay).format('LL') }}
+                    {{ dateLabel }}
                     <input
                         class="sr-only form-input bottom-0 left-0"
                         type="date"
@@ -51,6 +51,12 @@ const key = ref(uuidv4());
 
 watch(todaysEntries, () => {
     key.value = uuidv4();
+});
+
+const dateLabel = computed(() => {
+    const { $moment } = useNuxtApp();
+    const string = $moment(viewedDay.value).format('dddd, LL');
+    return string[0].toUpperCase() + string.slice(1);
 });
 
 function changeDay(operation: 'next' | 'prev') {

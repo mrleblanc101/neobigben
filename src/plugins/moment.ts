@@ -1,11 +1,10 @@
 import moment from 'moment';
-import 'moment/locale/fr';
+import 'moment/dist/locale/fr-ca';
 import momentDurationFormatSetup from 'moment-duration-format';
 
 export default defineNuxtPlugin((nuxtApp) => {
-    moment.locale('fr');
-    console.log(moment.locale());
     momentDurationFormatSetup(moment);
+    moment.locale('fr-ca');
     return {
         provide: {
             moment,
