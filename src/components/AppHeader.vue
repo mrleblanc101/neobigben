@@ -1,7 +1,7 @@
 <template>
     <header class="sticky top-0 z-40 w-full border-b dark:border-gray-800 bg-white dark:bg-gray-900">
         <div class="flex items-center justify-between h-16 px-4 lg:px-8">
-            <button type="button" class="text-2xl font-black" @click="viewedDay = $moment().format('YYYY-MM-DD')">
+            <button type="button" class="text-2xl font-black" @click="selectedDay = $moment().format('YYYY-MM-DD')">
                 NeoBigben
             </button>
             <div class="flex items-center gap-4">
@@ -12,15 +12,40 @@
                         @click="is_open = !is_open"
                     >
                         <IClock class="h-5" />
-                        <span class="font-bold text-xl">{{ remainingTime }}</span>
+                        <span class="font-bold text-xl">{{ weekRemaining }}</span>
                     </button>
                     <div
                         v-if="is_open"
                         class="absolute rounded top-full right-0 p-4 border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 border min-w-full flex flex-col gap-6 translate-y-2"
                     >
                         <div class="flex flex-col gap-2">
+                            <div class="border-b dark:border-gray-800 pb-2 flex justify-between items-end">
+                                <div>
+                                    <div class="text-xs font-bold uppercase opacity-80">Mon objectif</div>
+                                    <div v-if="!is_editing" class="text-3xl mt-1 font-bold tabular-nums block">
+                                        {{ weekObjective }}
+                                    </div>
+                                    <TimeInput v-else class="mt-1" v-model="objective" mask="99:99" />
+                                </div>
+                                <button
+                                    v-if="!is_editing"
+                                    type="button"
+                                    class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 text-sm"
+                                    @click="is_editing = true"
+                                >
+                                    <IEdit class="h-5" />
+                                </button>
+                                <button
+                                    v-else
+                                    type="button"
+                                    class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 text-sm"
+                                    @click="onSave"
+                                >
+                                    <ISave class="h-5" />
+                                </button>
+                            </div>
                             <div
-                                v-for="(day, index) in weeklySummary"
+                                v-for="(day, index) in weekSummary"
                                 :key="index"
                                 class="flex items-end justify-between gap-8"
                             >
@@ -28,13 +53,19 @@
                                     class="text-xs font-bold uppercase"
                                     :class="{
                                         'opacity-50 dark:opacity-30': index === 0 || index === 6,
-                                        'opacity-90': index !== 0 && index !== 6,
+                                        'opacity-80': index !== 0 && index !== 6,
                                     }"
                                 >
                                     {{ $moment().day(index).format('dddd') }}
                                 </div>
-                                <div class="font-bold tabular-nums" :class="weeklySummaryColors(day)">
+                                <div class="font-bold tabular-nums" :class="weekSummaryColors(day)">
                                     {{ day }}
+                                </div>
+                            </div>
+                            <div class="flex border-t dark:border-gray-800 items-end justify-between gap-8 pt-2 mt-2">
+                                <div class="font-bold uppercase">Total</div>
+                                <div class="font-bold tabular-nums">
+                                    {{ weekTotal }}
                                 </div>
                             </div>
                         </div>
@@ -55,6 +86,8 @@
 </template>
 
 <script lang="ts" setup>
+import ISave from '@/assets/svg/save.svg?component';
+import IEdit from '@/assets/svg/edit.svg?component';
 import IDownload from '@/assets/svg/download.svg?component';
 import IClock from '@/assets/svg/clock.svg?component';
 import { storeToRefs } from 'pinia';
@@ -62,8 +95,15 @@ import { useStore } from '@/stores/index';
 
 const store = useStore();
 
-const { weeklySummaryColors } = store;
-const { remainingTime, weeklySummary, viewedDay } = storeToRefs(store);
+const { weekSummaryColors } = store;
+let { weekRemaining, weekSummary, selectedDay, weekObjective, weekTotal } = storeToRefs(store);
 
 const is_open = ref(false);
+const is_editing = ref(false);
+let objective = ref(weekObjective.value);
+
+function onSave() {
+    is_editing.value = false;
+    weekObjective.value = objective.value;
+}
 </script>

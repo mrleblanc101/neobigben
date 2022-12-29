@@ -16,7 +16,7 @@
                     <input
                         class="sr-only form-input bottom-0 left-0"
                         type="date"
-                        v-model="viewedDay"
+                        v-model="selectedDay"
                         onfocus="this.showPicker()"
                     />
                 </label>
@@ -45,7 +45,7 @@ import IArrowLeft from '@/assets/svg/arrow-left.svg?component';
 import IArrowRight from '@/assets/svg/arrow-right.svg?component';
 
 const store = useStore();
-const { todaysEntries, viewedDay } = storeToRefs(store);
+const { todaysEntries, selectedDay } = storeToRefs(store);
 
 useHead({
     title: 'NeoBigben',
@@ -66,7 +66,7 @@ watch(todaysEntries, () => {
 
 const dateLabel = computed(() => {
     const { $moment } = useNuxtApp();
-    const string = $moment(viewedDay.value).format('dddd, LL');
+    const string = $moment(selectedDay.value).format('dddd, LL');
     return string[0].toUpperCase() + string.slice(1);
 });
 
@@ -74,10 +74,10 @@ function changeDay(operation: 'next' | 'prev') {
     const { $moment } = useNuxtApp();
 
     if (operation === 'prev') {
-        viewedDay.value = $moment(viewedDay.value).subtract(1, 'day').format('YYYY-MM-DD');
+        selectedDay.value = $moment(selectedDay.value).subtract(1, 'day').format('YYYY-MM-DD');
     }
     if (operation === 'next') {
-        viewedDay.value = $moment(viewedDay.value).add(1, 'day').format('YYYY-MM-DD');
+        selectedDay.value = $moment(selectedDay.value).add(1, 'day').format('YYYY-MM-DD');
     }
 }
 </script>

@@ -141,7 +141,7 @@
                 </button>
             </template>
             <button
-                v-else-if="model.is_creating"
+                v-else-if="model.id && model.is_creating"
                 type="button"
                 class="appearance-none bg-transparent font-bold text-gray-400 hover:text-gray-300 active:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:active:text-gray-600 dark:hover:bg-gray-800 text-sm px-2"
                 @click="deleteEntry(entry as Entry)"
@@ -162,7 +162,6 @@
                 :disabled="!(model.start_time && model.end_time && model.duration && model.project)"
             >
                 {{ model.is_creating ? 'Ajouter' : 'Sauvegarder' }}
-                <ISave class="h-4 w-4" />
             </button>
         </div>
     </form>
@@ -218,7 +217,6 @@
 import IPlay from '@/assets/svg/play.svg?component';
 import IStop from '@/assets/svg/stop.svg?component';
 import IEdit from '@/assets/svg/edit.svg?component';
-import ISave from '@/assets/svg/save.svg?component';
 import IDelete from '@/assets/svg/delete.svg?component';
 
 import Multiselect from '@vueform/multiselect';
@@ -229,7 +227,7 @@ const { $moment } = useNuxtApp();
 
 const store = useStore();
 const { addProject, addEntry, updateEntry, deleteEntry } = store;
-const { projects, viewedDay } = storeToRefs(store);
+const { projects, selectedDay } = storeToRefs(store);
 
 const props = defineProps({
     entry: {
@@ -254,7 +252,7 @@ let model = ref(Object.assign({}, props.entry));
 const placeholder = ref('00:00:00');
 
 const computedDate = computed(() => {
-    return model.value.date ?? viewedDay.value;
+    return model.value.date ?? selectedDay.value;
 });
 
 const computedDuration = computed({
@@ -286,7 +284,7 @@ const computedDuration = computed({
 });
 
 const isToday = computed(() => {
-    return $moment(viewedDay.value).isSame($moment(), 'day');
+    return $moment(selectedDay.value).isSame($moment(), 'day');
 });
 
 onMounted(() => {

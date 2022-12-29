@@ -5,7 +5,6 @@
         type="text"
         :value="value"
         :placeholder="placeholder"
-        onclick="this.select()"
         @blur="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     />
 </template>
@@ -17,6 +16,14 @@ const timeInput = ref<HTMLElement | null>(null);
 const { $inputmask } = useNuxtApp();
 
 const props = defineProps({
+    type: {
+        type: String,
+        default: 'datetime',
+    },
+    mask: {
+        type: String,
+        default: null,
+    },
     modelValue: {
         type: String,
         default: null,
@@ -38,8 +45,15 @@ const value = computed({
 });
 
 onMounted(() => {
-    new $inputmask('datetime', {
-        inputFormat: 'HH:MM',
-    }).mask(timeInput.value!);
+    props.mask
+        ? new $inputmask({
+              mask: props.mask,
+              insertModeVisual: false,
+              placeholder: 'HH:MM',
+          }).mask(timeInput.value!)
+        : new $inputmask('datetime', {
+              inputFormat: 'HH:MM',
+              insertModeVisual: false,
+          }).mask(timeInput.value!);
 });
 </script>

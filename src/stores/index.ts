@@ -4,8 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 export const useStore = defineStore('store', {
     state: () => {
         return {
-            viewedDay: new Date().toLocaleDateString('en-CA'),
-            weeklyHours: '40:00',
+            selectedDay: new Date().toLocaleDateString('en-CA'),
+            weekObjective: '40:00',
             projects: [] as Project[],
             entries: [] as Entry[],
         };
@@ -19,13 +19,14 @@ export const useStore = defineStore('store', {
                     const startB = $moment(b.date + ' ' + b.start_time, 'YYYY-M-D HH:mm');
                     return startB.isBefore(startA) ? 1 : -1;
                 })
-                .filter((e) => $moment(this.viewedDay).isSame(e.date, 'day'));
+                .filter((e) => $moment(this.selectedDay).isSame(e.date, 'day'));
 
             return entries;
         },
-        remainingTime(): string {
+        weekTotal(): string {
             const { $moment } = useNuxtApp();
-            const total = this.weeklySummary.reduce((acc: moment.Duration, day: string) => {
+
+            const total = this.weekSummary.reduce((acc: moment.Duration, day: string) => {
                 acc = $moment.duration(acc).add($moment.duration(day));
                 return acc;
             }, $moment.duration());
@@ -33,11 +34,18 @@ export const useStore = defineStore('store', {
                 trim: false,
             });
         },
-        weeklySummary(): string[] {
+        weekRemaining(): string {
             const { $moment } = useNuxtApp();
 
-            const weekStart = $moment(this.viewedDay).startOf('week');
-            const weekEnd = $moment(this.viewedDay).endOf('week');
+            return $moment.duration(this.weekObjective).subtract($moment.duration(this.weekTotal)).format('HH:mm', {
+                trim: false,
+            });
+        },
+        weekSummary(): string[] {
+            const { $moment } = useNuxtApp();
+
+            const weekStart = $moment(this.selectedDay).startOf('week');
+            const weekEnd = $moment(this.selectedDay).endOf('week');
 
             return this.entries
                 .filter((e) => !e.is_creating)
@@ -57,14 +65,15 @@ export const useStore = defineStore('store', {
                     ['00:00', '00:00', '00:00', '00:00', '00:00', '00:00', '00:00'],
                 );
         },
-        weeklySummaryColors(): Function {
+        weekSummaryColors(): Function {
             return (time: string): string => {
                 const { $moment } = useNuxtApp();
 
                 const isZero = $moment.duration(time).asHours() === 0;
-                const isOvertime = $moment.duration(time).asHours() >= $moment.duration(this.weeklyHours).asHours() / 5;
+                const isOvertime =
+                    $moment.duration(time).asHours() >= $moment.duration(this.weekObjective).asHours() / 5;
                 const isWarn =
-                    $moment.duration(time).asHours() >= $moment.duration(this.weeklyHours).asHours() / 5 - 0.5;
+                    $moment.duration(time).asHours() >= $moment.duration(this.weekObjective).asHours() / 5 - 0.5;
 
                 if (isZero) {
                     return 'text-gray-400 dark:text-gray-600';
