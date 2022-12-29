@@ -47,6 +47,17 @@ import IArrowRight from '@/assets/svg/arrow-right.svg?component';
 const store = useStore();
 const { todaysEntries, viewedDay } = storeToRefs(store);
 
+useHead({
+    title: 'NeoBigben',
+    link: [
+        {
+            rel: 'icon',
+            href: '/favicon.svg',
+            type: 'image/svg+xml',
+        },
+    ],
+});
+
 const key = ref(uuidv4());
 
 watch(todaysEntries, () => {
