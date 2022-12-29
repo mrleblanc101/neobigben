@@ -16,7 +16,7 @@
                     </button>
                     <div
                         v-if="is_open"
-                        class="absolute rounded top-full right-0 p-4 border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 border min-w-full flex flex-col gap-4 translate-y-2"
+                        class="absolute rounded top-full right-0 p-4 border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 border min-w-full flex flex-col gap-6 translate-y-2"
                     >
                         <div class="flex flex-col gap-2">
                             <div
@@ -24,10 +24,18 @@
                                 :key="index"
                                 class="flex items-end justify-between gap-8"
                             >
-                                <div class="font-medium text-xs opacity-60 uppercase">
+                                <div
+                                    class="text-xs font-bold uppercase"
+                                    :class="{
+                                        'opacity-50 dark:opacity-30': index === 0 || index === 6,
+                                        'opacity-90': index !== 0 && index !== 6,
+                                    }"
+                                >
                                     {{ $moment().day(index).format('dddd') }}
                                 </div>
-                                <div class="font-bold tabular-nums">{{ day }}</div>
+                                <div class="font-bold tabular-nums" :class="weeklySummaryColors(day)">
+                                    {{ day }}
+                                </div>
                             </div>
                         </div>
                         <button
@@ -54,6 +62,7 @@ import { useStore } from '@/stores/index';
 
 const store = useStore();
 
+const { weeklySummaryColors } = store;
 const { remainingTime, weeklySummary, viewedDay } = storeToRefs(store);
 
 const is_open = ref(false);

@@ -61,6 +61,26 @@ export const useStore = defineStore('store', {
                     ['00:00', '00:00', '00:00', '00:00', '00:00', '00:00', '00:00'],
                 );
         },
+        weeklySummaryColors(): Function {
+            return (time: string): string => {
+                const { $moment } = useNuxtApp();
+
+                const isZero = $moment.duration(time).asHours() === 0;
+                const isOvertime = $moment.duration(time).asHours() >= $moment.duration(this.weeklyHours).asHours() / 5;
+                const isWarn =
+                    $moment.duration(time).asHours() >= $moment.duration(this.weeklyHours).asHours() / 5 - 0.5;
+
+                if (isZero) {
+                    return 'text-gray-400 dark:text-gray-600';
+                } else if (isOvertime) {
+                    return 'text-green-500';
+                } else if (isWarn) {
+                    return 'text-yellow-500';
+                } else {
+                    return 'text-red-500';
+                }
+            };
+        },
     },
     actions: {
         addEntry(entry: Entry) {

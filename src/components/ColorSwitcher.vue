@@ -6,8 +6,8 @@
         @click="onClick"
     >
         <ColorScheme placeholder="...">
-            <ISun class="h-5" v-if="colorMode.preference === 'dark'" />
-            <IMoon class="h-5" v-else-if="colorMode.preference === 'light'" />
+            <IMoon class="h-5" v-if="colorMode.preference === 'dark'" />
+            <ISun class="h-5" v-else-if="colorMode.preference === 'light'" />
             <IComputer class="h-5" v-else />
         </ColorScheme>
     </button>
