@@ -25,27 +25,23 @@ export const useStore = defineStore('store', {
         },
         remainingTime(): string {
             const { $moment } = useNuxtApp();
-
-            const total = this.entries
-                .filter((e) => !e.is_creating)
-                .reduce((acc, e: Entry) => {
-                    acc = $moment
-                        .duration(acc)
-                        .add($moment.duration(e.duration as string))
-                        .format('HH:mm', {
-                            trim: false,
-                        });
-
-                    return acc;
-                }, '00:00');
-
-            return $moment.duration(this.weeklyHours).subtract(total).format('HH:mm');
+            const total = this.weeklySummary.reduce((acc: moment.Duration, day: string) => {
+                acc = $moment.duration(acc).add($moment.duration(day));
+                return acc;
+            }, $moment.duration());
+            return $moment.duration(total).format('HH:mm', {
+                trim: false,
+            });
         },
-        weeklySummary(): object {
+        weeklySummary(): string[] {
             const { $moment } = useNuxtApp();
+
+            const weekStart = $moment(this.viewedDay).startOf('week');
+            const weekEnd = $moment(this.viewedDay).endOf('week');
 
             return this.entries
                 .filter((e) => !e.is_creating)
+                .filter((e) => $moment(e.date).isBetween(weekStart, weekEnd))
                 .reduce(
                     (acc: string[], e: Entry) => {
                         const day = $moment(e.date).day();
