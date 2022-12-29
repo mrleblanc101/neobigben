@@ -1,7 +1,5 @@
 import ViteSvgLoader from 'vite-svg-loader';
 
-import svgoConfig from './svgo.config.js';
-
 export default defineNuxtConfig({
     srcDir: 'src/',
 
@@ -38,7 +36,20 @@ export default defineNuxtConfig({
     vite: {
         plugins: [
             ViteSvgLoader({
-                svgoConfig,
+                svgoConfig: {
+                    plugins: [
+                        { name: 'prefixIds' },
+                        { name: 'removeTitle' },
+                        { name: 'removeDesc' },
+                        { name: 'removeDimensions' },
+                        {
+                            name: 'removeAttrs',
+                            params: {
+                                attrs: '(fill|stroke)',
+                            },
+                        },
+                    ],
+                },
             }),
         ],
     },
