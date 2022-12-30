@@ -129,13 +129,13 @@ export const useStore = defineStore('store', {
     actions: {
         addEntry(entry: Entry) {
             this.entries.push({
-                ...entry,
+                ...JSON.parse(JSON.stringify(entry)),
                 id: uuidv4(),
             });
         },
         updateEntry(entry: Entry) {
             let index = this.entries.findIndex((e) => e.id === entry.id);
-            this.entries[index] = entry;
+            this.entries[index] = JSON.parse(JSON.stringify(entry));
         },
         deleteEntry(entry: Entry) {
             if (confirm('Êtes vous certain de vouloir supprimer cette entrée ?')) {

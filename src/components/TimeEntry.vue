@@ -42,7 +42,7 @@
                 label="name"
                 value-prop="id"
                 :object="true"
-                placeholder="Choisir..."
+                placeholder="Choisir ou créer..."
                 :classes="{
                     container:
                         'relative h-9 mx-auto w-full flex items-center justify-end box-border cursor-pointer rounded text-sm leading-snug outline-none bg-white dark:bg-gray-900 dark:focus:bg-gray-900 border border-gray-300 dark:border-gray-700 dark:focus:border-gray-500',
@@ -79,7 +79,7 @@
                     inifiteSpinner:
                         'bg-multiselect-spinner bg-center bg-no-repeat w-4 h-4 z-10 animate-spin flex-shrink-0 flex-grow-0 m-3.5',
                     dropdown:
-                        'max-h-60 absolute -left-px -right-px bottom-0 transform translate-y-full border border-white border-gray-300 dark:border-gray-700 dark:focus:border-gray-500 -mt-px overflow-y-scroll z-50 bg-white dark:bg-gray-900 flex flex-col rounded-b',
+                        'max-h-60 absolute -left-px -right-px bottom-0 transform translate-y-full border border-primary-300 dark:border-gray-500 dark:focus:border-gray-500 -mt-px overflow-y-scroll z-50 bg-white dark:bg-gray-900 flex flex-col rounded-b',
                     dropdownTop: '-translate-y-full top-px bottom-auto rounded-b-none rounded-t',
                     dropdownHidden: 'hidden',
                     options: 'flex flex-col p-0 m-0 list-none',
@@ -208,7 +208,7 @@
         </div>
         <div v-if="model.description">
             <label>Description</label>
-            <strong class="block">{{ model.description }}</strong>
+            <strong class="block whitespace-pre">{{ model.description }}</strong>
         </div>
     </div>
 </template>
@@ -343,7 +343,8 @@ function startTimer() {
 }
 
 function onCancelEdits() {
-    model.value = props.entry;
+    model.value.is_editing = false;
+    model.value = JSON.parse(JSON.stringify(props.entry));
 }
 </script>
 
