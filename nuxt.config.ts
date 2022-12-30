@@ -11,6 +11,13 @@ export default defineNuxtConfig({
         '@pinia-plugin-persistedstate/nuxt',
     ],
 
+    piniaPersistedstate: {
+        storage: 'cookies',
+        cookieOptions: {
+            maxAge: 400 * 24 * 60 * 60, // 400 days
+        },
+    },
+
     googleFonts: {
         download: true,
         families: {

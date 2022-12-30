@@ -138,7 +138,5 @@ export const useStore = defineStore('store', {
             return project;
         },
     },
-    persist: {
-        storage: persistedState.cookies,
-    },
+    persist: true,
 });
