@@ -15,3 +15,13 @@ type Project = {
     readonly id?: string;
     name: string;
 };
+
+type Summary = {
+    sunday: string;
+    monday: string;
+    tuesday: string;
+    wednesday: string;
+    thursday: string;
+    friday: string;
+    saturday: string;
+};

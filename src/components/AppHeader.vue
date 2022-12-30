@@ -45,7 +45,7 @@
                                 </button>
                             </div>
                             <div
-                                v-for="(day, index) in weekSummary"
+                                v-for="(day, index) in Object.values(weekSummary)"
                                 :key="index"
                                 class="flex items-end justify-between gap-8"
                             >
@@ -72,6 +72,7 @@
                         <button
                             class="shadow bg-primary-500 hover:bg-primary-400 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center py-2 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2 whitespace-nowrap h-9"
                             type="button"
+                            @click="onDownload"
                         >
                             <!-- TODO: Download and reset -->
                             Télécharger & réinitialiser
@@ -95,7 +96,7 @@ import { useStore } from '@/stores/index';
 
 const store = useStore();
 
-const { weekSummaryColors } = store;
+const { weekSummaryColors, downloadAndReset } = store;
 let { weekRemaining, weekSummary, selectedDay, weekObjective, weekTotal } = storeToRefs(store);
 
 const is_open = ref(false);
@@ -105,5 +106,9 @@ let objective = ref(weekObjective.value);
 function onSave() {
     is_editing.value = false;
     weekObjective.value = objective.value;
+}
+function onDownload() {
+    is_open.value = false;
+    downloadAndReset();
 }
 </script>

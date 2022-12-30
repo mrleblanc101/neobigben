@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
+import { saveAs } from 'file-saver';
 
 export const useStore = defineStore('store', {
     state: () => {
@@ -31,7 +32,7 @@ export const useStore = defineStore('store', {
         weekTotal(): string {
             const { $moment } = useNuxtApp();
 
-            const total = this.weekSummary.reduce((acc: moment.Duration, day: string) => {
+            const total = Object.values(this.weekSummary).reduce((acc: moment.Duration, day: string) => {
                 acc = $moment.duration(acc).add($moment.duration(day));
                 return acc;
             }, $moment.duration());
@@ -46,7 +47,7 @@ export const useStore = defineStore('store', {
                 trim: false,
             });
         },
-        weekSummary(): string[] {
+        weekSummary(): Summary {
             const { $moment } = useNuxtApp();
 
             const weekStart = $moment(this.selectedDay).startOf('week');
@@ -56,8 +57,8 @@ export const useStore = defineStore('store', {
                 .filter((e) => !e.is_creating)
                 .filter((e) => $moment(e.date).isBetween(weekStart, weekEnd))
                 .reduce(
-                    (acc: string[], e: Entry) => {
-                        const day = $moment(e.date).day();
+                    (acc: Summary, e: Entry) => {
+                        const day = $moment(e.date).locale('en').format('dddd').toLowerCase() as keyof Summary;
                         acc[day] = $moment
                             .duration(acc[day])
                             .add($moment.duration(e.duration as string))
@@ -67,7 +68,15 @@ export const useStore = defineStore('store', {
 
                         return acc;
                     },
-                    ['00:00', '00:00', '00:00', '00:00', '00:00', '00:00', '00:00'],
+                    {
+                        sunday: '00:00',
+                        monday: '00:00',
+                        tuesday: '00:00',
+                        wednesday: '00:00',
+                        thursday: '00:00',
+                        friday: '00:00',
+                        saturday: '00:00',
+                    } as Summary,
                 );
         },
         weekSummaryColors(): Function {
@@ -136,6 +145,19 @@ export const useStore = defineStore('store', {
             };
             this.projects.push(project);
             return project;
+        },
+        downloadAndReset() {
+            const { $moment } = useNuxtApp();
+            const data = {
+                entries: this.entries,
+                weekSummary: this.weekSummary,
+                weekTotal: this.weekTotal,
+            };
+
+            var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            saveAs(blob, `semaine-${$moment().week()}.json`);
+
+            this.entries = [];
         },
     },
     persist: true,
