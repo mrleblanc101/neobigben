@@ -29,6 +29,7 @@
     "inputmask": "^5.0.7",
     "moment": "^2.29.4",
     "moment-duration-format": "^2.3.2",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "vue3-click-away": "^1.2.4"
   }
 }

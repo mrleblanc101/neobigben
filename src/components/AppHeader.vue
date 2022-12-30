@@ -9,7 +9,7 @@
                     <button
                         type="button"
                         class="flex gap-2 items-center px-3 h-10 rounded cursor-pointer hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-800 dark:hover:bg-gray-800"
-                        @click="is_open = !is_open"
+                        @click="is_open = true"
                     >
                         <IClock class="h-5" />
                         <span class="font-bold text-xl">{{ weekRemaining }}</span>
@@ -17,6 +17,7 @@
                     <div
                         v-if="is_open"
                         class="absolute rounded top-full right-0 p-4 border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 border min-w-full flex flex-col gap-6 translate-y-2"
+                        v-click-away="onClickAway"
                     >
                         <div class="flex flex-col gap-2">
                             <div class="border-b dark:border-gray-800 pb-2 flex justify-between items-end">
@@ -110,5 +111,10 @@ function onSave() {
 function onDownload() {
     is_open.value = false;
     downloadAndReset();
+}
+function onClickAway() {
+    console.log('click-away');
+
+    is_open.value = false;
 }
 </script>
