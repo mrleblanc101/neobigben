@@ -53,8 +53,7 @@
                                 <div
                                     class="text-xs font-bold uppercase"
                                     :class="{
-                                        'opacity-50 dark:opacity-30': index === 0 || index === 6,
-                                        'opacity-80': index !== 0 && index !== 6,
+                                        'opacity-70 dark:opacity-30': index === 0 || index === 6,
                                     }"
                                 >
                                     {{ $moment().day(index).format('dddd') }}

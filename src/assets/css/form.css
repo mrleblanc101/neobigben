@@ -19,7 +19,8 @@
     @apply dark:border-gray-700 dark:focus:border-gray-500;
 }
 .dark .form-input,
-.dark .form-select {
+.dark .form-select,
+.dark input.sr-only {
     color-scheme: dark;
 }
 /* placeholder text style */
