@@ -6,7 +6,12 @@ export const useStore = defineStore('store', {
         return {
             selectedDay: new Date().toLocaleDateString('en-CA'),
             weekObjective: '40:00',
-            projects: [] as Project[],
+            projects: [
+                {
+                    id: uuidv4(),
+                    name: 'Libéo - Interne',
+                },
+            ] as Project[],
             entries: [] as Entry[],
         };
     },
@@ -72,19 +77,39 @@ export const useStore = defineStore('store', {
                 const isZero = $moment.duration(time).asHours() === 0;
                 const isOvertime =
                     $moment.duration(time).asHours() >= $moment.duration(this.weekObjective).asHours() / 5;
-                const isWarn =
+                const isBelow =
                     $moment.duration(time).asHours() >= $moment.duration(this.weekObjective).asHours() / 5 - 0.5;
 
                 if (isZero) {
                     return 'text-gray-400 dark:text-gray-600';
                 } else if (isOvertime) {
                     return 'text-green-500';
-                } else if (isWarn) {
+                } else if (isBelow) {
                     return 'text-yellow-500';
                 } else {
                     return 'text-red-500';
                 }
             };
+        },
+        weekSummaryByProjects(): { [key: string]: string } {
+            const { $moment } = useNuxtApp();
+
+            const weekStart = $moment(this.selectedDay).startOf('week');
+            const weekEnd = $moment(this.selectedDay).endOf('week');
+
+            return this.entries
+                .filter((e) => !e.is_creating)
+                .filter((e) => $moment(e.date).isBetween(weekStart, weekEnd))
+                .reduce((acc: { [key: string]: string }, e: Entry) => {
+                    const project = e.project as Project;
+
+                    if (!acc[project.name]) {
+                        acc[project.name] = e.duration;
+                    } else {
+                        acc[project.name] = $moment.duration(acc[project.name]).add(e.duration).format('HH:mm');
+                    }
+                    return acc;
+                }, {});
         },
     },
     actions: {
