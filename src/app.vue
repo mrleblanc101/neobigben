@@ -36,7 +36,8 @@
             </div>
             <div
                 v-if="weekSummaryByProjects && weekSummaryByProjects.length"
-                class="p-4 lg:py-6 w-96 border-l dark:border-gray-800 shrink-0 absolute lg:static top-16 right-0 bottom-0 bg-white dark:bg-gray-900 z-10 flex flex-col gap-2"
+                v-show="menuOpened"
+                class="p-4 lg:py-6 w-96 border-l dark:border-gray-800 shrink-0 absolute lg:static top-16 right-0 bottom-0 bg-white dark:bg-gray-900 z-10 flex lg:!flex flex-col gap-2"
             >
                 <div
                     v-for="[project, duration] in weekSummaryByProjects"
@@ -59,7 +60,7 @@ import IArrowLeft from '@/assets/svg/arrow-left.svg?component';
 import IArrowRight from '@/assets/svg/arrow-right.svg?component';
 
 const store = useStore();
-const { todaysEntries, selectedDay, weekSummaryByProjects } = storeToRefs(store);
+const { todaysEntries, selectedDay, weekSummaryByProjects, menuOpened } = storeToRefs(store);
 
 useHead({
     title: 'NeoBigben',

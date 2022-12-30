@@ -5,6 +5,7 @@ import { saveAs } from 'file-saver';
 export const useStore = defineStore('store', {
     state: () => {
         return {
+            menuOpened: false,
             selectedDay: new Date().toLocaleDateString('en-CA'),
             weekObjective: '40:00',
             projects: [
@@ -161,7 +162,15 @@ export const useStore = defineStore('store', {
             var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             saveAs(blob, `semaine-${$moment().week()}.json`);
 
-            this.entries = [];
+            setTimeout(() => {
+                if (
+                    confirm(
+                        'Voulez-vous réinitialisé votre feuille de temps ? Ceci remettera à zero votre entrées de temps, mais conservera vos projets.',
+                    )
+                ) {
+                    this.entries = [];
+                }
+            }, 100);
         },
     },
     persist: true,
