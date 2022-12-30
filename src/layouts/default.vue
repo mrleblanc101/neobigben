@@ -1,6 +1,6 @@
 <template>
     <AppHeader />
-    <main class="p-4 lg:p-8">
+    <main class="min-h-screen pt-16 flex">
         <slot />
     </main>
 </template>

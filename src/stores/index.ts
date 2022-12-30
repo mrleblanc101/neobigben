@@ -100,13 +100,13 @@ export const useStore = defineStore('store', {
                 }
             };
         },
-        weekSummaryByProjects(): { [key: string]: string } {
+        weekSummaryByProjects(): [string, string][] {
             const { $moment } = useNuxtApp();
 
             const weekStart = $moment(this.selectedDay).startOf('week');
             const weekEnd = $moment(this.selectedDay).endOf('week');
 
-            return this.entries
+            const projects = this.entries
                 .filter((e) => !e.is_creating)
                 .filter((e) => $moment(e.date).isBetween(weekStart, weekEnd))
                 .reduce((acc: { [key: string]: string }, e: Entry) => {
@@ -119,6 +119,10 @@ export const useStore = defineStore('store', {
                     }
                     return acc;
                 }, {});
+
+            return Object.entries(projects).sort((a, b) => {
+                return $moment.duration(b[1]).asMilliseconds() - $moment.duration(a[1]).asMilliseconds();
+            });
         },
     },
     actions: {
