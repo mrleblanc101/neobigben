@@ -3,7 +3,7 @@
         v-if="model.is_creating || model.is_editing"
         class="relative p-4 bg-gray-100 dark:bg-gray-800 rounded flex flex-col gap-2 w-full border"
         :class="[
-            has_overlap ? 'border-red-500' : 'border-transparent',
+            has_overlap_previous || has_overlap_next ? 'border-red-500' : 'border-transparent',
             {
                 'has-gap mt-10': has_gap,
             },
@@ -13,11 +13,11 @@
         <div class="grid gap-2 grid-cols-2 md:grid-cols-4">
             <div>
                 <label>Début<span class="text-red-500">*</span></label>
-                <TimeInput v-model="model.start_time" />
+                <TimeInput v-model="model.start_time" :class="{ 'border !border-red-500': start_time_error }" />
             </div>
             <div>
                 <label>Fin<span class="text-red-500">*</span></label>
-                <TimeInput v-model="model.end_time" />
+                <TimeInput v-model="model.end_time" :class="{ 'border !border-red-500': end_time_error }" />
             </div>
             <div>
                 <label>Durée<span class="text-red-500">*</span></label>
@@ -175,7 +175,7 @@
         v-else
         class="relative p-4 bg-gray-100 dark:bg-gray-800 rounded flex flex-col gap-2 w-full border"
         :class="[
-            has_overlap ? 'border-red-500' : 'border-transparent',
+            has_overlap_previous || has_overlap_next ? 'border-red-500' : 'border-transparent',
             {
                 'has-gap mt-10': has_gap,
             },
@@ -206,11 +206,11 @@
         <div class="grid gap-2 grid-cols-2 md:grid-cols-4">
             <div>
                 <label>Début</label>
-                <strong class="block">{{ model.start_time }}</strong>
+                <strong class="block" :class="{ 'text-red-500': start_time_error }">{{ model.start_time }}</strong>
             </div>
             <div>
                 <label>Fin</label>
-                <strong class="block">{{ model.end_time }}</strong>
+                <strong class="block" :class="{ 'text-red-500': end_time_error }">{{ model.end_time }}</strong>
             </div>
             <div>
                 <label>Durée</label>
@@ -308,7 +308,14 @@ const previousEntry = computed((): undefined | Entry => {
     return todaysEntries.value[index - 1];
 });
 
-const has_overlap = computed(() => {
+const nextEntry = computed((): undefined | Entry => {
+    if (!model.value.id) return;
+    const index = todaysEntries.value.findIndex((e: Entry) => e.id === model.value.id);
+    if (index === todaysEntries.value.length) return;
+    return todaysEntries.value[index + 1];
+});
+
+const has_overlap_previous = computed(() => {
     if (previousEntry && previousEntry.value) {
         const { $moment } = useNuxtApp();
 
@@ -320,11 +327,31 @@ const has_overlap = computed(() => {
     return false;
 });
 
-const has_gap = computed(() => {
-    if (previousEntry.value) {
-        return !has_overlap.value && previousEntry.value.end_time !== model.value.start_time;
+const has_overlap_next = computed(() => {
+    if (nextEntry && nextEntry.value) {
+        const { $moment } = useNuxtApp();
+
+        return (
+            $moment.duration(model.value.end_time).asMinutes() >
+            $moment.duration(nextEntry.value.start_time).asMinutes()
+        );
     }
     return false;
+});
+
+const has_gap = computed(() => {
+    if (previousEntry.value) {
+        return !has_overlap_previous.value && previousEntry.value.end_time !== model.value.start_time;
+    }
+    return false;
+});
+
+const start_time_error = computed(() => {
+    return has_overlap_previous.value;
+});
+
+const end_time_error = computed(() => {
+    return has_overlap_next.value;
 });
 
 onMounted(() => {
