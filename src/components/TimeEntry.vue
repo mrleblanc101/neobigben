@@ -219,7 +219,7 @@
             </div>
             <div>
                 <label>Date</label>
-                <strong class="block">{{ model.date }}</strong>
+                <strong class="block">{{ $moment(model.date).format('L') }}</strong>
             </div>
         </div>
         <div v-if="model.description">

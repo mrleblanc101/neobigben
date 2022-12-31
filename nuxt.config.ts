@@ -1,15 +1,42 @@
 import ViteSvgLoader from 'vite-svg-loader';
+import messages from './src/i18n';
 
 export default defineNuxtConfig({
     srcDir: 'src/',
 
     modules: [
+        '@nuxtjs/i18n',
         '@nuxtjs/tailwindcss',
         '@nuxtjs/color-mode',
         '@nuxtjs/google-fonts',
         '@pinia/nuxt',
         '@pinia-plugin-persistedstate/nuxt',
     ],
+
+    i18n: {
+        strategy: 'prefix_except_default',
+        defaultLocale: 'fr',
+        locales: [
+            {
+                code: 'fr',
+                name: 'Français',
+                iso: 'fr-CA',
+                momentLocale: 'fr-ca',
+            },
+            {
+                code: 'en',
+                name: 'English',
+                iso: 'en-CA',
+                momentLocale: 'en',
+            },
+        ],
+        vueI18n: {
+            legacy: false,
+            // silentFallbackWarn: true,
+            // silentTranslationWarn: true,
+            messages,
+        },
+    },
 
     piniaPersistedstate: {
         storage: 'cookies',
