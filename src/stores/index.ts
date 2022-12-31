@@ -8,12 +8,7 @@ export const useStore = defineStore('store', {
             menuOpened: false,
             selectedDay: new Date().toLocaleDateString('en-CA'),
             weekObjective: '40:00',
-            projects: [
-                {
-                    id: uuidv4(),
-                    name: 'Libéo - Interne',
-                },
-            ] as Project[],
+            projects: [] as Project[],
             entries: [] as Entry[],
         };
     },
@@ -138,7 +133,10 @@ export const useStore = defineStore('store', {
             this.entries[index] = JSON.parse(JSON.stringify(entry));
         },
         deleteEntry(entry: Entry) {
-            if (confirm('Êtes vous certain de vouloir supprimer cette entrée ?')) {
+            const nuxtApp = useNuxtApp();
+            const { t } = nuxtApp.$i18n;
+
+            if (confirm(t('Êtes vous certain de vouloir supprimer cette entrée ?'))) {
                 const index = this.entries.findIndex((e) => e.id === entry.id);
                 this.entries.splice(index, 1);
             }
@@ -152,6 +150,9 @@ export const useStore = defineStore('store', {
             return project;
         },
         downloadAndReset() {
+            const nuxtApp = useNuxtApp();
+            const { t } = nuxtApp.$i18n;
+
             const { $moment } = useNuxtApp();
             const data = {
                 entries: this.entries,
@@ -165,7 +166,9 @@ export const useStore = defineStore('store', {
             setTimeout(() => {
                 if (
                     confirm(
-                        'Voulez-vous réinitialisé votre feuille de temps ? Ceci remettera à zero votre entrées de temps, mais conservera vos projets.',
+                        t(
+                            'Voulez-vous réinitialisé votre feuille de temps ? Ceci remettera à zero votre entrées de temps, mais conservera vos projets.',
+                        ),
                     )
                 ) {
                     this.entries = [];

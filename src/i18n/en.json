@@ -1,0 +1,19 @@
+{
+    "Mon objectif": "My target",
+    "Total": "Total",
+    "Télécharger & réinitialiser": "Download & reset",
+    "Projet": "Project",
+    "Début": "Start",
+    "Fin": "End",
+    "Durée": "Duration",
+    "Date": "Date",
+    "Choisir ou créer...": "Choose or create...",
+    "Description": "Description",
+    "Démarrer": "Start",
+    "Arrêter": "Stop",
+    "Ajouter": "Add",
+    "Annuler": "Cancel",
+    "Interne": "Internal",
+    "Êtes vous certain de vouloir supprimer cette entrée ?": "Are you sure you want to delete this entry?",
+    "Voulez-vous réinitialisé votre feuille de temps ? Ceci remettera à zero votre entrées de temps, mais conservera vos projets.": "Do you want to reset your timesheet ? This will reset all your entries, but will preserve all your projects."
+}

@@ -15,7 +15,7 @@
             <div class="flex flex-col gap-2">
                 <div class="border-b dark:border-gray-800 pb-2 flex justify-between items-end">
                     <div>
-                        <div class="text-xs font-bold uppercase opacity-80">Mon objectif</div>
+                        <div class="text-xs font-bold uppercase opacity-80">{{ $t('Mon objectif') }}</div>
                         <div v-if="!is_editing" class="text-3xl mt-1 font-bold tabular-nums block">
                             {{ weekObjective }}
                         </div>
@@ -56,7 +56,7 @@
                     </div>
                 </div>
                 <div class="flex border-t dark:border-gray-800 items-end justify-between gap-8 pt-2 mt-2">
-                    <div class="font-bold uppercase">Total</div>
+                    <div class="font-bold uppercase">{{ $t('Total') }}</div>
                     <div class="font-bold tabular-nums">
                         {{ weekTotal }}
                     </div>
@@ -67,7 +67,7 @@
                 type="button"
                 @click="onDownload"
             >
-                Télécharger & réinitialiser
+                {{ $t('Télécharger & réinitialiser') }}
                 <IDownload class="h-5 w-5" />
             </button>
         </div>

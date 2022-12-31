@@ -1,5 +1,4 @@
 import ViteSvgLoader from 'vite-svg-loader';
-import messages from './src/i18n';
 
 export default defineNuxtConfig({
     srcDir: 'src/',
@@ -16,17 +15,21 @@ export default defineNuxtConfig({
     i18n: {
         strategy: 'prefix_except_default',
         defaultLocale: 'fr',
+        // lazy: true,
+        langDir: 'i18n/',
         locales: [
             {
                 code: 'fr',
                 name: 'Français',
                 iso: 'fr-CA',
+                file: 'fr.json',
                 momentLocale: 'fr-ca',
             },
             {
                 code: 'en',
                 name: 'English',
                 iso: 'en-CA',
+                file: 'en.json',
                 momentLocale: 'en',
             },
         ],
@@ -34,7 +37,6 @@ export default defineNuxtConfig({
             legacy: false,
             // silentFallbackWarn: true,
             // silentTranslationWarn: true,
-            messages,
         },
     },
 

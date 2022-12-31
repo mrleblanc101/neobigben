@@ -45,5 +45,3 @@ function changeDay(operation: 'next' | 'prev') {
     }
 }
 </script>
-
-<style lang="postcss" scoped></style>

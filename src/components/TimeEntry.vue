@@ -12,15 +12,15 @@
     >
         <div class="grid gap-2 grid-cols-2 md:grid-cols-4">
             <div>
-                <label>Début<span class="text-red-500">*</span></label>
+                <label>{{ $t('Début') }}<span class="text-red-500">*</span></label>
                 <TimeInput v-model="model.start_time" :class="{ 'border !border-red-500': start_time_error }" />
             </div>
             <div>
-                <label>Fin<span class="text-red-500">*</span></label>
+                <label>{{ $t('Fin') }}<span class="text-red-500">*</span></label>
                 <TimeInput v-model="model.end_time" :class="{ 'border !border-red-500': end_time_error }" />
             </div>
             <div>
-                <label>Durée<span class="text-red-500">*</span></label>
+                <label>{{ $t('Durée') }}<span class="text-red-500">*</span></label>
                 <TimeInput
                     v-model="computedDuration"
                     class="read-only:pointer-events-none"
@@ -31,7 +31,7 @@
                 />
             </div>
             <div>
-                <label>Date</label>
+                <label>{{ $t('Date') }}</label>
                 <input
                     v-model="model.date"
                     :class="{ 'has-value': model.date }"
@@ -41,7 +41,7 @@
             </div>
         </div>
         <div>
-            <label>Projet<span class="text-red-500">*</span></label>
+            <label>{{ $t('Projet') }}<span class="text-red-500">*</span></label>
             <Multiselect
                 v-model="model.project"
                 :options="projects"
@@ -49,7 +49,7 @@
                 label="name"
                 value-prop="id"
                 :object="true"
-                placeholder="Choisir ou créer..."
+                :placeholder="$t('Choisir ou créer...')"
                 :classes="classes"
                 :appendNewOption="false"
                 searchable
@@ -58,12 +58,12 @@
             />
         </div>
         <div>
-            <label>Description</label>
+            <label>{{ $t('Description') }}</label>
             <textarea
                 v-model="model.description"
                 class="block w-full form-control form-input form-input-bordered py-3 h-auto"
                 rows="2"
-                placeholder="Description..."
+                :placeholder="`${$t('Description')}...`"
             ></textarea>
         </div>
         <div class="flex gap-2 justify-end">
@@ -73,7 +73,7 @@
                     type="submit"
                     class="shadow bg-green-500 hover:bg-green-400 active:bg-green-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2"
                 >
-                    Démarrer
+                    {{ $t('Démarrer') }}
                     <IPlay class="h-3 w-4" />
                 </button>
                 <button
@@ -81,7 +81,7 @@
                     type="submit"
                     class="shadow bg-rose-500 hover:bg-rose-400 active:bg-rose-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2"
                 >
-                    Arrêter
+                    {{ $t('Arrêter') }}
                     <IStop class="h-3 w-4" />
                 </button>
             </template>
@@ -91,7 +91,7 @@
                 class="appearance-none bg-transparent font-bold text-gray-400 hover:text-gray-300 active:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:active:text-gray-600 dark:hover:bg-gray-800 text-sm px-2"
                 @click="deleteEntry(entry as Entry)"
             >
-                Annuler
+                {{ $t('Annuler') }}
             </button>
             <button
                 v-if="model.is_editing"
@@ -99,14 +99,14 @@
                 class="appearance-none bg-transparent font-bold text-gray-400 hover:text-gray-300 active:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:active:text-gray-600 dark:hover:bg-gray-800 text-sm px-2"
                 @click="onCancelEdits"
             >
-                Annuler
+                {{ $t('Annuler') }}
             </button>
             <button
                 type="submit"
                 class="shadow bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2"
                 :disabled="!(model.start_time && model.end_time && model.duration && model.project)"
             >
-                {{ model.is_creating ? 'Ajouter' : 'Sauvegarder' }}
+                {{ model.is_creating ? $t('Ajouter') : $t('Sauvegarder') }}
             </button>
         </div>
     </form>
@@ -122,7 +122,7 @@
     >
         <div class="flex items-start justify-between gap-2">
             <div>
-                <label>Projet</label>
+                <label>{{ $t('Projet') }}</label>
                 <strong class="block">{{ model.project.name }}</strong>
             </div>
             <div class="flex gap-2">
@@ -144,24 +144,24 @@
         </div>
         <div class="grid gap-2 grid-cols-2 md:grid-cols-4">
             <div>
-                <label>Début</label>
+                <label>{{ $t('Début') }}</label>
                 <strong class="block" :class="{ 'text-red-500': start_time_error }">{{ model.start_time }}</strong>
             </div>
             <div>
-                <label>Fin</label>
+                <label>{{ $t('Fin') }}</label>
                 <strong class="block" :class="{ 'text-red-500': end_time_error }">{{ model.end_time }}</strong>
             </div>
             <div>
-                <label>Durée</label>
+                <label>{{ $t('Durée') }}</label>
                 <strong class="block" :class="{ 'text-red-500': duration_error }">{{ model.duration }}</strong>
             </div>
             <div>
-                <label>Date</label>
+                <label>{{ $t('Date') }}</label>
                 <strong class="block">{{ $moment(model.date).format('L') }}</strong>
             </div>
         </div>
         <div v-if="model.description">
-            <label>Description</label>
+            <label>{{ $t('Description') }}</label>
             <strong class="block whitespace-pre">{{ model.description }}</strong>
         </div>
     </div>
