@@ -24,6 +24,7 @@
                 <TimeInput
                     v-model="computedDuration"
                     class="read-only:pointer-events-none"
+                    :class="{ 'border !border-red-500': duration_error }"
                     format="HH:MM"
                     :placeholder="model.is_live_clocking ? placeholder : undefined"
                     :readonly="model.is_live_clocking"
@@ -214,7 +215,7 @@
             </div>
             <div>
                 <label>Durée</label>
-                <strong class="block">{{ model.duration }}</strong>
+                <strong class="block" :class="{ 'text-red-500': duration_error }">{{ model.duration }}</strong>
             </div>
             <div>
                 <label>Date</label>
@@ -352,6 +353,21 @@ const start_time_error = computed(() => {
 
 const end_time_error = computed(() => {
     return has_overlap_next.value;
+});
+
+const duration_error = computed(() => {
+    const date = !model.value.is_live_clocking ? computedDate.value : new Date().toLocaleDateString('en-CA');
+    const start = $moment(computedDate.value + ' ' + model.value.start_time, 'YYYY-M-D HH:mm');
+    const end = $moment(date + ' ' + model.value.end_time, 'YYYY-M-D HH:mm');
+
+    if (
+        $moment(model.value.start_time, 'HH:mm', true).isValid() &&
+        $moment(model.value.end_time, 'HH:mm', true).isValid()
+    ) {
+        const duration = $moment.duration(end.diff(start));
+        return duration.asMilliseconds() <= 0;
+    }
+    return false;
 });
 
 onMounted(() => {
