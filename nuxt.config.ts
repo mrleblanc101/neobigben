@@ -15,7 +15,6 @@ export default defineNuxtConfig({
     i18n: {
         strategy: 'prefix_except_default',
         defaultLocale: 'fr',
-        // lazy: true,
         langDir: 'i18n/',
         locales: [
             {
@@ -35,8 +34,8 @@ export default defineNuxtConfig({
         ],
         vueI18n: {
             legacy: false,
-            // silentFallbackWarn: true,
-            // silentTranslationWarn: true,
+            fallbackWarn: false,
+            missingWarn: false,
         },
     },
 
