@@ -4,7 +4,7 @@ const colors = require('tailwindcss/colors');
 module.exports = {
     mode: 'jit',
     darkMode: 'class',
-    content: ['./src/stores/**/*.{js,ts}'],
+    content: ['./src/stores/**/*.{js,ts}', './src/utils/**/*.{js,ts}'],
     theme: {
         extend: {
             colors: { primary: colors.sky },

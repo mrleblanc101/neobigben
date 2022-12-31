@@ -25,7 +25,7 @@
     </svg>
 </template>
 
-<style lang="postcss">
+<style lang="postcss" scoped>
 .fill {
     fill: #102a3e;
 }

@@ -134,12 +134,12 @@ export const useStore = defineStore('store', {
             });
         },
         updateEntry(entry: Entry) {
-            let index = this.entries.findIndex((e) => e.id === entry.id);
+            const index = this.entries.findIndex((e) => e.id === entry.id);
             this.entries[index] = JSON.parse(JSON.stringify(entry));
         },
         deleteEntry(entry: Entry) {
             if (confirm('Êtes vous certain de vouloir supprimer cette entrée ?')) {
-                let index = this.entries.findIndex((e) => e.id === entry.id);
+                const index = this.entries.findIndex((e) => e.id === entry.id);
                 this.entries.splice(index, 1);
             }
         },
