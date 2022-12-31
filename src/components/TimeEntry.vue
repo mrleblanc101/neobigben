@@ -1,7 +1,13 @@
 <template>
     <form
         v-if="model.is_creating || model.is_editing"
-        class="p-4 bg-gray-100 dark:bg-gray-800 rounded flex flex-col gap-2 w-full"
+        class="relative p-4 bg-gray-100 dark:bg-gray-800 rounded flex flex-col gap-2 w-full border"
+        :class="[
+            has_overlap ? 'border-red-500' : 'border-transparent',
+            {
+                'has-gap mt-10': has_gap,
+            },
+        ]"
         @submit.prevent="onSave"
     >
         <div class="grid gap-2 grid-cols-2 md:grid-cols-4">
@@ -165,7 +171,16 @@
             </button>
         </div>
     </form>
-    <div v-else class="p-4 bg-gray-100 dark:bg-gray-800 rounded flex flex-col gap-2 w-full">
+    <div
+        v-else
+        class="relative p-4 bg-gray-100 dark:bg-gray-800 rounded flex flex-col gap-2 w-full border"
+        :class="[
+            has_overlap ? 'border-red-500' : 'border-transparent',
+            {
+                'has-gap mt-10': has_gap,
+            },
+        ]"
+    >
         <div class="flex items-start justify-between gap-2">
             <div>
                 <label>Projet</label>
@@ -227,7 +242,7 @@ const { $moment } = useNuxtApp();
 
 const store = useStore();
 const { addProject, addEntry, updateEntry, deleteEntry } = store;
-const { projects, selectedDay } = storeToRefs(store);
+const { projects, selectedDay, todaysEntries } = storeToRefs(store);
 
 const props = defineProps({
     entry: {
@@ -284,6 +299,32 @@ const computedDuration = computed({
 
 const isToday = computed(() => {
     return $moment(selectedDay.value).isSame($moment(), 'day');
+});
+
+const previousEntry = computed((): undefined | Entry => {
+    if (!model.value.id) return;
+    const index = todaysEntries.value.findIndex((e: Entry) => e.id === model.value.id);
+    if (index === 0) return;
+    return todaysEntries.value[index - 1];
+});
+
+const has_overlap = computed(() => {
+    if (previousEntry && previousEntry.value) {
+        const { $moment } = useNuxtApp();
+
+        return (
+            $moment.duration(previousEntry.value.end_time).asMinutes() >
+            $moment.duration(model.value.start_time).asMinutes()
+        );
+    }
+    return false;
+});
+
+const has_gap = computed(() => {
+    if (previousEntry.value) {
+        return !has_overlap.value && previousEntry.value.end_time !== model.value.start_time;
+    }
+    return false;
 });
 
 onMounted(() => {
@@ -352,5 +393,14 @@ function onCancelEdits() {
 <style lang="postcss" scoped>
 label {
     @apply uppercase text-xs font-medium opacity-60;
+}
+.has-gap::before {
+    content: '•••';
+    line-height: 0;
+    @apply absolute left-1/2 -translate-x-1/2 -translate-y-1/2 -top-6 bg-gray-100 dark:bg-gray-800 rounded p-2 font-bold z-10;
+}
+.has-gap::after {
+    content: '';
+    @apply absolute -top-6 left-0 right-0 block border-b dark:border-gray-800 z-0;
 }
 </style>
