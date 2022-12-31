@@ -1,8 +1,8 @@
 <template>
     <NuxtLayout>
         <div class="flex justify-center min-h-full grow">
-            <div class="p-4 py-6 flex mx-auto flex-col items-center max-w-5xl gap-4 w-screen">
-                <div class="flex gap-2 justify-between w-full min-w-0">
+            <div class="p-4 py-6 flex mx-auto flex-col items-center max-w-5xl w-screen">
+                <div class="flex gap-2 justify-between w-full min-w-0 mb-4">
                     <button
                         type="button"
                         class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 text-sm"
@@ -30,10 +30,10 @@
                         <IArrowRight class="h-3" />
                     </button>
                 </div>
-                <div class="w-full flex flex-col items-center max-w-5xl gap-4 mx-auto">
+                <div class="w-full flex flex-col items-center max-w-5xl gap-2 mx-auto">
                     <TimeEntry v-for="(entry, index) in todaysEntries" :key="entry.id" :entry="entry" />
+                    <TimeEntry :key="key" />
                 </div>
-                <TimeEntry :key="key" />
             </div>
             <div
                 v-if="weekSummaryByProjects && weekSummaryByProjects.length"

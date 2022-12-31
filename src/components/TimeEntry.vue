@@ -247,8 +247,7 @@ const props = defineProps({
     },
 });
 
-let model = ref(Object.assign({}, props.entry));
-
+const model = ref(Object.assign({}, props.entry));
 const placeholder = ref('00:00:00');
 
 const computedDate = computed(() => {

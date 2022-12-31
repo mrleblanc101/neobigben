@@ -20,7 +20,7 @@ export const useStore = defineStore('store', {
     getters: {
         todaysEntries(): Entry[] {
             const { $moment } = useNuxtApp();
-            const entries = this.entries
+            const entries = [...this.entries]
                 .sort((a, b) => {
                     const startA = $moment(a.date + ' ' + a.start_time, 'YYYY-M-D HH:mm');
                     const startB = $moment(b.date + ' ' + b.start_time, 'YYYY-M-D HH:mm');
@@ -107,7 +107,7 @@ export const useStore = defineStore('store', {
             const weekStart = $moment(this.selectedDay).startOf('week');
             const weekEnd = $moment(this.selectedDay).endOf('week');
 
-            const projects = this.entries
+            const projects = [...this.entries]
                 .filter((e) => !e.is_creating)
                 .filter((e) => $moment(e.date).isBetween(weekStart, weekEnd))
                 .reduce((acc: { [key: string]: string }, e: Entry) => {
