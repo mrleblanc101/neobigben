@@ -1,7 +1,7 @@
 <template>
     <NuxtLayout>
         <div class="flex justify-center min-h-full grow">
-            <div class="p-4 py-6 flex mx-auto flex-col items-center max-w-5xl w-screen">
+            <div class="p-4 py-6 flex mx-auto flex-col items-center max-w-5xl w-full">
                 <div class="flex gap-2 justify-between w-full min-w-0 mb-4">
                     <button
                         type="button"
@@ -30,24 +30,32 @@
                         <IArrowRight class="h-3" />
                     </button>
                 </div>
-                <div class="w-full flex flex-col items-center max-w-5xl gap-2 mx-auto">
+                <div class="flex flex-col items-center w-full gap-2 mx-auto">
                     <TimeEntry v-for="(entry, index) in todaysEntries" :key="entry.id" :entry="entry" />
                     <TimeEntry :key="key" />
                 </div>
             </div>
-            <div
-                v-if="weekSummaryByProjects && weekSummaryByProjects.length"
-                v-show="menuOpened"
-                class="p-4 py-6 w-96 border-l dark:border-gray-800 shrink-0 absolute lg:static top-16 right-0 bottom-0 bg-white dark:bg-gray-900 z-10 flex lg:!flex flex-col gap-2"
+            <Transition
+                enter-from-class="translate-x-full"
+                leave-to-class="translate-x-full"
+                enter-active-class="transition duration-300"
+                leave-active-class="transition duration-300"
             >
                 <div
-                    v-for="[project, duration] in weekSummaryByProjects"
-                    class="p-4 bg-gray-100 dark:bg-gray-800 rounded gap-4 w-full font-bold flex justify-between"
+                    v-if="weekSummaryByProjects && weekSummaryByProjects.length"
+                    v-show="menuOpened"
+                    class="p-4 py-6 w-96 border-l dark:border-gray-800 shrink-0 absolute lg:static top-16 right-0 bottom-0 bg-white dark:bg-gray-900 z-10 flex lg:!flex flex-col gap-2 shadow-lg lg:shadow-none"
+                    v-click-away="menuOpened ? onClickAway : () => {}"
                 >
-                    <span>{{ project }}</span>
-                    <span>{{ duration }}</span>
+                    <div
+                        v-for="[project, duration] in weekSummaryByProjects"
+                        class="p-4 bg-gray-100 dark:bg-gray-800 rounded gap-4 w-full font-bold flex justify-between"
+                    >
+                        <span>{{ project }}</span>
+                        <span>{{ duration }}</span>
+                    </div>
                 </div>
-            </div>
+            </Transition>
         </div>
     </NuxtLayout>
 </template>
@@ -89,5 +97,11 @@ function changeDay(operation: 'next' | 'prev') {
     if (operation === 'next') {
         selectedDay.value = $moment(selectedDay.value).add(1, 'day').format('YYYY-MM-DD');
     }
+}
+
+function onClickAway() {
+    console.log('onClickAway');
+
+    menuOpened.value = false;
 }
 </script>
