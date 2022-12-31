@@ -1,7 +1,7 @@
 <template>
     <NuxtLayout>
         <div class="flex justify-center min-h-full grow">
-            <div class="p-4 py-6 flex mx-auto flex-col items-center max-w-5xl w-full">
+            <div class="px-4 lg:px-8 py-6 flex mx-auto flex-col items-center max-w-5xl w-full">
                 <div class="flex gap-2 justify-between w-full min-w-0 mb-4">
                     <button
                         type="button"
@@ -100,8 +100,6 @@ function changeDay(operation: 'next' | 'prev') {
 }
 
 function onClickAway() {
-    console.log('onClickAway');
-
     menuOpened.value = false;
 }
 </script>

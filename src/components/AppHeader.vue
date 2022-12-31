@@ -129,8 +129,6 @@ function onDownload() {
     downloadAndReset();
 }
 function onClickAway() {
-    console.log('on-click-away-2');
-
     is_open.value = false;
 }
 </script>
