@@ -105,7 +105,7 @@ export const useStore = defineStore('store', {
 
             const projects = [...this.entries]
                 .filter((e) => !e.is_creating)
-                .filter((e) => $moment(e.date).isBetween(weekStart, weekEnd))
+                .filter((e) => $moment(e.date).isBetween(weekStart, weekEnd, 'day', '[]'))
                 .reduce((acc: { [key: string]: string }, e: Entry) => {
                     const project = e.project as Project;
 
