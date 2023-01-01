@@ -21,9 +21,7 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: yarn
       - run: yarn install
-      - run: yarn generate
-        env:
-          NITRO_APP_BASE_URL: /neobigben/
+      - run: NUXT_APP_BASE_URL=/neobigben/ yarn generate
       - uses: JamesIves/github-pages-deploy-action@v4.4.1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
