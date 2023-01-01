@@ -3,6 +3,8 @@ import ViteSvgLoader from 'vite-svg-loader';
 export default defineNuxtConfig({
     srcDir: 'src/',
 
+    ssr: false,
+
     modules: [
         '@nuxtjs/i18n',
         '@nuxtjs/tailwindcss',
@@ -57,8 +59,9 @@ export default defineNuxtConfig({
     },
 
     colorMode: {
+        preference: 'system',
+        fallback: 'dark',
         classSuffix: '',
-        dataValue: 'theme',
     },
 
     postcss: {
