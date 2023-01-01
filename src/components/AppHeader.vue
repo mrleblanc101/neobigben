@@ -1,13 +1,17 @@
 <template>
     <header class="fixed top-0 z-40 w-full border-b dark:border-gray-800 bg-white dark:bg-gray-900">
         <div class="flex items-center justify-between h-16 px-4 lg:px-8">
-            <button type="button" class="text-2xl font-black" @click="selectedDay = $moment().format('YYYY-MM-DD')">
+            <button
+                type="button"
+                class="flex rounded p-2 -m-2 text-2xl font-black focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring"
+                @click="selectedDay = $moment().format('YYYY-MM-DD')"
+            >
                 <Logo />
             </button>
             <div class="flex items-center gap-1 md:gap-2 relative">
                 <button
                     type="button"
-                    class="flex gap-2 items-center px-2 md:px-3 h-10 rounded cursor-pointer hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-800 dark:hover:bg-gray-800"
+                    class="flex gap-2 items-center px-2 md:px-3 h-10 rounded cursor-pointer hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-800 dark:hover:bg-gray-800 focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring"
                     @click="is_summary_open = true"
                 >
                     <IClock class="h-5" />

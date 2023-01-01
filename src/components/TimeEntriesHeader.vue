@@ -9,10 +9,17 @@
         </button>
         <label
             class="relative rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring border border-gray-100 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 leading-10 px-5 cursor-pointer font-medium text-ellipsis overflow-hidden whitespace-nowrap shrink text-center min-w-0"
+            tabindex="0"
         >
             <span class="capitalize">{{ $moment(selectedDay).format('dddd') }}, </span>
             <span>{{ $moment(selectedDay).format('LL') }}</span>
-            <input class="sr-only bottom-0 left-0" type="date" v-model="selectedDay" onfocus="this.showPicker()" />
+            <input
+                class="sr-only bottom-0 left-0"
+                type="date"
+                v-model="selectedDay"
+                tabindex="-1"
+                onfocus="this.showPicker()"
+            />
         </label>
         <button
             type="button"
