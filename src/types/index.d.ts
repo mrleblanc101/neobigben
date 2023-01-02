@@ -1,3 +1,7 @@
+interface Window {
+    colorMode: any;
+}
+
 type Entry = {
     readonly id?: string;
     project: object;

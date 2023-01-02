@@ -23,5 +23,6 @@ const onClick = () => {
     const index = values.indexOf(colorMode.preference);
     const next = (index + 1) % values.length;
     colorMode.preference = values[next];
+    window.colorMode && window.colorMode.switch(values[next]);
 };
 </script>

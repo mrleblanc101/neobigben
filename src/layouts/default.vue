@@ -31,7 +31,21 @@ useHead({
         },
     ],
     bodyAttrs: {
-        class: 'antialiased text-gray-700 leading-normal bg-white dark:bg-gray-900 dark:text-gray-300',
+        class: 'antialiased text-gray-700 leading-normal bg-white dark:bg-gray-900 dark:text-gray-300 fadein',
     },
 });
 </script>
+
+<style lang="postcss">
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+.fadein {
+    animation: fadein 0.42s;
+}
+</style>
