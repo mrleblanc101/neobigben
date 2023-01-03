@@ -42,10 +42,10 @@ export default defineNuxtConfig({
     },
 
     piniaPersistedstate: {
-        storage: 'cookies',
-        cookieOptions: {
-            maxAge: 400 * 24 * 60 * 60, // 400 days
-        },
+        storage: 'localStorage',
+        // cookieOptions: {
+        //     maxAge: 400 * 24 * 60 * 60, // 400 days
+        // },
     },
 
     googleFonts: {
