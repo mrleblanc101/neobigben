@@ -1,8 +1,8 @@
 {
     "name": "NeoBigben",
     "short_name": "NeoBigben",
-    "id": "/?source=pwa",
-    "start_url": "/?source=pwa",
+    "id": "/neobigben/?source=pwa",
+    "start_url": "/neobigben/?source=pwa",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
