@@ -5,11 +5,6 @@
     "start_url": "/neobigben/?source=pwa",
     "icons": [
         {
-            "src": "/neobigben/android-chrome-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
             "src": "/neobigben/android-chrome-512x512.png",
             "sizes": "512x512",
             "type": "image/png"
