@@ -1,6 +1,8 @@
 {
     "name": "NeoBigben",
     "short_name": "NeoBigben",
+    "id": "/?source=pwa",
+    "start_url": "/?source=pwa",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
@@ -19,7 +21,7 @@
             "purpose": "maskable"
         }
     ],
-    "theme_color": "#ffffff",
-    "background_color": "#ffffff",
+    "theme_color": "#111827",
+    "background_color": "#122739",
     "display": "standalone"
 }
