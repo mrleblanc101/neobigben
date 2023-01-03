@@ -10,7 +10,7 @@
         ]"
         @submit.prevent="onSave"
     >
-        <div class="grid gap-2 grid-cols-2 md:grid-cols-4">
+        <div class="grid gap-2 grid-cols-2 sm:grid-cols-4">
             <div>
                 <label>{{ $t('Début') }}<span class="text-red-500">*</span></label>
                 <TimeInput v-model="model.start_time" :class="{ 'border !border-red-500': start_time_error }" />
@@ -142,7 +142,7 @@
                 </button>
             </div>
         </div>
-        <div class="grid gap-2 grid-cols-2 md:grid-cols-4">
+        <div class="grid gap-2 grid-cols-2 sm:grid-cols-4">
             <div>
                 <label>{{ $t('Début') }}</label>
                 <strong class="block" :class="{ 'text-red-500': start_time_error }">{{ model.start_time }}</strong>

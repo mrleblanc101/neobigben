@@ -3,8 +3,6 @@ import ViteSvgLoader from 'vite-svg-loader';
 export default defineNuxtConfig({
     srcDir: 'src/',
 
-    ssr: false,
-
     modules: [
         '@nuxtjs/i18n',
         '@nuxtjs/tailwindcss',
