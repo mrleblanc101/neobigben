@@ -11,6 +11,7 @@
             class="p-4 py-6 w-full sm:w-96 border-l dark:border-gray-800 shrink-0 absolute lg:static top-16 right-0 bottom-0 bg-white dark:bg-gray-900 z-10 flex lg:!flex flex-col gap-2 shadow-lg lg:shadow-none"
             v-click-away="menuOpened ? onClickAway : () => {}"
             @click.stop
+            @touchstart.stop
         >
             <div
                 v-for="[project, duration] in weekSummaryByProjects"
