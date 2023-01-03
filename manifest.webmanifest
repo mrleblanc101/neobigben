@@ -11,12 +11,12 @@
         },
         {
             "src": "/neobigben/maskable_icon.png",
-            "sizes": "512x512",
+            "sizes": "1024x1024",
             "type": "image/png",
             "purpose": "maskable"
         }
     ],
     "theme_color": "#111827",
-    "background_color": "#122739",
+    "background_color": "#111827",
     "display": "standalone"
 }
