@@ -6,12 +6,9 @@
         leave-active-class="transition duration-300"
     >
         <div
-            v-if="weekSummaryByProjects && weekSummaryByProjects.length"
-            v-show="menuOpened"
+            v-if="weekSummaryByProjects && weekSummaryByProjects.length && (isLgOrGreater || menuOpened)"
             class="p-4 py-6 w-full sm:w-96 border-l dark:border-gray-800 shrink-0 absolute lg:static top-16 right-0 bottom-0 bg-white dark:bg-gray-900 z-10 flex lg:!flex flex-col gap-2 shadow-lg lg:shadow-none"
-            v-click-away="menuOpened ? onClickAway : () => {}"
-            @click.stop
-            @touchstart.stop
+            v-on-click-outside.bubble="onClickOutside"
         >
             <div
                 v-for="[project, duration] in weekSummaryByProjects"
@@ -25,13 +22,16 @@
 </template>
 
 <script lang="ts" setup>
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 import { useStore } from '@/stores/index';
 import { storeToRefs } from 'pinia';
 
+const breakpoints = useBreakpoints(breakpointsTailwind);
 const store = useStore();
 const { weekSummaryByProjects, menuOpened } = storeToRefs(store);
+const isLgOrGreater = breakpoints.greater('lg');
 
-function onClickAway() {
+function onClickOutside() {
     menuOpened.value = false;
 }
 </script>

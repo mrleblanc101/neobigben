@@ -10,9 +10,7 @@
         <div
             v-if="is_open"
             class="absolute rounded top-full right-0 p-4 border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 border min-w-full flex flex-col gap-6 translate-y-2 w-64"
-            v-click-away="onClickAway"
-            @click.stop
-            @touchstart.stop
+            v-on-click-outside.bubble="onClickOutside"
         >
             <div class="flex flex-col gap-2">
                 <div class="border-b dark:border-gray-800 pb-2 flex justify-between items-end">
@@ -103,7 +101,7 @@ function onDownload() {
     emit('update:is_open', false);
     downloadAndReset();
 }
-function onClickAway() {
+function onClickOutside() {
     emit('update:is_open', false);
 }
 </script>

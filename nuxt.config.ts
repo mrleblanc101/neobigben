@@ -12,6 +12,7 @@ export default defineNuxtConfig({
         '@nuxtjs/google-fonts',
         '@pinia/nuxt',
         '@pinia-plugin-persistedstate/nuxt',
+        '@vueuse/nuxt',
     ],
 
     i18n: {

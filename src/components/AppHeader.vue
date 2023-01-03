@@ -12,7 +12,7 @@
                 <button
                     type="button"
                     class="flex gap-2 items-center px-2 sm:px-3 h-10 rounded cursor-pointer hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-800 dark:hover:bg-gray-800 focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring"
-                    @click="is_summary_open = true"
+                    @click.stop="is_summary_open = !is_summary_open"
                 >
                     <IClock class="h-5" />
                     <span class="font-bold text-xl">{{ weekRemaining }}</span>
@@ -25,7 +25,7 @@
                     v-if="weekSummaryByProjects && weekSummaryByProjects.length"
                     type="button"
                     class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 items-center justify-center font-bold h-10 w-10 text-sm inline-flex lg:hidden"
-                    @click="menuOpened = !menuOpened"
+                    @click.stop="menuOpened = !menuOpened"
                 >
                     <IHamburger v-if="!menuOpened" class="w-4 h-4" />
                     <IClose v-else class="w-6 h-6" />
