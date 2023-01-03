@@ -1,5 +1,7 @@
 import ViteSvgLoader from 'vite-svg-loader';
 
+const isElectron = process.env.isElectron || false;
+
 export default defineNuxtConfig({
     srcDir: 'src/',
 
