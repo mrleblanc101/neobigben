@@ -5,7 +5,7 @@
     </main>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 useHead({
     title: 'NeoBigben',
     meta: [

@@ -12,7 +12,7 @@
     </button>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import IMoon from '@/assets/svg/moon.svg?component';
 import ISun from '@/assets/svg/sun.svg?component';
 import IComputer from '@/assets/svg/computer.svg?component';

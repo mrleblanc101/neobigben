@@ -167,7 +167,7 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import IPlay from '@/assets/svg/play.svg?component';
 import IStop from '@/assets/svg/stop.svg?component';
 import IEdit from '@/assets/svg/edit.svg?component';

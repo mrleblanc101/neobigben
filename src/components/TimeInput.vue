@@ -9,7 +9,7 @@
     />
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 // TODO: Increment value using Arrow Up/Down
 // TODO: Increment by 10 using Shift + Arrow Up/Down
 const timeInput = ref<HTMLElement | null>(null);
