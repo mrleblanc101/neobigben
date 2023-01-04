@@ -1,6 +1,6 @@
 <template>
     <AppHeader />
-    <main class="overflow-x-clip">
+    <main class="min-h-screen pt-16 flex">
         <NuxtPage />
     </main>
 </template>
@@ -31,7 +31,7 @@ useHead({
         },
     ],
     bodyAttrs: {
-        class: 'antialiased text-gray-700 leading-normal bg-white dark:bg-gray-900 dark:text-gray-300',
+        class: 'antialiased overflow-x-clip text-gray-700 leading-normal bg-white dark:bg-gray-900 dark:text-gray-300',
     },
 });
 </script>
