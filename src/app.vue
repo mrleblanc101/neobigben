@@ -1,6 +1,6 @@
 <template>
     <AppHeader />
-    <main class="min-h-screen pt-16 flex overflow-x-clip">
+    <main class="overflow-x-clip">
         <NuxtPage />
     </main>
 </template>
