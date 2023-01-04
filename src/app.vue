@@ -1,7 +1,7 @@
 <template>
     <AppHeader />
     <main class="min-h-screen pt-16 flex overflow-x-clip">
-        <slot />
+        <NuxtPage />
     </main>
 </template>
 
