@@ -39,6 +39,7 @@ export default defineNuxtConfig({
             legacy: false,
             fallbackWarn: false,
             missingWarn: false,
+            formatFallbackMessages: true,
         },
     },
 
