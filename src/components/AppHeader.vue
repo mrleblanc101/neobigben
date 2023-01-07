@@ -11,7 +11,7 @@
             <div class="flex items-center gap-1 sm:gap-2 relative">
                 <button
                     type="button"
-                    class="flex gap-2 items-center px-2 sm:px-3 h-10 rounded cursor-pointer hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-800 dark:hover:bg-gray-800 focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring"
+                    class="flex gap-2 items-center px-2 sm:px-3 h-10 rounded cursor-pointer hover:bg-gray-100 focus:bg-gray-100 dark:focus:bg-gray-800 dark:hover:bg-gray-800 focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring transition"
                     @click.stop="is_summary_open = !is_summary_open"
                 >
                     <IClock class="h-5" />
@@ -24,7 +24,7 @@
                 <button
                     v-if="weekSummaryByProjects && weekSummaryByProjects.length"
                     type="button"
-                    class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 items-center justify-center font-bold h-10 w-10 text-sm inline-flex lg:hidden"
+                    class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 items-center justify-center font-bold h-10 w-10 text-sm inline-flex lg:hidden transition"
                     @click.stop="menuOpened = !menuOpened"
                 >
                     <IHamburger v-if="!menuOpened" class="w-4 h-4" />
