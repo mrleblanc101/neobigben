@@ -79,6 +79,9 @@ export default defineNuxtConfig({
     },
 
     vite: {
+        define: {
+            __VUE_PROD_DEVTOOLS__: true,
+        },
         plugins: [
             ViteSvgLoader({
                 svgoConfig: {
