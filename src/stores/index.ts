@@ -112,7 +112,9 @@ export const useStore = defineStore('store', {
                     if (!acc[project.name]) {
                         acc[project.name] = e.duration;
                     } else {
-                        acc[project.name] = $moment.duration(acc[project.name]).add(e.duration).format('HH:mm');
+                        acc[project.name] = $moment.duration(acc[project.name]).add(e.duration).format('HH:mm', {
+                            trim: false,
+                        });
                     }
                     return acc;
                 }, {});
@@ -162,7 +164,7 @@ export const useStore = defineStore('store', {
             };
 
             var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            saveAs(blob, `semaine-${$moment().week()}.json`);
+            saveAs(blob, `semaine-${$moment(this.selectedDay).week()}.json`);
 
             setTimeout(() => {
                 if (
