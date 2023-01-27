@@ -17,7 +17,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         isInitialSetup: boolean,
         nuxtApp: NuxtApp,
     ) => {
-        const locales = (nuxtApp.$i18n.locales as any).value;
+        const locales = (nuxtApp.$i18n.locales as ComputedRef).value;
         const momentLocale = locales.find((l: LocaleObject) => l.code === newLocale)?.momentLocale;
 
         moment.locale(momentLocale);
