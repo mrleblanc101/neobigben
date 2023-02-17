@@ -162,7 +162,7 @@
         </div>
         <div v-if="model.description">
             <label>{{ $t('Description') }}</label>
-            <strong class="block whitespace-pre">{{ model.description }}</strong>
+            <strong class="block whitespace-pre v-html" v-html="linkify(model.description)"></strong>
         </div>
     </div>
 </template>
@@ -173,6 +173,7 @@ import IStop from '@/assets/svg/stop.svg?component';
 import IEdit from '@/assets/svg/edit.svg?component';
 import IDelete from '@/assets/svg/delete.svg?component';
 
+import linkify from 'linkify-string';
 import classes from '@/utils/MultiselectClasses';
 import Multiselect from '@vueform/multiselect';
 import { storeToRefs } from 'pinia';
@@ -384,5 +385,10 @@ label {
 .has-gap::after {
     content: '';
     @apply absolute -top-6 left-0 right-0 block border-b dark:border-gray-800 z-0;
+}
+.v-html {
+    :deep(a) {
+        @apply text-primary-500;
+    }
 }
 </style>
