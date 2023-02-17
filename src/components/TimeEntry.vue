@@ -331,7 +331,7 @@ function onSave() {
         onAddEntry(model.value as Entry);
     } else if (model.value.is_live_clocking) {
         // Arrêter
-        model.value.end_time = $moment().format('HH:mm');
+        model.value.end_time = model.value.end_time || $moment().format('HH:mm');
         model.value.is_live_clocking = false;
         updateEntry(model.value as Entry);
     } else if (!model.value.id) {
