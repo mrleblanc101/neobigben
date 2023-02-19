@@ -67,24 +67,22 @@
             ></textarea>
         </div>
         <div class="flex gap-2 justify-end">
-            <template v-if="isToday && (!model.start_time || !model.end_time)">
-                <button
-                    v-if="!model.is_live_clocking"
-                    type="submit"
-                    class="shadow bg-green-500 hover:bg-green-400 active:bg-green-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2 transition"
-                >
-                    {{ $t('Démarrer') }}
-                    <IPlay class="h-3 w-4" />
-                </button>
-                <button
-                    v-else
-                    type="submit"
-                    class="shadow bg-rose-500 hover:bg-rose-400 active:bg-rose-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2 transition"
-                >
-                    {{ $t('Arrêter') }}
-                    <IStop class="h-3 w-4" />
-                </button>
-            </template>
+            <button
+                v-if="isToday && !model.is_live_clocking && !model.end_time"
+                type="submit"
+                class="shadow bg-green-500 hover:bg-green-400 active:bg-green-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2 transition"
+            >
+                {{ $t('Démarrer') }}
+                <IPlay class="h-3 w-4" />
+            </button>
+            <button
+                v-else-if="isToday && model.is_live_clocking"
+                type="submit"
+                class="shadow bg-rose-500 hover:bg-rose-400 active:bg-rose-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2 transition"
+            >
+                {{ $t('Arrêter') }}
+                <IStop class="h-3 w-4" />
+            </button>
             <button
                 v-else-if="model.id && model.is_creating"
                 type="button"
@@ -97,7 +95,7 @@
                 v-if="model.is_editing"
                 type="button"
                 class="appearance-none bg-transparent font-bold text-gray-400 hover:text-gray-300 active:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:active:text-gray-600 dark:hover:bg-gray-800 text-sm px-2 transition"
-                @click="onCancelEdits"
+                @click="cancel"
             >
                 {{ $t('Annuler') }}
             </button>
@@ -322,35 +320,45 @@ watch(computedDuration, (value) => {
 
 function onSave() {
     if ((!model.value.start_time || !model.value.end_time) && !model.value.is_live_clocking) {
-        // Démarrer
-        if (!model.value.start_time) {
-            model.value.start_time = $moment().format('HH:mm');
-        }
-        model.value.is_live_clocking = true;
-        startTimer();
-        onAddEntry(model.value as Entry);
+        start();
     } else if (model.value.is_live_clocking) {
-        // Arrêter
-        model.value.end_time = model.value.end_time || $moment().format('HH:mm');
-        model.value.is_live_clocking = false;
-        updateEntry(model.value as Entry);
+        stop();
     } else if (!model.value.id) {
-        // Ajouter
-        model.value.is_creating = false;
-        onAddEntry(model.value as Entry);
+        add();
     } else {
-        // Modifier
-        model.value.is_creating = false;
-        model.value.is_editing = false;
-        updateEntry(model.value as Entry);
+        edit();
     }
 }
 
-function onAddEntry(entry: Entry) {
-    addEntry({
-        ...entry,
-        date: computedDate.value,
-    });
+function start() {
+    if (!model.value.start_time) {
+        model.value.start_time = $moment().format('HH:mm');
+    }
+    model.value.is_live_clocking = true;
+    startTimer();
+    commitEntry(model.value as Entry);
+}
+
+function stop() {
+    model.value.end_time = model.value.end_time || $moment().format('HH:mm');
+    model.value.is_live_clocking = false;
+    updateEntry(model.value as Entry);
+}
+
+function add() {
+    model.value.is_creating = false;
+    commitEntry(model.value as Entry);
+}
+
+function edit() {
+    model.value.is_creating = false;
+    model.value.is_editing = false;
+    updateEntry(model.value as Entry);
+}
+
+function cancel() {
+    model.value.is_editing = false;
+    model.value = JSON.parse(JSON.stringify(props.entry));
 }
 
 function startTimer() {
@@ -365,9 +373,11 @@ function startTimer() {
     }, 100);
 }
 
-function onCancelEdits() {
-    model.value.is_editing = false;
-    model.value = JSON.parse(JSON.stringify(props.entry));
+function commitEntry(entry: Entry) {
+    addEntry({
+        ...entry,
+        date: computedDate.value,
+    });
 }
 </script>
 
