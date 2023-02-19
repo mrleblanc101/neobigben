@@ -12,22 +12,41 @@
         >
             <Tab title="Résumé">
                 <div class="flex justify-end items-center mb-2 gap-2">
-                    <span class="font-bold uppercase text-sm opacity-60 tracking-wide">Filtrer</span>
+                    <span class="font-bold uppercase text-xs opacity-60 tracking-wide">Filtrer</span>
                     <select v-model="filter" class="form-control form-select form-select-bordered pr-12">
                         <option value="daily">Par jour</option>
                         <option value="weekly">Par semaine</option>
                     </select>
                 </div>
                 <div
+                    v-if="summary && summary.length"
                     v-for="[project, duration] in summary"
                     class="p-4 bg-gray-100 dark:bg-gray-800 rounded gap-4 w-full font-bold flex justify-between"
                 >
                     <span>{{ project }}</span>
                     <span>{{ duration }}</span>
                 </div>
+                <div
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center opacity-60 w-full leading-tight"
+                    v-else
+                >
+                    Aucune donnée pour l'instant
+                </div>
             </Tab>
-            <Tab title="Projets"></Tab>
-            <Tab title="Priorités"></Tab>
+            <Tab title="Projets">
+                <div
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center opacity-60 w-full leading-tight"
+                >
+                    Aucune donnée pour l'instant
+                </div>
+            </Tab>
+            <Tab title="Priorités">
+                <div
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center opacity-60 w-full leading-tight"
+                >
+                    Aucune donnée pour l'instant
+                </div>
+            </Tab>
         </Tabs>
     </Transition>
 </template>
