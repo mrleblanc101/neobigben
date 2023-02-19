@@ -11,6 +11,7 @@ export const useStore = defineStore('store', {
             weekObjective: '40:00',
             projects: [] as Project[],
             entries: [] as Entry[],
+            filter: 'daily',
         };
     },
     getters: {
@@ -97,7 +98,7 @@ export const useStore = defineStore('store', {
                 }
             };
         },
-        weekSummaryByProjects(): [string, string][] {
+        weeklySummaryByProjects(): [string, string][] {
             const { $moment } = useNuxtApp();
 
             const weekStart = $moment(this.selectedDay).startOf('week');
@@ -106,6 +107,29 @@ export const useStore = defineStore('store', {
             const projects = [...this.entries]
                 .filter((e) => !e.is_creating)
                 .filter((e) => $moment(e.date).isBetween(weekStart, weekEnd, 'day', '[]'))
+                .reduce((acc: { [key: string]: string }, e: Entry) => {
+                    const project = e.project as Project;
+
+                    if (!acc[project.name]) {
+                        acc[project.name] = e.duration;
+                    } else {
+                        acc[project.name] = $moment.duration(acc[project.name]).add(e.duration).format('HH:mm', {
+                            trim: false,
+                        });
+                    }
+                    return acc;
+                }, {});
+
+            return Object.entries(projects).sort((a, b) => {
+                return $moment.duration(b[1]).asMilliseconds() - $moment.duration(a[1]).asMilliseconds();
+            });
+        },
+        dailySummaryByProjects(): [string, string][] {
+            const { $moment } = useNuxtApp();
+
+            const projects = [...this.entries]
+                .filter((e) => !e.is_creating)
+                .filter((e) => $moment(e.date).isSame(this.selectedDay))
                 .reduce((acc: { [key: string]: string }, e: Entry) => {
                     const project = e.project as Project;
 

@@ -44,7 +44,7 @@ import { storeToRefs } from 'pinia';
 
 const store = useStore();
 
-const { weekRemaining, selectedDay, menuOpened, weekSummaryByProjects } = storeToRefs(store);
+const { weekRemaining, selectedDay, menuOpened, weeklySummaryByProjects } = storeToRefs(store);
 
 const is_summary_open = ref(false);
 </script>

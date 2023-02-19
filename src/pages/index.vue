@@ -1,5 +1,5 @@
 <template>
-    <div class="flex justify-center min-h-full grow">
+    <div class="flex justify-center min-h-full grow xl:pr-[28rem] max-w-full">
         <div class="px-4 lg:px-8 py-6 flex mx-auto flex-col items-center max-w-5xl w-full">
             <TimeEntriesHeader />
             <div class="flex flex-col items-center w-full gap-2 mx-auto">
