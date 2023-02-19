@@ -15,5 +15,15 @@
     "Annuler": "Cancel",
     "Interne": "Internal",
     "Êtes vous certain de vouloir supprimer cette entrée ?": "Are you sure you want to delete this entry?",
-    "Voulez-vous réinitialisé votre feuille de temps ? Ceci remettera à zero votre entrées de temps, mais conservera vos projets.": "Do you want to reset your timesheet ? This will reset all your entries, but will preserve all your projects."
+    "Voulez-vous réinitialisé votre feuille de temps ? Ceci remettera à zero votre entrées de temps, mais conservera vos projets.": "Do you want to reset your timesheet ? This will reset all your entries, but will preserve all your projects.",
+    "Résumé": "Summary",
+    "Projets": "Projects",
+    "Priorités": "Priorities",
+    "Filtrer": "Filter",
+    "Par jour": "Per day",
+    "Par semaine": "Per week",
+    "Aucune donnée pour l'instant": "Nothing to display for now",
+    "Aucune entrée | {n} entrée | {n} entrées": "No entries | {n} entry | {n} entries",
+    "Êtes vous certain de vouloir supprimer ce projet ?": "Are you sure you want to delete this project?",
+    "Voulez-vous supprimer l'entrée reliée ? | Voulez-vous supprimer les {n} entrées reliées ?": "Do you wish to delete the linked entry? | Do you wish to delete the {n} linked entries?"
 }

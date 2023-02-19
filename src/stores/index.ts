@@ -147,6 +147,9 @@ export const useStore = defineStore('store', {
                 return $moment.duration(b[1]).asMilliseconds() - $moment.duration(a[1]).asMilliseconds();
             });
         },
+        projectEntriesTotal(): Function {
+            return (project: Project) => this.entries.filter((e) => e.project.id === project.id).length;
+        },
     },
     actions: {
         addEntry(entry: Entry) {
@@ -159,13 +162,17 @@ export const useStore = defineStore('store', {
             const index = this.entries.findIndex((e) => e.id === entry.id);
             this.entries[index] = JSON.parse(JSON.stringify(entry));
         },
-        deleteEntry(entry: Entry) {
+        deleteEntry(entry: Entry, force = false) {
             const nuxtApp = useNuxtApp();
             const { t } = nuxtApp.$i18n;
+            const index = this.entries.findIndex((e) => e.id === entry.id);
 
-            if (confirm(t('Êtes vous certain de vouloir supprimer cette entrée ?'))) {
-                const index = this.entries.findIndex((e) => e.id === entry.id);
+            if (force) {
                 this.entries.splice(index, 1);
+            } else {
+                if (confirm(t('Êtes vous certain de vouloir supprimer cette entrée ?'))) {
+                    this.entries.splice(index, 1);
+                }
             }
         },
         addProject(option: Project) {
@@ -175,6 +182,32 @@ export const useStore = defineStore('store', {
             };
             this.projects.push(project);
             return project;
+        },
+        deleteProject(project: Project) {
+            const nuxtApp = useNuxtApp();
+            const { t } = nuxtApp.$i18n;
+
+            if (confirm(t('Êtes vous certain de vouloir supprimer ce projet ?'))) {
+                const index = this.projects.findIndex((e) => e.id === project.id);
+                this.projects.splice(index, 1);
+                const linkedEntries = this.projectEntriesTotal(project);
+
+                if (linkedEntries > 0) {
+                    // TODO: Waiting for vue-i18n-next fix
+                    if (
+                        confirm(
+                            t(
+                                "Voulez-vous supprimer l'entrée reliée ? | Voulez-vous supprimer les {n} entrées reliées ?",
+                                linkedEntries,
+                            ),
+                        )
+                    ) {
+                        this.entries
+                            .filter((e) => e.project.id === project.id)
+                            .forEach((e) => this.deleteEntry(e, true));
+                    }
+                }
+            }
         },
         downloadAndReset() {
             const nuxtApp = useNuxtApp();

@@ -1,6 +1,6 @@
 type Entry = {
-    readonly id?: string;
-    project: object;
+    readonly id: string;
+    project: Project;
     is_live_clocking: boolean;
     is_creating: boolean;
     is_editing: boolean;
@@ -12,7 +12,7 @@ type Entry = {
 };
 
 type Project = {
-    readonly id?: string;
+    readonly id: string;
     name: string;
 };
 

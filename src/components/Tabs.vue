@@ -33,7 +33,14 @@ export default defineComponent({
                         );
                     }),
                 ),
-                h('div', { class: 'p-4 py-6 flex flex-col gap-2 h-full overflow-y-auto relative' }, selectedTab),
+                h(
+                    'div',
+                    {
+                        key: selectedTabIndex.value,
+                        class: 'p-4 py-6 flex flex-col gap-2 h-full overflow-y-auto relative',
+                    },
+                    selectedTab,
+                ),
             ]);
         };
     },
