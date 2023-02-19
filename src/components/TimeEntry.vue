@@ -117,6 +117,7 @@
                 'has-gap mt-10': has_gap,
             },
         ]"
+        :data-gap-duration="has_gap"
     >
         <div class="flex items-start justify-between gap-2">
             <div>
@@ -279,8 +280,16 @@ const has_overlap_next = computed(() => {
 });
 
 const has_gap = computed(() => {
-    if (previousEntry.value) {
-        return !has_overlap_previous.value && previousEntry.value.end_time !== model.value.start_time;
+    const { $moment } = useNuxtApp();
+
+    if (previousEntry.value && !has_overlap_previous.value) {
+        const hasGap = previousEntry.value.end_time !== model.value.start_time;
+        const gapDuration = $moment
+            .duration($moment(model.value.start_time, 'HH:mm').diff($moment(previousEntry.value.end_time, 'HH:mm')))
+            .format('HH:mm', { trim: false });
+        return hasGap ? gapDuration : false;
+
+        return;
     }
     return false;
 });
@@ -388,9 +397,8 @@ label {
     @apply uppercase text-xs font-medium opacity-60;
 }
 .has-gap::before {
-    content: '•••';
-    line-height: 0;
-    @apply absolute left-1/2 -translate-x-1/2 -translate-y-1/2 -top-6 bg-gray-100 dark:bg-gray-800 rounded p-2 font-bold z-10;
+    content: attr(data-gap-duration);
+    @apply absolute left-1/2 -translate-x-1/2 -translate-y-1/2 -top-6 bg-gray-100 dark:bg-gray-800 rounded px-2 font-bold z-10;
 }
 .has-gap::after {
     content: '';
