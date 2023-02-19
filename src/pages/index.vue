@@ -7,7 +7,7 @@
                 <TimeEntry :key="key" />
             </div>
         </div>
-        <WeekSummaryByProjects />
+        <SummarySidebar />
     </div>
 </template>
 
