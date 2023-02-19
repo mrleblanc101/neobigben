@@ -161,7 +161,7 @@
         </div>
         <div v-if="model.description">
             <label>{{ $t('Description') }}</label>
-            <strong class="block whitespace-pre v-html" v-html="linkify(model.description)"></strong>
+            <strong class="block whitespace-pre-wrap v-html" v-html="linkify(model.description)"></strong>
         </div>
     </div>
 </template>
@@ -407,6 +407,7 @@ label {
 .v-html {
     :deep(a) {
         @apply text-primary-500;
+        overflow-wrap: break-word;
     }
 }
 </style>
