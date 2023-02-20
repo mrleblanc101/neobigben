@@ -74,7 +74,7 @@
             </Tab>
             <Tab :title="$t('Priorités')">
                 <!-- TODO: Handle priority by week -->
-                <div class="flex justify-end items-center mb-2 gap-2">
+                <div class="flex justify-start items-center mb-2 gap-2">
                     <button
                         type="button"
                         class="shadow bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2 transition"
