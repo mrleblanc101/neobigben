@@ -150,7 +150,7 @@ export const useStore = defineStore('store', {
             });
         },
         projectEntriesTotal(): Function {
-            return (project: Project) => this.entries.filter((e) => e.project.id === project.id).length;
+            return (project: Project) => this.entries.filter((e) => e?.project?.id === project.id).length;
         },
     },
     actions: {
@@ -237,8 +237,6 @@ export const useStore = defineStore('store', {
             const nuxtApp = useNuxtApp();
             const { t } = nuxtApp.$i18n;
             const completed = this.priorities.filter((p: Priority) => p.completed);
-
-            console.log(completed.length);
 
             if (completed.length !== 0) {
                 if (confirm(t('Êtes vous certain de vouloir supprimer les priorités complétées ?'))) {
