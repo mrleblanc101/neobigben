@@ -246,7 +246,7 @@ export const useStore = defineStore('store', {
                 }
             } else {
                 // TODO: Use sweetalert or something like that
-                alert('Aucune priorité complétée à supprimer');
+                alert(t('Aucune priorité complétée à supprimer'));
             }
         },
         downloadAndReset() {
@@ -273,6 +273,7 @@ export const useStore = defineStore('store', {
                 ) {
                     this.entries = [];
                 }
+                this.priorities = [];
             }, 100);
         },
     },
