@@ -22,7 +22,7 @@
                 <div
                     v-if="summary && summary.length"
                     v-for="[project, duration] in summary"
-                    class="p-4 bg-gray-100 dark:bg-gray-800 rounded gap-4 w-full font-bold flex items-center justify-between leading-none"
+                    class="p-4 bg-gray-100 dark:bg-gray-800 rounded gap-4 w-full font-bold flex items-center justify-between"
                 >
                     <span>{{ project }}</span>
                     <span>{{ duration }}</span>
@@ -49,7 +49,7 @@
                     v-if="projects && projects.length"
                     v-for="project in projects"
                     :key="project.id"
-                    class="p-4 bg-gray-100 dark:bg-gray-800 rounded gap-4 w-full flex items-center justify-between relative pr-14 leading-none"
+                    class="p-4 bg-gray-100 dark:bg-gray-800 rounded gap-4 w-full flex items-center justify-between relative pr-16"
                 >
                     <span class="font-bold">{{ project.name }}</span>
                     <span class="text-xs font-bold opacity-60 shrink-0">
@@ -58,7 +58,7 @@
                     </span>
                     <button
                         type="button"
-                        class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-red-500 hover:bg-red-400 active:bg-red-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-8 w-8 text-sm transition absolute right-2 top-1/2 -translate-y-1/2"
+                        class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-red-500 hover:bg-red-400 active:bg-red-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 text-sm transition absolute right-2 top-1/2 -translate-y-1/2"
                         @click="deleteProject(project)"
                     >
                         <!-- TODO: Show on focus/hover -->
@@ -94,13 +94,13 @@
                                 class="w-6 h-6 dark:bg-gray-800 text-primary-500 dark:text-primary-500 dark:checked:bg-primary-500 rounded-full border-gray-400 disabled:opacity-30"
                             />
                             <div
-                                class="p-4 bg-gray-100 dark:bg-gray-800 rounded gap-4 w-full flex items-center justify-between relative pr-16 leading-none"
+                                class="p-4 bg-gray-100 dark:bg-gray-800 rounded gap-4 w-full flex items-center justify-between relative pr-16"
                             >
                                 <span class="font-bold">{{ index + 1 }}. {{ priority.name }}</span>
                             </div>
                             <button
                                 type="button"
-                                class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-red-500 hover:bg-red-400 active:bg-red-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-8 w-8 text-sm transition absolute right-2 top-1/2 -translate-y-1/2"
+                                class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-red-500 hover:bg-red-400 active:bg-red-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 text-sm transition absolute right-2 top-1/2 -translate-y-1/2"
                                 @click="deletePriority(priority)"
                             >
                                 <!-- TODO: Show on focus/hover -->
@@ -127,8 +127,13 @@
                                 v-model="priority"
                                 type="text"
                                 placeholder="Ajouter une priorité"
-                                class="form-control form-input form-input-bordered h-10 w-full max-w-[calc(100%-48px)]"
+                                class="form-control form-input form-input-bordered h-10 w-full"
                             />
+                            <div
+                                class="flex-shrink-0 rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring inline-flex items-center justify-center font-bold h-10 w-10 text-sm transition text-gray-400 opacity-50"
+                            >
+                                <IHandle class="w-5 h-5 shrink-0 handle" />
+                            </div>
                         </label>
                     </div>
                 </form>
