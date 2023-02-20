@@ -11,7 +11,9 @@ export const useStore = defineStore('store', {
             weekObjective: '40:00',
             projects: [] as Project[],
             entries: [] as Entry[],
+            priorities: [] as Priority[],
             filter: 'daily',
+            selectedTabIndex: 0,
         };
     },
     getters: {
@@ -207,6 +209,44 @@ export const useStore = defineStore('store', {
                             .forEach((e) => this.deleteEntry(e, true));
                     }
                 }
+            }
+        },
+        addPriority(name: string) {
+            const project = {
+                id: uuidv4(),
+                name,
+                checked: false,
+            };
+            this.priorities.push(project);
+            return project;
+        },
+        deletePriority(priority: Priority, force = false) {
+            const nuxtApp = useNuxtApp();
+            const { t } = nuxtApp.$i18n;
+            const index = this.priorities.findIndex((e) => e.id === priority.id);
+
+            if (force) {
+                this.priorities.splice(index, 1);
+            } else {
+                if (confirm(t('Êtes vous certain de vouloir supprimer cette priorité ?'))) {
+                    this.priorities.splice(index, 1);
+                }
+            }
+        },
+        deleteCompletedPriorities() {
+            const nuxtApp = useNuxtApp();
+            const { t } = nuxtApp.$i18n;
+            const completed = this.priorities.filter((p: Priority) => p.completed);
+
+            console.log(completed.length);
+
+            if (completed.length !== 0) {
+                if (confirm(t('Êtes vous certain de vouloir supprimer les priorités complétées ?'))) {
+                    completed.forEach((p) => this.deletePriority(p, true));
+                }
+            } else {
+                // TODO: Use sweetalert or something like that
+                alert('Aucune priorité complétée à supprimer');
             }
         },
         downloadAndReset() {

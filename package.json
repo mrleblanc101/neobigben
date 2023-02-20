@@ -27,6 +27,7 @@
     },
     "dependencies": {
         "@pinia/nuxt": "^0.4.6",
+        "@tailwindcss/forms": "^0.5.3",
         "@types/node": "^18.14.0",
         "@vueform/multiselect": "^2.5.8",
         "file-saver": "^2.0.5",
@@ -35,6 +36,7 @@
         "linkifyjs": "^4.1.0",
         "moment": "^2.29.4",
         "moment-duration-format": "^2.3.2",
-        "uuid": "^9.0.0"
+        "uuid": "^9.0.0",
+        "vue-draggable-next": "^2.1.1"
     }
 }
