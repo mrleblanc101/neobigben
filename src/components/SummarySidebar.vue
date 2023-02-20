@@ -15,8 +15,8 @@
                 <div class="flex justify-end items-center mb-2 gap-2">
                     <span class="font-bold uppercase text-xs opacity-60 tracking-wide">{{ $t('Filtrer') }}</span>
                     <select v-model="filter" class="form-control form-select form-select-bordered pr-12">
-                        <option value="daily">{{ $t('Par jour') }}</option>
-                        <option value="weekly">{{ $t('Par semaine') }}</option>
+                        <option value="daily">{{ $t('Jourée courante') }}</option>
+                        <option value="weekly">{{ $t('Semaine courante') }}</option>
                     </select>
                 </div>
                 <div
@@ -65,6 +65,7 @@
                         <IDelete class="h-5" />
                     </button>
                 </div>
+                <!-- TODO: Ajouter un form pour créer un projet -->
                 <div
                     v-else
                     class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center opacity-60 w-full leading-tight"

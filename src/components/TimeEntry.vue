@@ -8,6 +8,7 @@
                 'has-gap mt-10': has_gap,
             },
         ]"
+        :data-gap-duration="has_gap"
         @submit.prevent="onSave"
     >
         <div class="grid gap-2 grid-cols-2 sm:grid-cols-4">
