@@ -161,7 +161,17 @@
         </div>
         <div v-if="model.description">
             <label>{{ $t('Description') }}</label>
-            <strong class="block whitespace-pre-wrap v-html" v-html="linkify(model.description)"></strong>
+            <strong
+                class="block v-html"
+                v-html="
+                    linkify(model.description, {
+                        defaultProtocol: 'https',
+                        target: '_blank',
+                        nl2br: true,
+                        rel: 'noopener noreferrer',
+                    })
+                "
+            ></strong>
         </div>
     </div>
 </template>
