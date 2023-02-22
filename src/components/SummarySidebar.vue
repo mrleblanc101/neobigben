@@ -40,7 +40,7 @@
                     <select v-model="sort" class="form-control form-select form-select-bordered pr-12">
                         <option value="entries">{{ $t("Nb. d'entrées") }}</option>
                         <option value="name">{{ $t('Alphabétique') }}</option>
-                        <option value="creation">{{ $t('Création') }}</option>
+                        <option value="creation">{{ $t('Date de création') }}</option>
                     </select>
                 </div>
 
