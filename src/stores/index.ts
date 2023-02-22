@@ -14,6 +14,7 @@ export const useStore = defineStore('store', {
             priorities: [] as Priority[],
             filter: 'daily',
             selectedTabIndex: 0,
+            sort: 'entries',
         };
     },
     getters: {
@@ -149,6 +150,24 @@ export const useStore = defineStore('store', {
                 return $moment.duration(b[1]).asMilliseconds() - $moment.duration(a[1]).asMilliseconds();
             });
         },
+        sortedProjects(): [Project, number][] {
+            const projects = [...this.projects].map((p): [Project, number] => [p, this.projectEntriesTotal(p)]);
+            if (this.sort === 'name') {
+                return projects.sort((a, b) => {
+                    return a[0].name.localeCompare(b[0].name);
+                });
+            }
+            if (this.sort === 'entries') {
+                return projects
+                    .sort((a, b) => {
+                        return a[0].name.localeCompare(b[0].name);
+                    })
+                    .sort((a, b) => {
+                        return b[1] - a[1];
+                    });
+            }
+            return projects;
+        },
         projectEntriesTotal(): Function {
             return (project: Project) => this.entries.filter((e) => e?.project?.id === project.id).length;
         },
@@ -215,7 +234,7 @@ export const useStore = defineStore('store', {
             const project = {
                 id: uuidv4(),
                 name,
-                checked: false,
+                completed: false,
             };
             this.priorities.push(project);
             return project;

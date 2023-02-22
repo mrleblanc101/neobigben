@@ -7,9 +7,9 @@ import type { ComputedRef } from 'vue';
 
 export default defineNuxtPlugin((nuxtApp) => {
     const locale = nuxtApp.$i18n.locale.value;
-    const momentLocale = nuxtApp.$i18n.locales.value.find((l: LocaleObject) => l.code === locale).momentLocale;
+    const iso = nuxtApp.$i18n.locales.value.find((l: LocaleObject) => l.code === locale).iso;
     momentDurationFormatSetup(moment);
-    moment.locale(momentLocale);
+    moment.locale(iso);
 
     nuxtApp.$i18n.onBeforeLanguageSwitch = (
         oldLocale: string,
@@ -18,9 +18,9 @@ export default defineNuxtPlugin((nuxtApp) => {
         nuxtApp: NuxtApp,
     ) => {
         const locales = (nuxtApp.$i18n.locales as ComputedRef).value;
-        const momentLocale = locales.find((l: LocaleObject) => l.code === newLocale)?.momentLocale;
+        const iso = locales.find((l: LocaleObject) => l.code === newLocale).iso;
 
-        moment.locale(momentLocale);
+        moment.locale(iso);
     };
 
     return {

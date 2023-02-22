@@ -35,26 +35,25 @@
                 </div>
             </Tab>
             <Tab :title="$t('Projets')">
-                <!-- TODO: Add sort by A to Z and by Entries -->
-                <!-- TODO: Total for current week, or from begining -->
                 <div class="flex justify-end items-center mb-2 gap-2">
                     <span class="font-bold uppercase text-xs opacity-60 tracking-wide">{{ $t('Tri') }}</span>
-                    <select v-model="filter" class="form-control form-select form-select-bordered pr-12">
-                        <option value="daily">{{ $t('Alphabétique') }}</option>
-                        <option value="weekly">{{ $t("Nb. d'entrées") }}</option>
+                    <select v-model="sort" class="form-control form-select form-select-bordered pr-12">
+                        <option value="entries">{{ $t("Nb. d'entrées") }}</option>
+                        <option value="name">{{ $t('Alphabétique') }}</option>
+                        <option value="creation">{{ $t('Création') }}</option>
                     </select>
                 </div>
 
                 <div
-                    v-if="projects && projects.length"
-                    v-for="project in projects"
+                    v-if="sortedProjects && sortedProjects.length"
+                    v-for="[project, entries] in sortedProjects"
                     :key="project.id"
                     class="p-4 bg-gray-100 dark:bg-gray-800 rounded gap-4 w-full flex items-center justify-between relative pr-16"
                 >
                     <span class="font-bold">{{ project.name }}</span>
                     <span class="text-xs font-bold opacity-60 shrink-0">
                         <!-- TODO: Waiting for vue-i18n-next fix -->
-                        {{ $t('Aucune entrée | {n} entrée | {n} entrées', projectEntriesTotal(project)) }}
+                        {{ $t('Aucune entrée | {n} entrée | {n} entrées', entries) }}
                     </span>
                     <button
                         type="button"
@@ -65,7 +64,6 @@
                         <IDelete class="h-5" />
                     </button>
                 </div>
-                <!-- TODO: Ajouter un form pour créer un projet -->
                 <div
                     v-else
                     class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center opacity-60 w-full leading-tight"
@@ -155,16 +153,8 @@ import { storeToRefs } from 'pinia';
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const store = useStore();
 
-// TODO: Don't look on project, use getter that return project name and nb. of entries
-const {
-    weeklySummaryByProjects,
-    dailySummaryByProjects,
-    menuOpened,
-    filter,
-    projects,
-    projectEntriesTotal,
-    priorities,
-} = storeToRefs(store);
+const { weeklySummaryByProjects, dailySummaryByProjects, menuOpened, filter, sort, sortedProjects, priorities } =
+    storeToRefs(store);
 const { deleteProject, deletePriority, deleteCompletedPriorities, addPriority } = store;
 const isXlOrGreater = breakpoints.greater('xl');
 

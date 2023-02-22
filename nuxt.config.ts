@@ -25,14 +25,12 @@ export default defineNuxtConfig({
                 name: 'Français',
                 iso: 'fr-CA',
                 file: 'fr.json',
-                momentLocale: 'fr-ca',
             },
             {
                 code: 'en',
                 name: 'English',
                 iso: 'en-CA',
                 file: 'en.json',
-                momentLocale: 'en',
             },
         ],
         vueI18n: {
