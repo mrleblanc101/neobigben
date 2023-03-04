@@ -23,7 +23,7 @@ export default defineComponent({
                             'button',
                             {
                                 class: [
-                                    'p-4 pb-3 text-sm border-b-4 border-y-transparent border-x-gray-200 dark:border-x-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 row-start-1',
+                                    'p-4 pb-3 text-sm border-b-4 border-y-transparent border-x-gray-200 dark:border-x-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 row-start-1 focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600',
                                     {
                                         'font-bold text-primary-500  border-b-primary-500 dark:border-b-primary-500 ':
                                             index === selectedTabIndex.value,

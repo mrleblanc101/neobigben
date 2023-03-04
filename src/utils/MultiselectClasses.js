@@ -2,8 +2,8 @@ export default {
     container:
         'relative h-9 mx-auto w-full flex items-center justify-end box-border cursor-pointer rounded text-sm leading-snug outline-none bg-white dark:bg-gray-900 dark:focus:bg-gray-900 border border-gray-300 dark:border-gray-700 dark:focus:border-gray-500',
     containerDisabled: 'cursor-default bg-gray-100',
-    containerOpen: 'rounded-b-none border-primary-300 dark:border-gray-500',
-    containerOpenTop: 'rounded-t-none border-primary-300 dark:border-gray-500',
+    containerOpen: 'rounded-b-none border-primary-300 dark:!border-gray-500',
+    containerOpenTop: 'rounded-t-none border-primary-300 dark:!border-gray-500',
     containerActive: 'ring ring-primary-200 dark:ring-gray-600 border-primary-300 dark:border-gray-500',
     singleLabel:
         'flex items-center h-full max-w-full absolute left-0 top-0 pointer-events-none bg-transparent leading-snug pl-3.5 pr-16 box-border',

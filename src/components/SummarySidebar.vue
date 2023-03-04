@@ -52,7 +52,6 @@
                 >
                     <span class="font-bold">{{ project.name }}</span>
                     <span class="text-xs font-bold opacity-60 shrink-0">
-                        <!-- TODO: Waiting for vue-i18n-next fix -->
                         {{ $t('Aucune entrée | {n} entrée | {n} entrées', entries) }}
                     </span>
                     <button
@@ -89,7 +88,7 @@
                             <input
                                 type="checkbox"
                                 v-model="priority.completed"
-                                class="w-6 h-6 dark:bg-gray-800 text-primary-500 dark:text-primary-500 dark:checked:bg-primary-500 rounded-full border-gray-400 disabled:opacity-30"
+                                class="form-control form-input form-input-bordered p-0 w-6 h-6 text-primary-500 dark:text-primary-500 dark:checked:bg-primary-500 rounded-full disabled:opacity-30"
                             />
                             <div
                                 class="p-4 bg-gray-100 dark:bg-gray-800 rounded gap-4 w-full flex items-center justify-between relative pr-16"
@@ -117,7 +116,7 @@
                         <input
                             type="checkbox"
                             disabled
-                            class="w-6 h-6 dark:bg-gray-800 text-primary-500 dark:text-primary-500 dark:checked:bg-primary-500 rounded-full border-gray-400 disabled:opacity-30"
+                            class="form-control form-input form-input-bordered p-0 w-6 h-6 dark:bg-gray-800 text-primary-500 dark:text-primary-500 dark:checked:bg-primary-500 rounded-full border-gray-400 disabled:opacity-30 focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600"
                         />
                         <label class="flex gap-2 items-center w-full">
                             <span class="sr-only">{{ $t('Priorité') }}</span>

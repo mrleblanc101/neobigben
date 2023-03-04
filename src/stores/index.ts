@@ -214,7 +214,6 @@ export const useStore = defineStore('store', {
                 const linkedEntries = this.projectEntriesTotal(project);
 
                 if (linkedEntries > 0) {
-                    // TODO: Waiting for vue-i18n-next fix
                     if (
                         confirm(
                             t(
