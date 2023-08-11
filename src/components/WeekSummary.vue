@@ -38,7 +38,6 @@
                         <ISave class="h-5" />
                     </button>
                 </div>
-                <!-- TODO: Highlight la journée affichée -->
                 <div
                     v-for="(day, index) in Object.values(weekSummary)"
                     :key="index"

@@ -5,7 +5,6 @@
         enter-active-class="transition duration-300"
         leave-active-class="transition duration-300"
     >
-        <!-- TODO: Body-scroll-lock when opened -->
         <Tabs
             v-if="isXlOrGreater || menuOpened"
             class="w-full sm:w-[28rem] border-l dark:border-gray-800 shrink-0 fixed top-16 right-0 bottom-0 bg-white dark:bg-gray-900 z-10 shadow-lg xl:shadow-none flex flex-col"
@@ -59,7 +58,6 @@
                         class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-red-500 hover:bg-red-400 active:bg-red-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 text-sm transition absolute right-2 top-1/2 -translate-y-1/2"
                         @click="deleteProject(project)"
                     >
-                        <!-- TODO: Show on focus/hover -->
                         <IDelete class="h-5" />
                     </button>
                 </div>
@@ -71,7 +69,6 @@
                 </div>
             </Tab>
             <Tab :title="$t('Priorités')">
-                <!-- TODO: Handle priority by week -->
                 <div class="flex justify-end items-center mb-2 gap-2">
                     <button
                         type="button"
@@ -100,7 +97,6 @@
                                 class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-red-500 hover:bg-red-400 active:bg-red-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 text-sm transition absolute right-2 top-1/2 -translate-y-1/2"
                                 @click="deletePriority(priority)"
                             >
-                                <!-- TODO: Show on focus/hover -->
                                 <IDelete class="h-5" />
                             </button>
                         </label>

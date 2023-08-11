@@ -261,7 +261,6 @@ export const useStore = defineStore('store', {
                     completed.forEach((p) => this.deletePriority(p, true));
                 }
             } else {
-                // TODO: Use sweetalert or something like that
                 alert(t('Aucune priorité complétée à supprimer'));
             }
         },
