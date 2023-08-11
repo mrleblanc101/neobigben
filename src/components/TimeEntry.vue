@@ -234,7 +234,7 @@ const computedDuration = computed({
     get() {
         const date = !model.value.is_live_clocking ? computedDate.value : new Date().toLocaleDateString('en-CA');
         const start = $moment(computedDate.value + ' ' + model.value.start_time, 'YYYY-M-D HH:mm');
-        const end = $moment(date + ' ' + model.value.end_time, 'YYYY-M-D HH:mm');
+        const end = (model.value.end_time !== '00:00' ? $moment(date) : $moment(date).add(1, 'day')).set({hours: model.value.end_time.split(':')[0], minutes: model.value.end_time.split(':')[1]});
 
         if (
             $moment(model.value.start_time, 'HH:mm', true).isValid() &&
@@ -326,7 +326,7 @@ const end_time_error = computed(() => {
 const duration_error = computed(() => {
     const date = !model.value.is_live_clocking ? computedDate.value : new Date().toLocaleDateString('en-CA');
     const start = $moment(computedDate.value + ' ' + model.value.start_time, 'YYYY-M-D HH:mm');
-    const end = $moment(date + ' ' + model.value.end_time, 'YYYY-M-D HH:mm');
+    const end = (model.value.end_time !== '00:00' ? $moment(date) : $moment(date).add(1, 'day')).set({hours: model.value.end_time.split(':')[0], minutes: model.value.end_time.split(':')[1]});
 
     if (
         $moment(model.value.start_time, 'HH:mm', true).isValid() &&
