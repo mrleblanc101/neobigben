@@ -4,6 +4,7 @@ type Entry = {
     is_live_clocking: boolean;
     is_creating: boolean;
     is_editing: boolean;
+    is_synced: boolean;
     date: string;
     start_time: string;
     end_time: string;

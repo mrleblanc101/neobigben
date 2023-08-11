@@ -196,6 +196,12 @@ export const useStore = defineStore('store', {
                 }
             }
         },
+        toggleEntrySynced(id: string) {
+            const entry = this.entries.find((e) => e.id === id);
+            if(entry) {
+                entry.is_synced = !entry.is_synced ?? true;
+            }
+        },
         addProject(option: Project) {
             const project = {
                 id: uuidv4(),
