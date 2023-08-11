@@ -33,12 +33,6 @@ export default defineNuxtConfig({
                 file: 'en.json',
             },
         ],
-        vueI18n: {
-            legacy: false,
-            fallbackWarn: false,
-            missingWarn: false,
-            fallbackFormat: true,
-        },
     },
 
     piniaPersistedstate: {
