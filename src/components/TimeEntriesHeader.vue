@@ -51,4 +51,10 @@ function changeDay(operation: 'next' | 'prev') {
         selectedDay.value = $moment(selectedDay.value).add(1, 'day').format('YYYY-MM-DD');
     }
 }
+
+onKeyStroke(['ArrowLeft', 'ArrowRight'], (e) => {
+  if(document?.activeElement?.tagName !== 'BODY') return;
+  if(e.key === "ArrowLeft") changeDay('prev');
+  if(e.key === "ArrowRight") changeDay('next');
+}, { target: document })
 </script>
