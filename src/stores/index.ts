@@ -171,6 +171,15 @@ export const useStore = defineStore('store', {
         projectEntriesTotal(): Function {
             return (project: Project) => this.entries.filter((e) => e?.project?.id === project.id).length;
         },
+        isLiveClockingEntry(): boolean {
+            return !!this.entries.find(e => e.is_live_clocking);
+        },
+        isCreatingEntry(): boolean {
+            return !!this.entries.find(e => e.is_creating);
+        },
+        canCreateEntry(): boolean {
+            return !this.isLiveClockingEntry && !this.isCreatingEntry;
+        }
     },
     actions: {
         addEntry(entry: Entry) {

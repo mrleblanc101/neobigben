@@ -4,7 +4,7 @@
             <TimeEntriesHeader />
             <div class="flex flex-col items-center w-full gap-2 mx-auto">
                 <TimeEntry v-for="(entry, index) in todaysEntries" :key="entry.id" :entry="entry" />
-                <TimeEntry :key="key" />
+                <TimeEntry v-if="canCreateEntry" :key="key" />
             </div>
         </div>
         <SummarySidebar />
@@ -17,7 +17,7 @@ import { useStore } from '@/stores/index';
 import { storeToRefs } from 'pinia';
 
 const store = useStore();
-const { todaysEntries } = storeToRefs(store);
+const { todaysEntries, canCreateEntry } = storeToRefs(store);
 
 const key = ref(uuidv4());
 
