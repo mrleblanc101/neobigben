@@ -24,7 +24,7 @@ export default {
         'flex items-center h-full absolute left-0 top-0 pointer-events-none bg-transparent leading-snug pl-3.5 text-gray-400 dark:text-gray-600',
     caret: 'bg-multiselect-caret bg-center bg-no-repeat w-2.5 h-4 py-px box-content mr-3.5 relative z-10 flex-shrink-0 flex-grow-0 transition-transform transform pointer-events-none',
     caretOpen: 'rotate-180 pointer-events-auto',
-    clear: 'pr-3.5 relative z-10 transition duration-300 flex-shrink-0 flex-grow-0 flex hover:opacity-80',
+    clear: 'mr-3.5 relative z-10 transition duration-300 flex-shrink-0 flex-grow-0 flex hover:opacity-80',
     clearIcon: 'bg-multiselect-remove bg-center bg-no-repeat w-2.5 h-4 py-px box-content inline-block',
     spinner: 'bg-multiselect-spinner bg-center bg-no-repeat w-4 h-4 z-10 mr-3.5 animate-spin flex-shrink-0 flex-grow-0',
     inifite: 'flex items-center justify-center w-full',
