@@ -3,6 +3,8 @@ import ViteSvgLoader from 'vite-svg-loader';
 export default defineNuxtConfig({
     srcDir: 'src/',
 
+    devtools: { enabled: true },
+
     ssr: false,
 
     modules: [
