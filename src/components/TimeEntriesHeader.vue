@@ -12,7 +12,7 @@
             tabindex="0"
         >
             <span class="capitalize">{{ $moment(selectedDay).format('dddd') }}, </span>
-            <span>{{ $moment(selectedDay).format('LL') }}</span>
+            <span :key="$i18n.locale">{{ $moment(selectedDay).format('LL') }}</span>
             <input
                 class="sr-only bottom-0 left-0"
                 type="date"
