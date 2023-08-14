@@ -55,7 +55,7 @@
                     </span>
                     <button
                         type="button"
-                        class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-red-500 hover:bg-red-400 active:bg-red-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 text-sm transition absolute right-2 top-1/2 -translate-y-1/2"
+                        class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-red-500 hover:bg-red-400 active:bg-red-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 transition absolute right-2 top-1/2 -translate-y-1/2"
                         @click="deleteProject(project)"
                     >
                         <IDelete class="h-5" />
@@ -94,14 +94,14 @@
                             </div>
                             <button
                                 type="button"
-                                class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-red-500 hover:bg-red-400 active:bg-red-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 text-sm transition absolute right-2 top-1/2 -translate-y-1/2"
+                                class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-red-500 hover:bg-red-400 active:bg-red-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 transition absolute right-2 top-1/2 -translate-y-1/2"
                                 @click="deletePriority(priority)"
                             >
                                 <IDelete class="h-5" />
                             </button>
                         </label>
                         <div
-                            class="flex-shrink-0 rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring inline-flex items-center justify-center font-bold h-10 w-10 text-sm transition text-gray-400 hover:text-primary-400 active:text-primary-400"
+                            class="flex-shrink-0 rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring inline-flex items-center justify-center font-bold h-10 w-10 transition text-gray-400 hover:text-primary-400 active:text-primary-400"
                         >
                             <IHandle class="w-5 h-5 cursor-move shrink-0 handle" />
                         </div>
@@ -123,7 +123,7 @@
                                 class="form-control form-input form-input-bordered h-10 w-full"
                             />
                             <div
-                                class="flex-shrink-0 rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring inline-flex items-center justify-center font-bold h-10 w-10 text-sm transition text-gray-400 opacity-50"
+                                class="flex-shrink-0 rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring inline-flex items-center justify-center font-bold h-10 w-10 transition text-gray-400 opacity-50"
                             >
                                 <IHandle class="w-5 h-5 shrink-0 handle" />
                             </div>

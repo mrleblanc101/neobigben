@@ -23,7 +23,7 @@
                 <ColorSwitcher />
                 <button
                     type="button"
-                    class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 items-center justify-center font-bold h-10 w-10 text-sm inline-flex xl:hidden transition"
+                    class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 items-center justify-center font-bold h-10 w-10 inline-flex xl:hidden transition"
                     @click.stop="menuOpened = !menuOpened"
                 >
                     <IHamburger v-if="!menuOpened" class="w-4 h-4" />

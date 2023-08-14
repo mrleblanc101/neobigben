@@ -1,8 +1,8 @@
 <template>
-    <div class="flex gap-2 justify-between w-full min-w-0 mb-4">
+    <div class="sticky top-16 z-20 bg-white dark:bg-gray-900 flex gap-2 justify-between w-full min-w-0 -mt-6 pt-6 pb-3 mb-3">
         <button
             type="button"
-            class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 text-sm transition"
+            class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 transition"
             @click="changeDay('prev')"
         >
             <IArrowLeft class="h-3" />
@@ -23,7 +23,7 @@
         </label>
         <button
             type="button"
-            class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 text-sm transition"
+            class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 transition"
             @click="changeDay('next')"
         >
             <IArrowRight class="h-3" />
