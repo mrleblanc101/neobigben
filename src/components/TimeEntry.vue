@@ -223,6 +223,10 @@ const props = defineProps({
     },
 });
 
+const emit = defineEmits<{
+  (e: 'add'): void
+}>()
+
 const model = ref(Object.assign({}, props.entry));
 const placeholder = ref('00:00:00');
 
@@ -378,6 +382,7 @@ function stop() {
 function add() {
     model.value.is_creating = false;
     commitEntry(model.value as Entry);
+    emit('add');
 }
 
 function edit() {

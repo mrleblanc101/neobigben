@@ -4,7 +4,7 @@
             <TimeEntriesHeader />
             <div class="flex flex-col items-center w-full gap-2 mx-auto">
                 <TimeEntry v-for="(entry, index) in todaysEntries" :key="entry.id" :entry="entry" />
-                <TimeEntry v-if="canCreateEntry" :key="key" />
+                <TimeEntry v-if="canCreateEntry" :key="key" @add="key = uuidv4()" />
             </div>
         </div>
         <SummarySidebar />
@@ -20,8 +20,4 @@ const store = useStore();
 const { todaysEntries, canCreateEntry } = storeToRefs(store);
 
 const key = ref(uuidv4());
-
-watch(todaysEntries, () => {
-    key.value = uuidv4();
-});
 </script>
