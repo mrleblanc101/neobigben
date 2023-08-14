@@ -53,8 +53,8 @@ function changeDay(operation: 'next' | 'prev') {
 }
 
 onKeyStroke(['ArrowLeft', 'ArrowRight'], (e) => {
-  if(document?.activeElement?.tagName !== 'BODY') return;
+  if(['INPUT', 'TEXTAREA'].includes(document.activeElement!.tagName)) return;
   if(e.key === "ArrowLeft") changeDay('prev');
   if(e.key === "ArrowRight") changeDay('next');
-}, { target: document })
+})
 </script>
