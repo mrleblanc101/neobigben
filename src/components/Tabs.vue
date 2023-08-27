@@ -17,17 +17,15 @@ export default defineComponent({
             return h('div', [
                 h(
                     'div',
-                    { class: 'grid grid-flow-row auto-cols-fr border-b border-gray-200 dark:border-gray-700' },
+                    { class: 'grid grid-flow-row auto-cols-fr border-b dark:border-gray-800' },
                     tabs?.map((tab, index) => {
                         return h(
                             'button',
                             {
                                 class: [
-                                    'p-4 pb-3 text-sm border-b-4 border-y-transparent border-x-gray-200 dark:border-x-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 row-start-1 focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600',
+                                    'relative p-4 pb-3 text-sm border-b-4 border-b-transparent border-l dark:border-l-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 row-start-1 focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 first:border-l-0',
                                     {
-                                        'font-bold text-primary-500  border-b-primary-500 dark:border-b-primary-500 ':
-                                            index === selectedTabIndex.value,
-                                        'border-l': index !== 0,
+                                        'font-bold text-primary-500 after:absolute after:w-full after:border-b-4 after:left-0 after:-bottom-1 after:border-b-primary-500 after:dark:border-b-primary-500 ': index === selectedTabIndex.value,
                                     },
                                 ],
                                 type: 'button',

@@ -38,21 +38,20 @@
                         <ISave class="h-5" />
                     </button>
                 </div>
-                <div
-                    v-for="(day, index) in Object.values(weekSummary)"
-                    :key="index"
-                    class="flex items-end justify-between gap-8"
-                >
+                <div class="flex flex-col gap-2">
                     <div
-                        class="text-xs font-bold uppercase"
-                        :class="{
-                            'opacity-70 dark:opacity-30': index === 0 || index === 6,
-                        }"
+                        v-for="(day, index) in Object.values(weekSummary)"
+                        :key="index"
+                        class="flex items-end justify-between gap-8 group"
                     >
-                        {{ $moment().day(index).format('dddd') }}
-                    </div>
-                    <div class="font-bold tabular-nums" :class="weekSummaryColors(day)">
-                        {{ day }}
+                        <div
+                            class="text-xs font-bold uppercase group-first:opacity-70 group-first:dark:opacity-30 group-last:opacity-70 group-last:dark:opacity-30"
+                        >
+                            {{ $moment().day(index).format('dddd') }}
+                        </div>
+                        <div class="font-bold tabular-nums" :class="weekSummaryColors(day)">
+                            {{ day }}
+                        </div>
                     </div>
                 </div>
                 <div class="flex border-t dark:border-gray-800 items-end justify-between gap-8 pt-2 mt-2">

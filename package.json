@@ -21,7 +21,7 @@
         "@vueuse/components": "^10.3.0",
         "@vueuse/core": "^10.3.0",
         "@vueuse/nuxt": "^10.3.0",
-        "nuxt": "^3.0.0",
+        "nuxt": "^3.7.0",
         "postcss-import": "^15.1.0",
         "prettier": "^3.0.1",
         "vite-svg-loader": "^4.0.0"
