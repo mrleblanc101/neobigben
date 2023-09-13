@@ -5,15 +5,10 @@
     "start_url": "/neobigben/?source=pwa",
     "icons": [
         {
-            "src": "/neobigben/android-chrome-512x512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        },
-        {
             "src": "/neobigben/maskable_icon.png",
             "sizes": "1024x1024",
             "type": "image/png",
-            "purpose": "maskable"
+            "purpose": "any maskable"
         }
     ],
     "theme_color": "#111827",
