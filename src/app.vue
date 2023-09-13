@@ -21,11 +21,6 @@ useHead({
             type: 'image/svg+xml',
         },
         {
-            rel: 'apple-touch-icon',
-            sizes: '180x180',
-            href: '/neobigben/apple-touch-icon.png',
-        },
-        {
             rel: 'manifest',
             href: '/neobigben/manifest.json',
         }
