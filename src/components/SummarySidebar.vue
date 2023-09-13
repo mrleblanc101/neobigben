@@ -151,7 +151,7 @@ const store = useStore();
 const { weeklySummaryByProjects, dailySummaryByProjects, menuOpened, filter, sort, sortedProjects, priorities } =
     storeToRefs(store);
 const { deleteProject, deletePriority, deleteCompletedPriorities, addPriority } = store;
-const isXlOrGreater = breakpoints.greater('xl');
+const isXlOrGreater = breakpoints.greaterOrEqual('xl');
 
 const priority = ref('');
 
