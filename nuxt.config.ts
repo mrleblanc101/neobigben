@@ -15,7 +15,22 @@ export default defineNuxtConfig({
         '@pinia/nuxt',
         '@pinia-plugin-persistedstate/nuxt',
         '@vueuse/nuxt',
+        'nuxt-vuefire',
     ],
+
+    vuefire: {
+        auth: {
+            enabled: true
+        },
+        config: {
+            apiKey: "AIzaSyArKefxLB6DdSkXhewC3_EzcOplCGGhuRs",
+            authDomain: "neobigben.firebaseapp.com",
+            projectId: "neobigben",
+            storageBucket: "neobigben.appspot.com",
+            messagingSenderId: "681397227646",
+            appId: "1:681397227646:web:fdc164818213b9f80cc82f"
+        },
+    },
 
     i18n: {
         strategy: 'prefix_except_default',
@@ -48,7 +63,7 @@ export default defineNuxtConfig({
         download: true,
         families: {
             'DM+Sans': {
-                wght: [400, 500, 700],
+                wght: [400, 500, 700, 900],
                 ital: [400],
             },
         },

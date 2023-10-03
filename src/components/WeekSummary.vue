@@ -66,8 +66,8 @@
                 type="button"
                 @click="onDownload"
             >
-                {{ $t('Télécharger & réinitialiser') }}
-                <IDownload class="h-5 w-5" />
+                {{ $t('Télécharger') }}
+                <IDownload class="w-5 shrink-0" />
             </button>
         </div>
     </Transition>
@@ -77,11 +77,18 @@
 import ISave from '@/assets/svg/save.svg?component';
 import IEdit from '@/assets/svg/edit.svg?component';
 import IDownload from '@/assets/svg/download.svg?component';
+import ISignOut from '@/assets/svg/signout.svg?component';
 
 import { useStore } from '@/stores/index';
 import { storeToRefs } from 'pinia';
 
+import { useAuthStore } from '@/stores/auth';
+const auth = useAuthStore();
+const { logout } = auth;
+const user = useCurrentUser()
+
 const store = useStore();
+const route = useRoute();
 
 const { weekSummaryColors, downloadAndReset } = store;
 const { weekSummary, weekObjective, weekTotal } = storeToRefs(store);
@@ -92,6 +99,9 @@ const objective = ref(weekObjective.value);
 defineProps(['is_open']);
 const emit = defineEmits(['update:is_open']);
 
+watch(() => route.name, () => {
+    emit('update:is_open', false);
+});
 function onSave() {
     is_editing.value = false;
     weekObjective.value = objective.value;

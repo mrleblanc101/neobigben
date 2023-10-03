@@ -63,6 +63,7 @@
             <textarea
                 v-model="model.description"
                 class="block w-full form-control form-input form-input-bordered py-3 h-auto"
+                style="form-sizing: normal;"
                 rows="2"
                 :placeholder="`${$t('Description')}...`"
             ></textarea>

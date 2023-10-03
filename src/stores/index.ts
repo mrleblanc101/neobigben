@@ -8,13 +8,14 @@ export const useStore = defineStore('store', {
         return {
             menuOpened: false,
             selectedDay: new Date().toLocaleDateString('en-CA'),
+            filter: 'daily',
+            selectedTabIndex: 0,
+            sort: 'entries',
+            //
             weekObjective: '40:00',
             projects: [] as Project[],
             entries: [] as Entry[],
             priorities: [] as Priority[],
-            filter: 'daily',
-            selectedTabIndex: 0,
-            sort: 'entries',
         };
     },
     getters: {
