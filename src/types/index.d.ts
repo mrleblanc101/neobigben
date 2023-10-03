@@ -1,5 +1,5 @@
 type Entry = {
-    readonly id?: string;
+    readonly id: string;
     project: Project;
     is_live_clocking: boolean;
     is_creating: boolean;
@@ -13,7 +13,7 @@ type Entry = {
 };
 
 type Project = {
-    readonly id?: string;
+    readonly id: string;
     name: string;
 };
 
@@ -28,7 +28,7 @@ type Summary = {
 };
 
 type Priority = {
-    readonly id?: string;
+    readonly id: string;
     name: string;
     completed: boolean;
 };

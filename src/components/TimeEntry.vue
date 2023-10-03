@@ -57,6 +57,7 @@
                 createOption
                 @create="addProject"
             />
+            <!-- TODO: Fix Type here -->
         </div>
         <div>
             <label>{{ $t('Description') }}</label>
