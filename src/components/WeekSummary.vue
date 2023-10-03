@@ -96,7 +96,11 @@ const { weekSummary, weekObjective, weekTotal } = storeToRefs(store);
 const is_editing = ref(false);
 const objective = ref(weekObjective.value);
 
-defineProps(['is_open']);
+const props = withDefaults(defineProps<{
+    is_open: boolean,
+ }>(), {
+    is_open: false,
+});
 const emit = defineEmits(['update:is_open']);
 
 watch(() => route.name, () => {

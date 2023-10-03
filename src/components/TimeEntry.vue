@@ -90,7 +90,7 @@
                 v-else-if="model.id && model.is_creating"
                 type="button"
                 class="appearance-none bg-transparent font-bold text-gray-400 hover:text-gray-300 active:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:active:text-gray-600 dark:hover:bg-gray-800 text-sm px-2 transition"
-                @click="deleteEntry(entry as Entry)"
+                @click="deleteEntry(entry)"
             >
                 {{ $t('Annuler') }}
             </button>
@@ -126,13 +126,13 @@
         <div class="flex items-start justify-between gap-2">
             <div>
                 <label>{{ $t('Projet') }}</label>
-                <strong class="block">{{ model.project.name }}</strong>
+                <strong class="block">{{ model.project?.name }}</strong>
             </div>
             <div class="flex gap-2">
                 <button
                     type="button"
                     class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 transition"
-                    @click="toggleEntrySynced(model.id)"
+                    @click="toggleEntrySynced(entry)"
                 >
                     <INetsuite class="h-4" />
                 </button>
@@ -146,7 +146,7 @@
                 <button
                     type="button"
                     class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-red-500 hover:bg-red-400 active:bg-red-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 transition"
-                    @click="deleteEntry(entry as Entry)"
+                    @click="deleteEntry(entry)"
                 >
                     <IDelete class="h-5" />
                 </button>
@@ -206,24 +206,21 @@ const store = useStore();
 const { addProject, addEntry, updateEntry, deleteEntry, toggleEntrySynced } = store;
 const { projects, selectedDay, todaysEntries } = storeToRefs(store);
 
-const props = defineProps({
-    entry: {
-        type: Object,
-        default: () => ({
-            id: '',
-            is_creating: true,
-            is_editing: false,
-            is_synced: false,
-            is_live_clocking: false,
-            start_time: '',
-            end_time: '',
-            duration: '',
-            date: null,
-            description: '',
-            project: null,
-        }),
-    },
-});
+const props = withDefaults(defineProps<{ entry: Entry }>(), {
+    entry: () => ({
+        id: '',
+        is_creating: true,
+        is_editing: false,
+        is_synced: false,
+        is_live_clocking: false,
+        start_time: '',
+        end_time: '',
+        duration: '',
+        date: '',
+        description: '',
+        project: null,
+    })
+})
 
 const emit = defineEmits<{
   (e: 'add'): void
@@ -240,7 +237,12 @@ const computedDuration = computed({
     get() {
         const date = !model.value.is_live_clocking ? computedDate.value : new Date().toLocaleDateString('en-CA');
         const start = $moment(computedDate.value + ' ' + model.value.start_time, 'YYYY-M-D HH:mm');
-        const end = (model.value.end_time !== '00:00' ? $moment(date) : $moment(date).add(1, 'day')).set({hours: model.value.end_time.split(':')[0], minutes: model.value.end_time.split(':')[1]});
+        const end = (model.value.end_time !== '00:00' ?
+            $moment(date) :
+            $moment(date).add(1, 'day')).set({
+                hours: parseInt(model.value.end_time.split(':')[0]),
+                minutes: parseInt(model.value.end_time.split(':')[1])
+            });
 
         if (
             $moment(model.value.start_time, 'HH:mm', true).isValid() &&
@@ -268,14 +270,14 @@ const isToday = computed(() => {
     return $moment(selectedDay.value).isSame($moment(), 'day');
 });
 
-const previousEntry = computed((): undefined | Entry => {
+const previousEntry = computed((): Entry | undefined => {
     if (!model.value.id) return;
     const index = todaysEntries.value.findIndex((e: Entry) => e.id === model.value.id);
     if (index === 0) return;
     return todaysEntries.value[index - 1];
 });
 
-const nextEntry = computed((): undefined | Entry => {
+const nextEntry = computed((): Entry | undefined => {
     if (!model.value.id) return;
     const index = todaysEntries.value.findIndex((e: Entry) => e.id === model.value.id);
     if (index === todaysEntries.value.length) return;
@@ -332,7 +334,12 @@ const end_time_error = computed(() => {
 const duration_error = computed(() => {
     const date = !model.value.is_live_clocking ? computedDate.value : new Date().toLocaleDateString('en-CA');
     const start = $moment(computedDate.value + ' ' + model.value.start_time, 'YYYY-M-D HH:mm');
-    const end = (model.value.end_time !== '00:00' ? $moment(date) : $moment(date).add(1, 'day')).set({hours: model.value.end_time.split(':')[0], minutes: model.value.end_time.split(':')[1]});
+    const end = (model.value.end_time !== '00:00' ?
+        $moment(date) :
+        $moment(date).add(1, 'day')).set({
+            hours: parseInt(model.value.end_time.split(':')[0]),
+            minutes: parseInt(model.value.end_time.split(':')[1])
+        });
 
     if (
         $moment(model.value.start_time, 'HH:mm', true).isValid() &&
@@ -372,25 +379,25 @@ function start() {
     }
     model.value.is_live_clocking = true;
     startTimer();
-    commitEntry(model.value as Entry);
+    commitEntry(model.value);
 }
 
 function stop() {
     model.value.end_time = model.value.end_time || $moment().format('HH:mm');
     model.value.is_live_clocking = false;
-    updateEntry(model.value as Entry);
+    updateEntry(model.value);
 }
 
 function add() {
     model.value.is_creating = false;
-    commitEntry(model.value as Entry);
+    commitEntry(model.value);
     emit('add');
 }
 
 function edit() {
     model.value.is_creating = false;
     model.value.is_editing = false;
-    updateEntry(model.value as Entry);
+    updateEntry(model.value);
 }
 
 function cancel() {

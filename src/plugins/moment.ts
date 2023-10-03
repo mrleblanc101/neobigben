@@ -8,7 +8,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     const i18n = nuxtApp.$i18n as Composer;
     const { locale, locales } = i18n;
     const iso = (locales.value as LocaleObject[]).find((l) => l.code === locale.value)?.iso;
-    momentDurationFormatSetup(moment);
+    momentDurationFormatSetup(moment as any);
     moment.locale(iso);
 
     nuxtApp.hook('i18n:localeSwitched', ({oldLocale, newLocale}) => {

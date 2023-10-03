@@ -15,24 +15,19 @@
 const timeInput = ref<HTMLElement | null>(null);
 const { $inputmask } = useNuxtApp();
 
-const props = defineProps({
-    type: {
-        type: String,
-        default: 'datetime',
-    },
-    mask: {
-        type: String,
-        default: null,
-    },
-    modelValue: {
-        type: String,
-        default: null,
-    },
-    placeholder: {
-        type: String,
-        default: 'HH:MM',
-    },
-});
+const props = withDefaults(defineProps<{
+    type: string,
+    mask: string | null,
+    modelValue: string | null,
+    placeholder: string,
+ }>(), {
+    type: 'datetime',
+    mask: null,
+    modelValue: null,
+    placeholder: 'HH:MM'
+})
+
+
 const emit = defineEmits(['update:modelValue']);
 
 const value = computed({

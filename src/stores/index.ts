@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 import fileSaver from 'file-saver';
 const { saveAs } = fileSaver;
-import { collection, addDoc } from 'firebase/firestore'
+import { collection, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore'
 
 
 export const useStore = defineStore('store', () => {
@@ -61,7 +61,7 @@ export const useStore = defineStore('store', () => {
                     const day = $moment(e.date).locale('en').format('dddd').toLowerCase() as keyof Summary;
                     acc[day] = $moment
                         .duration(acc[day])
-                        .add($moment.duration(e.duration as string))
+                        .add($moment.duration(e.duration))
                         .format('HH:mm', {
                             trim: false,
                         });
@@ -110,7 +110,7 @@ export const useStore = defineStore('store', () => {
             .filter((e) => !e.is_creating)
             .filter((e) => $moment(e.date).isBetween(weekStart, weekEnd, 'day', '[]'))
             .reduce((acc: { [key: string]: string }, e: Entry) => {
-                const project = e.project as Project;
+                const project = e.project;
 
                 if (!acc[project.name]) {
                     acc[project.name] = e.duration;
@@ -133,7 +133,7 @@ export const useStore = defineStore('store', () => {
             .filter((e) => !e.is_creating)
             .filter((e) => $moment(e.date).isSame(selectedDay.value))
             .reduce((acc: { [key: string]: string }, e: Entry) => {
-                const project = e.project as Project;
+                const project = e.project;
 
                 if (!acc[project.name]) {
                     acc[project.name] = e.duration;
@@ -185,28 +185,31 @@ export const useStore = defineStore('store', () => {
             ...entry
         });
     };
-    function updateEntry(entry: Entry) {
-        const index = entries.value.findIndex((e) => e.id === entry.id);
-        entries.value[index] = JSON.parse(JSON.stringify(entry));
+    async function updateEntry(entry: Entry) {
+        // const index = entries.value.findIndex((e) => e.id === entry.id);
+        // entries.value[index] = JSON.parse(JSON.stringify(entry));
+        await updateDoc(doc(db, "entries", entry.id), {
+            ...entry
+        });
     };
-    function deleteEntry(entry: Entry, force = false) {
+    async function deleteEntry(entry: Entry, force = false) {
         const nuxtApp = useNuxtApp();
         const { t } = nuxtApp.$i18n;
         const index = entries.value.findIndex((e) => e.id === entry.id);
 
-        if (force) {
-            entries.value.splice(index, 1);
-        } else {
-            if (confirm(t('Êtes vous certain de vouloir supprimer cette entrée ?'))) {
-                entries.value.splice(index, 1);
-            }
+        if (force || confirm(t('Êtes vous certain de vouloir supprimer cette entrée ?'))) {
+            await deleteDoc(doc(db, "entries", entry.id));
         }
     };
-    function toggleEntrySynced(id: string) {
-        const entry = entries.value.find((e) => e.id === id);
-        if(entry) {
-            entry.is_synced = !entry.is_synced ?? true;
-        }
+    // TODO
+    async function toggleEntrySynced(entry: Entry) {
+        // const entry = entries.value.find((e) => e.id === id);
+        // if(entry) {
+        //     entry.is_synced = !entry.is_synced ?? true;
+        // }
+        await updateDoc(doc(db, "entries", entry.id), {
+            is_synced: !entry.is_synced ?? true,
+        });
     };
     async function addProject(option: Project) {
         const project = await addDoc(collection(db, "projects"), {
@@ -214,13 +217,13 @@ export const useStore = defineStore('store', () => {
         });
         return {id: project.id, name: option.name};
     };
-    function deleteProject(project: Project) {
+    async function deleteProject(project: Project) {
         const nuxtApp = useNuxtApp();
         const { t } = nuxtApp.$i18n;
 
         if (confirm(t('Êtes vous certain de vouloir supprimer ce projet ?'))) {
             const index = projects.value.findIndex((e) => e.id === project.id);
-            projects.value.splice(index, 1);
+            await deleteDoc(doc(db, "projects", project.id));
             const linkedEntries = projectEntriesTotal.value(project);
 
             if (linkedEntries > 0) {
@@ -245,17 +248,13 @@ export const useStore = defineStore('store', () => {
             completed: false,
         });
     };
-    function deletePriority(priority: Priority, force = false) {
+    async function deletePriority(priority: Priority, force = false) {
         const nuxtApp = useNuxtApp();
         const { t } = nuxtApp.$i18n;
         const index = priorities.value.findIndex((e) => e.id === priority.id);
 
-        if (force) {
-            priorities.value.splice(index, 1);
-        } else {
-            if (confirm(t('Êtes vous certain de vouloir supprimer cette priorité ?'))) {
-                priorities.value.splice(index, 1);
-            }
+        if (force || confirm(t('Êtes vous certain de vouloir supprimer cette priorité ?'))) {
+            await deleteDoc(doc(db, "priorities", priority.id));
         }
     };
     function deleteCompletedPriorities() {
@@ -271,6 +270,7 @@ export const useStore = defineStore('store', () => {
             alert(t('Aucune priorité complétée à supprimer'));
         }
     };
+    // TODO
     function downloadAndReset() {
         const nuxtApp = useNuxtApp();
         const { t } = nuxtApp.$i18n;

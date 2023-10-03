@@ -43,7 +43,11 @@ const user = useCurrentUser()
 
 const route = useRoute();
 
-defineProps(['is_open']);
+const props = withDefaults(defineProps<{
+    is_open: boolean,
+ }>(), {
+    is_open: false,
+});
 const emit = defineEmits(['update:is_open']);
 
 watch(() => route.name, () => {

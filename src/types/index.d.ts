@@ -1,6 +1,6 @@
 type Entry = {
     readonly id: string;
-    project: Project;
+    project: Nullable<Project>;
     is_live_clocking: boolean;
     is_creating: boolean;
     is_editing: boolean;
