@@ -9,14 +9,14 @@
     >
         <div
             v-if="is_open"
-            class="absolute rounded top-full right-0 p-4 border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 border min-w-full flex flex-col gap-6 translate-y-2 w-64"
+            class="absolute right-0 top-full flex w-64 min-w-full translate-y-2 flex-col gap-6 rounded border border-gray-100 bg-white p-4 dark:border-gray-800 dark:bg-gray-900"
             v-on-click-outside.bubble="onClickOutside"
         >
             <div class="flex flex-col gap-2">
-                <div class="border-b dark:border-gray-800 pb-2 flex justify-between items-end">
+                <div class="flex items-end justify-between border-b pb-2 dark:border-gray-800">
                     <div>
                         <div class="text-xs font-bold uppercase opacity-80">{{ $t('Mon objectif') }}</div>
-                        <div v-if="!is_editing" class="text-3xl mt-1 font-bold tabular-nums block">
+                        <div v-if="!is_editing" class="mt-1 block text-3xl font-bold tabular-nums">
                             {{ weekObjective }}
                         </div>
                         <TimeInput v-else class="mt-1" v-model="objective" mask="99:99" />
@@ -24,7 +24,7 @@
                     <button
                         v-if="!is_editing"
                         type="button"
-                        class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 transition"
+                        class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-gray-800 dark:ring-gray-600"
                         @click="is_editing = true"
                     >
                         <IEdit class="h-5" />
@@ -32,7 +32,7 @@
                     <button
                         v-else
                         type="button"
-                        class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 transition"
+                        class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-gray-800 dark:ring-gray-600"
                         @click="onSave"
                     >
                         <ISave class="h-5" />
@@ -42,10 +42,10 @@
                     <div
                         v-for="(day, index) in Object.values(weekSummary)"
                         :key="index"
-                        class="flex items-end justify-between gap-8 group"
+                        class="group flex items-end justify-between gap-8"
                     >
                         <div
-                            class="text-xs font-bold uppercase group-first:opacity-70 group-first:dark:opacity-30 group-last:opacity-70 group-last:dark:opacity-30"
+                            class="text-xs font-bold uppercase group-first:opacity-70 group-last:opacity-70 group-first:dark:opacity-30 group-last:dark:opacity-30"
                         >
                             {{ $moment().day(index).format('dddd') }}
                         </div>
@@ -54,7 +54,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex border-t dark:border-gray-800 items-end justify-between gap-8 pt-2 mt-2">
+                <div class="mt-2 flex items-end justify-between gap-8 border-t pt-2 dark:border-gray-800">
                     <div class="font-bold uppercase">{{ $t('Total') }}</div>
                     <div class="font-bold tabular-nums">
                         {{ weekTotal }}
@@ -62,7 +62,7 @@
                 </div>
             </div>
             <button
-                class="shadow bg-primary-500 hover:bg-primary-400 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center py-2 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2 whitespace-nowrap h-9 transition"
+                class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded bg-primary-500 px-3 py-2 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-900 dark:ring-gray-600"
                 type="button"
                 @click="onDownload"
             >
@@ -85,7 +85,7 @@ import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/auth';
 const auth = useAuthStore();
 const { logout } = auth;
-const user = useCurrentUser()
+const user = useCurrentUser();
 
 const store = useStore();
 const route = useRoute();
@@ -96,16 +96,22 @@ const { weekSummary, weekObjective, weekTotal } = storeToRefs(store);
 const is_editing = ref(false);
 const objective = ref(weekObjective.value);
 
-const props = withDefaults(defineProps<{
-    is_open: boolean,
- }>(), {
-    is_open: false,
-});
+const props = withDefaults(
+    defineProps<{
+        is_open: boolean;
+    }>(),
+    {
+        is_open: false,
+    },
+);
 const emit = defineEmits(['update:is_open']);
 
-watch(() => route.name, () => {
-    emit('update:is_open', false);
-});
+watch(
+    () => route.name,
+    () => {
+        emit('update:is_open', false);
+    },
+);
 function onSave() {
     is_editing.value = false;
     weekObjective.value = objective.value;

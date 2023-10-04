@@ -1,7 +1,7 @@
 <template>
     <form
         v-if="model.is_creating || model.is_editing"
-        class="relative p-4 bg-gray-100 dark:bg-gray-800 rounded flex flex-col gap-2 w-full border"
+        class="relative flex w-full flex-col gap-2 rounded border bg-gray-100 p-4 dark:bg-gray-800"
         :class="[
             has_overlap_previous || has_overlap_next ? 'border-red-500' : 'border-transparent',
             {
@@ -11,7 +11,7 @@
         :data-gap-duration="has_gap"
         @submit.prevent="onSave"
     >
-        <div class="grid gap-2 grid-cols-2 sm:grid-cols-4">
+        <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
             <div>
                 <label>{{ $t('Début') }}<span class="text-red-500">*</span></label>
                 <TimeInput v-model="model.start_time" :class="{ 'border !border-red-500': start_time_error }" />
@@ -37,7 +37,7 @@
                     v-model="model.date"
                     :class="{ 'has-value': model.date }"
                     type="date"
-                    class="form-control form-input form-input-bordered w-full"
+                    class="form-control form-input-bordered form-input w-full"
                 />
             </div>
         </div>
@@ -63,17 +63,17 @@
             <label>{{ $t('Description') }}</label>
             <textarea
                 v-model="model.description"
-                class="block w-full form-control form-input form-input-bordered py-3 h-auto"
-                style="form-sizing: normal;"
+                class="form-control form-input-bordered form-input block h-auto w-full py-3"
+                style="form-sizing: normal"
                 rows="2"
                 :placeholder="`${$t('Description')}...`"
             ></textarea>
         </div>
-        <div class="flex gap-2 justify-end">
+        <div class="flex justify-end gap-2">
             <button
                 v-if="isToday && !model.is_live_clocking && !model.end_time"
                 type="submit"
-                class="shadow bg-green-500 hover:bg-green-400 active:bg-green-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2 transition"
+                class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-green-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-green-400 focus:outline-none focus:ring active:bg-green-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-900 dark:ring-gray-600"
             >
                 {{ $t('Démarrer') }}
                 <IPlay class="h-3 w-4" />
@@ -81,7 +81,7 @@
             <button
                 v-else-if="isToday && model.is_live_clocking"
                 type="submit"
-                class="shadow bg-rose-500 hover:bg-rose-400 active:bg-rose-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2 transition"
+                class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-rose-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-rose-400 focus:outline-none focus:ring active:bg-rose-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-900 dark:ring-gray-600"
             >
                 {{ $t('Arrêter') }}
                 <IStop class="h-3 w-4" />
@@ -89,7 +89,7 @@
             <button
                 v-else-if="model.id && model.is_creating"
                 type="button"
-                class="appearance-none bg-transparent font-bold text-gray-400 hover:text-gray-300 active:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:active:text-gray-600 dark:hover:bg-gray-800 text-sm px-2 transition"
+                class="appearance-none bg-transparent px-2 text-sm font-bold text-gray-400 transition hover:text-gray-300 active:text-gray-500 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-400 dark:active:text-gray-600"
                 @click="deleteEntry(entry)"
             >
                 {{ $t('Annuler') }}
@@ -97,14 +97,14 @@
             <button
                 v-if="model.is_editing"
                 type="button"
-                class="appearance-none bg-transparent font-bold text-gray-400 hover:text-gray-300 active:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:active:text-gray-600 dark:hover:bg-gray-800 text-sm px-2 transition"
+                class="appearance-none bg-transparent px-2 text-sm font-bold text-gray-400 transition hover:text-gray-300 active:text-gray-500 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-400 dark:active:text-gray-600"
                 @click="cancel"
             >
                 {{ $t('Annuler') }}
             </button>
             <button
                 type="submit"
-                class="shadow bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2 transition"
+                class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-primary-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-900 dark:ring-gray-600"
                 :disabled="!(model.start_time && model.end_time && model.duration && model.project)"
             >
                 {{ model.is_creating ? $t('Ajouter') : $t('Sauvegarder') }}
@@ -113,12 +113,12 @@
     </form>
     <div
         v-else
-        class="relative p-4 bg-gray-100 dark:bg-gray-800 rounded flex flex-col gap-2 w-full border"
+        class="relative flex w-full flex-col gap-2 rounded border bg-gray-100 p-4 dark:bg-gray-800"
         :class="[
             has_overlap_previous || has_overlap_next ? 'border-red-500' : 'border-transparent',
             {
                 'has-gap mt-10': has_gap,
-                'opacity-50': entry.is_synced
+                'opacity-50': entry.is_synced,
             },
         ]"
         :data-gap-duration="has_gap"
@@ -131,28 +131,28 @@
             <div class="flex gap-2">
                 <button
                     type="button"
-                    class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 transition"
+                    class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-gray-800 dark:ring-gray-600"
                     @click="toggleEntrySynced(entry)"
                 >
                     <INetsuite class="h-4" />
                 </button>
                 <button
                     type="button"
-                    class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 transition"
+                    class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-gray-800 dark:ring-gray-600"
                     @click="model.is_editing = true"
                 >
                     <IEdit class="h-5" />
                 </button>
                 <button
                     type="button"
-                    class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-red-500 hover:bg-red-400 active:bg-red-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 transition"
+                    class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 dark:text-gray-800 dark:ring-gray-600"
                     @click="deleteEntry(entry)"
                 >
                     <IDelete class="h-5" />
                 </button>
             </div>
         </div>
-        <div class="grid gap-2 grid-cols-2 sm:grid-cols-4">
+        <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
             <div>
                 <label>{{ $t('Début') }}</label>
                 <strong class="block" :class="{ 'text-red-500': start_time_error }">{{ model.start_time }}</strong>
@@ -173,7 +173,7 @@
         <div v-if="model.description">
             <label>{{ $t('Description') }}</label>
             <strong
-                class="block v-html"
+                class="v-html block"
                 v-html="
                     linkify(model.description, {
                         defaultProtocol: 'https',
@@ -219,12 +219,12 @@ const props = withDefaults(defineProps<{ entry: Entry }>(), {
         date: '',
         description: '',
         project: null,
-    })
-})
+    }),
+});
 
 const emit = defineEmits<{
-  (e: 'add'): void
-}>()
+    (e: 'add'): void;
+}>();
 
 const model = ref(Object.assign({}, props.entry));
 const placeholder = ref('00:00:00');
@@ -237,12 +237,10 @@ const computedDuration = computed({
     get() {
         const date = !model.value.is_live_clocking ? computedDate.value : new Date().toLocaleDateString('en-CA');
         const start = $moment(computedDate.value + ' ' + model.value.start_time, 'YYYY-M-D HH:mm');
-        const end = (model.value.end_time !== '00:00' ?
-            $moment(date) :
-            $moment(date).add(1, 'day')).set({
-                hours: parseInt(model.value.end_time.split(':')[0]),
-                minutes: parseInt(model.value.end_time.split(':')[1])
-            });
+        const end = (model.value.end_time !== '00:00' ? $moment(date) : $moment(date).add(1, 'day')).set({
+            hours: parseInt(model.value.end_time.split(':')[0]),
+            minutes: parseInt(model.value.end_time.split(':')[1]),
+        });
 
         if (
             $moment(model.value.start_time, 'HH:mm', true).isValid() &&
@@ -334,12 +332,10 @@ const end_time_error = computed(() => {
 const duration_error = computed(() => {
     const date = !model.value.is_live_clocking ? computedDate.value : new Date().toLocaleDateString('en-CA');
     const start = $moment(computedDate.value + ' ' + model.value.start_time, 'YYYY-M-D HH:mm');
-    const end = (model.value.end_time !== '00:00' ?
-        $moment(date) :
-        $moment(date).add(1, 'day')).set({
-            hours: parseInt(model.value.end_time.split(':')[0]),
-            minutes: parseInt(model.value.end_time.split(':')[1])
-        });
+    const end = (model.value.end_time !== '00:00' ? $moment(date) : $moment(date).add(1, 'day')).set({
+        hours: parseInt(model.value.end_time.split(':')[0]),
+        minutes: parseInt(model.value.end_time.split(':')[1]),
+    });
 
     if (
         $moment(model.value.start_time, 'HH:mm', true).isValid() &&
@@ -429,15 +425,15 @@ function commitEntry(entry: Entry) {
 
 <style lang="postcss" scoped>
 label {
-    @apply uppercase text-xs font-medium opacity-60;
+    @apply text-xs font-medium uppercase opacity-60;
 }
 .has-gap::before {
     content: attr(data-gap-duration);
-    @apply absolute left-1/2 -translate-x-1/2 -translate-y-1/2 -top-6 bg-gray-100 dark:bg-gray-800 rounded px-2 font-bold z-10;
+    @apply absolute -top-6 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded bg-gray-100 px-2 font-bold dark:bg-gray-800;
 }
 .has-gap::after {
     content: '';
-    @apply absolute -top-6 left-0 right-0 block border-b dark:border-gray-800 z-0;
+    @apply absolute -top-6 left-0 right-0 z-0 block border-b dark:border-gray-800;
 }
 .v-html {
     :deep(a) {

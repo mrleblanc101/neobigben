@@ -1,14 +1,16 @@
 <template>
-    <div class="sticky top-16 z-20 bg-white dark:bg-gray-900 flex gap-2 justify-between w-full min-w-0 -mt-6 pt-6 pb-3 mb-3">
+    <div
+        class="sticky top-16 z-20 -mt-6 mb-3 flex w-full min-w-0 justify-between gap-2 bg-white pb-3 pt-6 dark:bg-gray-900"
+    >
         <button
             type="button"
-            class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 transition"
+            class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-gray-800 dark:ring-gray-600"
             @click="changeDay('prev')"
         >
             <IArrowLeft class="h-3" />
         </button>
         <label
-            class="relative rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring border border-gray-100 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 leading-10 px-5 cursor-pointer font-medium text-ellipsis overflow-hidden whitespace-nowrap shrink text-center min-w-0 transition"
+            class="relative min-w-0 shrink cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap rounded border border-gray-100 px-5 text-center font-medium leading-10 ring-primary-200 transition hover:bg-gray-100 focus:outline-none focus:ring dark:border-gray-800 dark:ring-gray-600 dark:hover:bg-gray-800"
             tabindex="0"
         >
             <span class="capitalize">{{ $moment(selectedDay).format('dddd') }}, </span>
@@ -23,7 +25,7 @@
         </label>
         <button
             type="button"
-            class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center justify-center font-bold h-10 w-10 transition"
+            class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-gray-800 dark:ring-gray-600"
             @click="changeDay('next')"
         >
             <IArrowRight class="h-3" />
@@ -53,8 +55,8 @@ function changeDay(operation: 'next' | 'prev') {
 }
 
 onKeyStroke(['ArrowLeft', 'ArrowRight'], (e) => {
-  if(['INPUT', 'TEXTAREA'].includes(document.activeElement!.tagName)) return;
-  if(e.key === "ArrowLeft") changeDay('prev');
-  if(e.key === "ArrowRight") changeDay('next');
-})
+    if (['INPUT', 'TEXTAREA'].includes(document.activeElement!.tagName)) return;
+    if (e.key === 'ArrowLeft') changeDay('prev');
+    if (e.key === 'ArrowRight') changeDay('next');
+});
 </script>

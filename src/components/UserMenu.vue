@@ -9,19 +9,21 @@
     >
         <div
             v-if="is_open"
-            class="absolute rounded top-full right-0 p-4 border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 border min-w-full flex flex-col gap-6 translate-y-2 w-64"
+            class="absolute right-0 top-full flex w-64 min-w-full translate-y-2 flex-col gap-6 rounded border border-gray-100 bg-white p-4 dark:border-gray-800 dark:bg-gray-900"
             v-on-click-outside.bubble="onClickOutside"
         >
             <div class="flex flex-col gap-2">
-                <div class="border-b dark:border-gray-800 pb-2">
+                <div class="border-b pb-2 dark:border-gray-800">
                     <div class="text-xs font-bold uppercase opacity-80">{{ $t('Bonjour') }}</div>
-                    <div v-if="user" class="text-2xl mt-1 font-black leading-[1] tabular-nums block">{{ user.displayName }}</div>
+                    <div v-if="user" class="mt-1 block text-2xl font-black tabular-nums leading-[1]">
+                        {{ user.displayName }}
+                    </div>
                 </div>
 
                 <LanguageSwitcher />
                 <ColorSwitcher />
                 <button
-                    class="shadow bg-red-500 hover:bg-red-400 active:bg-red-600 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center py-2 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2 whitespace-nowrap h-9 transition"
+                    class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded bg-red-500 px-3 py-2 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-900 dark:ring-gray-600"
                     type="button"
                     @click="logout"
                 >
@@ -39,20 +41,26 @@ import ILogout from '@/assets/svg/logout.svg?component';
 import { useAuthStore } from '@/stores/auth';
 const auth = useAuthStore();
 const { logout } = auth;
-const user = useCurrentUser()
+const user = useCurrentUser();
 
 const route = useRoute();
 
-const props = withDefaults(defineProps<{
-    is_open: boolean,
- }>(), {
-    is_open: false,
-});
+const props = withDefaults(
+    defineProps<{
+        is_open: boolean;
+    }>(),
+    {
+        is_open: false,
+    },
+);
 const emit = defineEmits(['update:is_open']);
 
-watch(() => route.name, () => {
-    emit('update:is_open', false);
-});
+watch(
+    () => route.name,
+    () => {
+        emit('update:is_open', false);
+    },
+);
 function onClickOutside() {
     emit('update:is_open', false);
 }

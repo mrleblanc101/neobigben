@@ -1,7 +1,7 @@
 <template>
     <button
         type="button"
-        class="shadow bg-primary-500 hover:bg-primary-400 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center py-2 px-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none gap-2 whitespace-nowrap h-9 transition"
+        class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded bg-primary-500 px-3 py-2 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-900 dark:ring-gray-600"
         @click="setLocale(nextLocale.code)"
     >
         {{ nextLocale.name }}
@@ -20,6 +20,6 @@ const nextLocale = computed(() => {
     const index = (locales.value as LocaleObject[]).findIndex((l) => l.code === locale.value);
     const nextIndex = index !== locales.value.length - 1 ? index + 1 : 0;
 
-    return (locales.value.at(nextIndex) as LocaleObject);
+    return locales.value.at(nextIndex) as LocaleObject;
 });
 </script>

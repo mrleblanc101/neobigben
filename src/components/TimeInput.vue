@@ -1,7 +1,7 @@
 <template>
     <input
         ref="timeInput"
-        class="form-control form-input form-input-bordered w-full"
+        class="form-control form-input-bordered form-input w-full"
         type="text"
         :value="value"
         :placeholder="placeholder"
@@ -15,18 +15,20 @@
 const timeInput = ref<HTMLElement | null>(null);
 const { $inputmask } = useNuxtApp();
 
-const props = withDefaults(defineProps<{
-    type: string,
-    mask: string | null,
-    modelValue: string | null,
-    placeholder: string,
- }>(), {
-    type: 'datetime',
-    mask: null,
-    modelValue: null,
-    placeholder: 'HH:MM'
-})
-
+const props = withDefaults(
+    defineProps<{
+        type: string;
+        mask: string | null;
+        modelValue: string | null;
+        placeholder: string;
+    }>(),
+    {
+        type: 'datetime',
+        mask: null,
+        modelValue: null,
+        placeholder: 'HH:MM',
+    },
+);
 
 const emit = defineEmits(['update:modelValue']);
 

@@ -25,7 +25,8 @@ export default defineComponent({
                                 class: [
                                     'relative p-4 pb-3 text-sm border-b-4 border-b-transparent border-l dark:border-l-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 row-start-1 focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 first:border-l-0',
                                     {
-                                        'font-bold text-primary-500 after:absolute after:w-full after:border-b-4 after:left-0 after:-bottom-1 after:border-b-primary-500 after:dark:border-b-primary-500 ': index === selectedTabIndex.value,
+                                        'font-bold text-primary-500 after:absolute after:w-full after:border-b-4 after:left-0 after:-bottom-1 after:border-b-primary-500 after:dark:border-b-primary-500 ':
+                                            index === selectedTabIndex.value,
                                     },
                                 ],
                                 type: 'button',
