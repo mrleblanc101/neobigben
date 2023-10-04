@@ -2,11 +2,11 @@ import { defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 import fileSaver from 'file-saver';
 const { saveAs } = fileSaver;
-import { collection, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore'
+import { collection, addDoc, updateDoc, deleteDoc, doc, query, where } from 'firebase/firestore';
 
-
-export const useStore = defineStore('store', () => {
-    const db = useFirestore()
+export const useIndexStore = defineStore('store', () => {
+    const db = useFirestore();
+    const user = useCurrentUser();
 
     const menuOpened = ref(false);
     const selectedDay = ref(new Date().toLocaleDateString('en-CA'));
@@ -14,9 +14,18 @@ export const useStore = defineStore('store', () => {
     const selectedTabIndex = ref(0);
     const sort = ref('entries');
     const weekObjective = ref('40:00');
-    const projects = useCollection<Project>(collection(db, 'projects'));
-    const entries = useCollection<Entry>(collection(db, 'entries'));
-    const priorities = useCollection<Priority>(collection(db, 'priorities'));
+    const projects = useCollection<Project>(query(collection(db, 'projects'), where('user', '==', user.value?.uid)), {
+        ssrKey: 'projects',
+    });
+    const priorities = useCollection<Priority>(
+        query(collection(db, 'priorities'), where('user', '==', user.value?.uid)),
+        {
+            ssrKey: 'priorities',
+        },
+    );
+    const entries = useCollection<Entry>(query(collection(db, 'entries'), where('user', '==', user.value?.uid)), {
+        ssrKey: 'entries',
+    });
 
     const todaysEntries = computed((): Entry[] => {
         const { $moment } = useNuxtApp();
@@ -27,7 +36,6 @@ export const useStore = defineStore('store', () => {
                 return startB.isBefore(startA) ? 1 : -1;
             })
             .filter((e) => $moment(selectedDay.value).isSame(e.date, 'day'));
-
     });
     const weekTotal = computed((): string => {
         const { $moment } = useNuxtApp();
@@ -59,12 +67,9 @@ export const useStore = defineStore('store', () => {
             .reduce(
                 (acc: Summary, e: Entry) => {
                     const day = $moment(e.date).locale('en').format('dddd').toLowerCase() as keyof Summary;
-                    acc[day] = $moment
-                        .duration(acc[day])
-                        .add($moment.duration(e.duration))
-                        .format('HH:mm', {
-                            trim: false,
-                        });
+                    acc[day] = $moment.duration(acc[day]).add($moment.duration(e.duration)).format('HH:mm', {
+                        trim: false,
+                    });
 
                     return acc;
                 },
@@ -84,8 +89,7 @@ export const useStore = defineStore('store', () => {
             const { $moment } = useNuxtApp();
 
             const isZero = $moment.duration(time).asHours() === 0;
-            const isOvertime =
-                $moment.duration(time).asHours() >= $moment.duration(weekObjective.value).asHours() / 5;
+            const isOvertime = $moment.duration(time).asHours() >= $moment.duration(weekObjective.value).asHours() / 5;
             const isBelow =
                 $moment.duration(time).asHours() >= $moment.duration(weekObjective.value).asHours() / 5 - 0.5;
 
@@ -171,59 +175,54 @@ export const useStore = defineStore('store', () => {
         return (project: Project) => entries.value.filter((e) => e?.project?.id === project.id).length;
     });
     const isLiveClockingEntry = computed((): boolean => {
-        return !!entries.value.find(e => e.is_live_clocking);
+        return !!entries.value.find((e) => e.is_live_clocking);
     });
     const isCreatingEntry = computed((): boolean => {
-        return !!entries.value.find(e => e.is_creating);
+        return !!entries.value.find((e) => e.is_creating);
     });
     const canCreateEntry = computed((): boolean => {
         return !isLiveClockingEntry.value && !isCreatingEntry.value;
     });
 
     async function addEntry(entry: Entry) {
-        await addDoc(collection(db, "entries"), {
-            ...entry
+        await addDoc(collection(db, 'entries'), {
+            ...entry,
+            user: user.value?.uid,
         });
-    };
+    }
     async function updateEntry(entry: Entry) {
-        // const index = entries.value.findIndex((e) => e.id === entry.id);
-        // entries.value[index] = JSON.parse(JSON.stringify(entry));
-        await updateDoc(doc(db, "entries", entry.id), {
-            ...entry
+        await updateDoc(doc(db, 'entries', entry.id), {
+            ...entry,
         });
-    };
+    }
     async function deleteEntry(entry: Entry, force = false) {
         const nuxtApp = useNuxtApp();
         const { t } = nuxtApp.$i18n;
         const index = entries.value.findIndex((e) => e.id === entry.id);
 
         if (force || confirm(t('Êtes vous certain de vouloir supprimer cette entrée ?'))) {
-            await deleteDoc(doc(db, "entries", entry.id));
+            await deleteDoc(doc(db, 'entries', entry.id));
         }
-    };
-    // TODO
+    }
     async function toggleEntrySynced(entry: Entry) {
-        // const entry = entries.value.find((e) => e.id === id);
-        // if(entry) {
-        //     entry.is_synced = !entry.is_synced ?? true;
-        // }
-        await updateDoc(doc(db, "entries", entry.id), {
+        await updateDoc(doc(db, 'entries', entry.id), {
             is_synced: !entry.is_synced ?? true,
         });
-    };
+    }
     async function addProject(option: Project) {
-        const project = await addDoc(collection(db, "projects"), {
+        const project = await addDoc(collection(db, 'projects'), {
             name: option.name,
+            user: user.value?.uid,
         });
-        return {id: project.id, name: option.name};
-    };
+        return { id: project.id, name: option.name };
+    }
     async function deleteProject(project: Project) {
         const nuxtApp = useNuxtApp();
         const { t } = nuxtApp.$i18n;
 
         if (confirm(t('Êtes vous certain de vouloir supprimer ce projet ?'))) {
             const index = projects.value.findIndex((e) => e.id === project.id);
-            await deleteDoc(doc(db, "projects", project.id));
+            await deleteDoc(doc(db, 'projects', project.id));
             const linkedEntries = projectEntriesTotal.value(project);
 
             if (linkedEntries > 0) {
@@ -235,28 +234,27 @@ export const useStore = defineStore('store', () => {
                         ),
                     )
                 ) {
-                    entries.value
-                        .filter((e) => e.project.id === project.id)
-                        .forEach((e) => deleteEntry(e, true));
+                    entries.value.filter((e) => e.project.id === project.id).forEach((e) => deleteEntry(e, true));
                 }
             }
         }
-    };
+    }
     async function addPriority(name: string) {
-        await addDoc(collection(db, "priorities"), {
+        await addDoc(collection(db, 'priorities'), {
             name,
             completed: false,
+            user: user.value?.uid,
         });
-    };
+    }
     async function deletePriority(priority: Priority, force = false) {
         const nuxtApp = useNuxtApp();
         const { t } = nuxtApp.$i18n;
         const index = priorities.value.findIndex((e) => e.id === priority.id);
 
         if (force || confirm(t('Êtes vous certain de vouloir supprimer cette priorité ?'))) {
-            await deleteDoc(doc(db, "priorities", priority.id));
+            await deleteDoc(doc(db, 'priorities', priority.id));
         }
-    };
+    }
     function deleteCompletedPriorities() {
         const nuxtApp = useNuxtApp();
         const { t } = nuxtApp.$i18n;
@@ -269,7 +267,7 @@ export const useStore = defineStore('store', () => {
         } else {
             alert(t('Aucune priorité complétée à supprimer'));
         }
-    };
+    }
     // TODO
     function downloadAndReset() {
         const nuxtApp = useNuxtApp();
@@ -297,7 +295,7 @@ export const useStore = defineStore('store', () => {
             }
             priorities.value = [];
         }, 100);
-    };
+    }
 
     return {
         menuOpened,
@@ -333,5 +331,5 @@ export const useStore = defineStore('store', () => {
         deletePriority,
         deleteCompletedPriorities,
         downloadAndReset,
-    }
+    };
 });

@@ -17,15 +17,13 @@ const { $inputmask } = useNuxtApp();
 
 const props = withDefaults(
     defineProps<{
-        type: string;
-        mask: string | null;
-        modelValue: string | null;
-        placeholder: string;
+        type?: string;
+        mask?: string;
+        modelValue?: string;
+        placeholder?: string;
     }>(),
     {
         type: 'datetime',
-        mask: null,
-        modelValue: null,
         placeholder: 'HH:MM',
     },
 );

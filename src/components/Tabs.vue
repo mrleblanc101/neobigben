@@ -1,11 +1,11 @@
 <script lang="ts">
-import { useStore } from '@/stores/index';
+import { useIndexStore } from '@/stores/index';
 import { storeToRefs } from 'pinia';
 
 export default defineComponent({
     setup() {
         const slots = useSlots();
-        const store = useStore();
+        const store = useIndexStore();
         const { selectedTabIndex } = storeToRefs(store);
 
         return () => {

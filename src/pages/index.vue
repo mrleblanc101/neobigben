@@ -13,10 +13,10 @@
 
 <script lang="ts" setup>
 import { v4 as uuidv4 } from 'uuid';
-import { useStore } from '@/stores/index';
+import { useIndexStore } from '@/stores/index';
 import { storeToRefs } from 'pinia';
 
-const store = useStore();
+const store = useIndexStore();
 const { todaysEntries, canCreateEntry } = storeToRefs(store);
 
 const key = ref(uuidv4());

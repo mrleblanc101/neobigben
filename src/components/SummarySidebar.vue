@@ -142,11 +142,11 @@ import IClear from '@/assets/svg/clear.svg?component';
 import { VueDraggableNext as draggable } from 'vue-draggable-next';
 
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
-import { useStore } from '@/stores/index';
+import { useIndexStore } from '@/stores/index';
 import { storeToRefs } from 'pinia';
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const store = useStore();
+const store = useIndexStore();
 
 const { weeklySummaryByProjects, dailySummaryByProjects, menuOpened, filter, sort, sortedProjects, priorities } =
     storeToRefs(store);

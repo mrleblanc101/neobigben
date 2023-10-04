@@ -37,10 +37,10 @@
 import IArrowLeft from '@/assets/svg/arrow-left.svg?component';
 import IArrowRight from '@/assets/svg/arrow-right.svg?component';
 
-import { useStore } from '@/stores/index';
+import { useIndexStore } from '@/stores/index';
 import { storeToRefs } from 'pinia';
 
-const store = useStore();
+const store = useIndexStore();
 const { selectedDay } = storeToRefs(store);
 
 function changeDay(operation: 'next' | 'prev') {

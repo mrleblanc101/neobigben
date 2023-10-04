@@ -20,15 +20,15 @@ export default defineNuxtConfig({
 
     vuefire: {
         auth: {
-            enabled: true
+            enabled: true,
         },
         config: {
-            apiKey: "AIzaSyArKefxLB6DdSkXhewC3_EzcOplCGGhuRs",
-            authDomain: "neobigben.firebaseapp.com",
-            projectId: "neobigben",
-            storageBucket: "neobigben.appspot.com",
-            messagingSenderId: "681397227646",
-            appId: "1:681397227646:web:fdc164818213b9f80cc82f"
+            apiKey: 'AIzaSyArKefxLB6DdSkXhewC3_EzcOplCGGhuRs',
+            authDomain: 'neobigben.firebaseapp.com',
+            projectId: 'neobigben',
+            storageBucket: 'neobigben.appspot.com',
+            messagingSenderId: '681397227646',
+            appId: '1:681397227646:web:fdc164818213b9f80cc82f',
         },
     },
 
@@ -54,9 +54,6 @@ export default defineNuxtConfig({
 
     piniaPersistedstate: {
         storage: 'localStorage',
-        // cookieOptions: {
-        //     maxAge: 400 * 24 * 60 * 60, // 400 days
-        // },
     },
 
     googleFonts: {

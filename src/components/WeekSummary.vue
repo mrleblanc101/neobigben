@@ -79,7 +79,7 @@ import IEdit from '@/assets/svg/edit.svg?component';
 import IDownload from '@/assets/svg/download.svg?component';
 import ISignOut from '@/assets/svg/signout.svg?component';
 
-import { useStore } from '@/stores/index';
+import { useIndexStore } from '@/stores/index';
 import { storeToRefs } from 'pinia';
 
 import { useAuthStore } from '@/stores/auth';
@@ -87,7 +87,7 @@ const auth = useAuthStore();
 const { logout } = auth;
 const user = useCurrentUser();
 
-const store = useStore();
+const store = useIndexStore();
 const route = useRoute();
 
 const { weekSummaryColors, downloadAndReset } = store;

@@ -32,6 +32,7 @@
                 <UserMenu v-model:is_open="is_user_menu_open" />
 
                 <button
+                    v-if="user"
                     type="button"
                     class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-gray-800 dark:ring-gray-600 xl:hidden"
                     @click.stop="menuOpened = !menuOpened"
@@ -50,10 +51,10 @@ import IClose from '@/assets/svg/close.svg?component';
 import IClock from '@/assets/svg/clock.svg?component';
 import IUser from '@/assets/svg/user.svg?component';
 
-import { useStore } from '@/stores/index';
+import { useIndexStore } from '@/stores/index';
 import { storeToRefs } from 'pinia';
 
-const store = useStore();
+const store = useIndexStore();
 
 const user = useCurrentUser();
 const { weekRemaining, selectedDay, menuOpened } = storeToRefs(store);

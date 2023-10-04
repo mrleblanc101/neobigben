@@ -198,15 +198,15 @@ import linkify from 'linkify-string';
 import classes from '@/utils/MultiselectClasses';
 import Multiselect from '@vueform/multiselect';
 import { storeToRefs } from 'pinia';
-import { useStore } from '@/stores/index';
+import { useIndexStore } from '@/stores/index';
 
 const { $moment } = useNuxtApp();
 
-const store = useStore();
+const store = useIndexStore();
 const { addProject, addEntry, updateEntry, deleteEntry, toggleEntrySynced } = store;
 const { projects, selectedDay, todaysEntries } = storeToRefs(store);
 
-const props = withDefaults(defineProps<{ entry: Entry }>(), {
+const props = withDefaults(defineProps<{ entry?: Entry }>(), {
     entry: () => ({
         id: '',
         is_creating: true,
@@ -230,7 +230,7 @@ const model = ref(Object.assign({}, props.entry));
 const placeholder = ref('00:00:00');
 
 const computedDate = computed(() => {
-    return model.value.date ?? selectedDay.value;
+    return model.value.date || selectedDay.value;
 });
 
 const computedDuration = computed({
