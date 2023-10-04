@@ -126,7 +126,7 @@
         <div class="flex items-start justify-between gap-2">
             <div>
                 <label>{{ $t('Projet') }}</label>
-                <strong class="block">{{ model.project?.name }}</strong>
+                <strong class="block">{{ model.project.name }}</strong>
             </div>
             <div class="flex gap-2">
                 <button

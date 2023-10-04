@@ -1,7 +1,7 @@
 {
     "Mon objectif": "My target",
     "Total": "Total",
-    "Télécharger & réinitialiser": "Download & reset",
+    "Télécharger": "Download",
     "Projet": "Project",
     "Début": "Start",
     "Fin": "End",
@@ -34,5 +34,11 @@
     "Alphabétique": "Alphabetical",
     "Nb. d'entrées": "Nb. of entries",
     "Date de création": "Creation date",
-    "Aucune priorité complétée à supprimer": "No completed priorities to delete"
+    "Aucune priorité complétée à supprimer": "No completed priorities to delete",
+    "Connexion avec Google": "Sign In with Google",
+    "Bonjour": "Welcome",
+    "Déconnexion": "Logout",
+    "Sombre": "Dark",
+    "Clair": "Light",
+    "Système": "System"
 }
