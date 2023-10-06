@@ -27,7 +27,7 @@ export const useIndexStore = defineStore('store', () => {
     const menuOpened = ref(false);
     const selectedDay = ref(new Date().toLocaleDateString('en-CA'));
     const filter = ref('daily');
-    const selectedTabIndex = ref(0);
+    const selectedTabIndex = ref(1);
     const sort = ref('entries');
     const weekObjective = ref('40:00');
     const projects = useCollection<Project>(query(collection(db, 'projects'), where('user', '==', user.value?.uid)), {
@@ -51,6 +51,35 @@ export const useIndexStore = defineStore('store', () => {
             ssrKey: 'entries',
         },
     );
+    watch(
+        () => selectedDay.value,
+        () => {
+            entries.value = useCollection<Entry>(
+                query(
+                    collection(db, 'entries').withConverter(dateConverter),
+                    where('user', '==', user.value?.uid),
+                    where('date', '>', $moment(selectedDay.value).startOf('week').toDate()),
+                    where('date', '<', $moment(selectedDay.value).endOf('week').toDate()),
+                ),
+                {
+                    ssrKey: 'entries',
+                },
+            ).value;
+        },
+    );
+    // const entries = computed(() => {
+    //     return useCollection<Entry>(
+    //         query(
+    //             collection(db, 'entries').withConverter(dateConverter),
+    //             where('user', '==', user.value?.uid),
+    //             where('date', '>', $moment(selectedDay.value).startOf('week').toDate()),
+    //             where('date', '<', $moment(selectedDay.value).endOf('week').toDate()),
+    //         ),
+    //         {
+    //             ssrKey: 'entries',
+    //         },
+    //     ).value;
+    // });
 
     const todaysEntries = computed((): Entry[] => {
         return [...entries.value]
