@@ -1,8 +1,7 @@
 <template>
-    <AppHeader />
-    <main class="min-h-screen pt-16 flex">
+    <NuxtLayout>
         <NuxtPage />
-    </main>
+    </NuxtLayout>
 </template>
 
 <script lang="ts" setup>
@@ -23,7 +22,7 @@ useHead({
         {
             rel: 'manifest',
             href: '/neobigben/manifest.json',
-        }
+        },
     ],
     bodyAttrs: {
         class: 'antialiased overflow-x-clip text-gray-700 leading-normal bg-white dark:bg-gray-900 dark:text-gray-300',

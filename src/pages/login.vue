@@ -11,6 +11,10 @@
 </template>
 
 <script lang="ts" setup>
+definePageMeta({
+    layout: 'login',
+});
+
 defineI18nRoute({
     paths: {
         fr: '/connexion',
@@ -22,5 +26,3 @@ import { useAuthStore } from '@/stores/auth';
 const auth = useAuthStore();
 const { login } = auth;
 </script>
-
-<style lang="postcss" scoped></style>

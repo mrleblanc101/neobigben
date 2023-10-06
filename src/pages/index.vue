@@ -15,8 +15,11 @@
 import { v4 as uuidv4 } from 'uuid';
 import { useIndexStore } from '@/stores/index';
 import { storeToRefs } from 'pinia';
+import { usePendingPromises } from 'vuefire';
 
 const store = useIndexStore();
+await usePendingPromises();
+
 const { todaysEntries, canCreateEntry } = storeToRefs(store);
 
 const key = ref(uuidv4());

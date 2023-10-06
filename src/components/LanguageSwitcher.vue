@@ -5,7 +5,7 @@
         @click="setLocale(nextLocale.code)"
     >
         {{ nextLocale.name }}
-        <ILanguage class="h-5" />
+        <ILanguage class="h-5 w-5" />
     </button>
 </template>
 

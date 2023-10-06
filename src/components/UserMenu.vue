@@ -28,7 +28,7 @@
                     @click="logout"
                 >
                     {{ $t('Déconnexion') }}
-                    <ILogout class="h-5" />
+                    <ILogout class="h-5 w-5" />
                 </button>
             </div>
         </div>

@@ -10,7 +10,6 @@
             </button>
             <div class="relative flex items-center gap-1 sm:gap-2">
                 <button
-                    v-if="user"
                     type="button"
                     class="inline-flex h-10 flex-shrink-0 items-center justify-center gap-1 rounded bg-primary-500 px-2 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-gray-800 dark:ring-gray-600 md:px-3"
                     @click.stop="is_summary_open = !is_summary_open"
@@ -21,7 +20,6 @@
                 <WeekSummary v-model:is_open="is_summary_open" />
 
                 <button
-                    v-if="user"
                     type="button"
                     class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 bg-cover font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-gray-800 dark:ring-gray-600"
                     :style="{ backgroundImage: `url('${user.photoURL}')` }"
@@ -32,7 +30,6 @@
                 <UserMenu v-model:is_open="is_user_menu_open" />
 
                 <button
-                    v-if="user"
                     type="button"
                     class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-gray-800 dark:ring-gray-600 xl:hidden"
                     @click.stop="menuOpened = !menuOpened"
@@ -54,9 +51,8 @@ import IUser from '@/assets/svg/user.svg?component';
 import { useIndexStore } from '@/stores/index';
 import { storeToRefs } from 'pinia';
 
-const store = useIndexStore();
-
 const user = useCurrentUser();
+const store = useIndexStore();
 const { weekRemaining, selectedDay, menuOpened } = storeToRefs(store);
 
 const is_summary_open = ref(false);

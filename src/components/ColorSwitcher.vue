@@ -7,15 +7,15 @@
         <ColorScheme placeholder="...">
             <template v-if="colorMode.preference === 'dark'">
                 {{ $t('Sombre') }}
-                <IMoon class="h-5" />
+                <IMoon class="h-5 w-5" />
             </template>
             <template v-else-if="colorMode.preference === 'light'">
                 {{ $t('Clair') }}
-                <ISun class="h-5" />
+                <ISun class="h-5 w-5" />
             </template>
             <template v-else>
                 {{ $t('Système') }}
-                <IComputer class="h-5" />
+                <IComputer class="h-5 w-5" />
             </template>
         </ColorScheme>
     </button>

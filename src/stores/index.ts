@@ -1,12 +1,28 @@
 import { defineStore } from 'pinia';
-import { v4 as uuidv4 } from 'uuid';
 import fileSaver from 'file-saver';
 const { saveAs } = fileSaver;
-import { collection, addDoc, updateDoc, deleteDoc, doc, query, where } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, deleteDoc, doc, query, where, Timestamp } from 'firebase/firestore';
+import type { QueryDocumentSnapshot, SnapshotOptions, DocumentData } from 'firebase/firestore';
 
 export const useIndexStore = defineStore('store', () => {
     const db = useFirestore();
     const user = useCurrentUser();
+    const nuxtApp = useNuxtApp();
+    const { $moment } = nuxtApp;
+    const { t } = nuxtApp.$i18n;
+
+    const dateConverter = {
+        toFirestore(entry: Entry): DocumentData {
+            return {
+                ...entry,
+                date: $moment(entry.date, 'YYYY-MM-DD').toDate(),
+            };
+        },
+        fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): DocumentData {
+            const data = snapshot.data(options)!;
+            return { ...data, date: $moment(data.date.toDate()).format('YYYY-MM-DD') };
+        },
+    };
 
     const menuOpened = ref(false);
     const selectedDay = ref(new Date().toLocaleDateString('en-CA'));
@@ -17,18 +33,26 @@ export const useIndexStore = defineStore('store', () => {
     const projects = useCollection<Project>(query(collection(db, 'projects'), where('user', '==', user.value?.uid)), {
         ssrKey: 'projects',
     });
+
     const priorities = useCollection<Priority>(
         query(collection(db, 'priorities'), where('user', '==', user.value?.uid)),
         {
             ssrKey: 'priorities',
         },
     );
-    const entries = useCollection<Entry>(query(collection(db, 'entries'), where('user', '==', user.value?.uid)), {
-        ssrKey: 'entries',
-    });
+    const entries = useCollection<Entry>(
+        query(
+            collection(db, 'entries').withConverter(dateConverter),
+            where('user', '==', user.value?.uid),
+            where('date', '>', $moment(selectedDay.value).startOf('week').toDate()),
+            where('date', '<', $moment(selectedDay.value).endOf('week').toDate()),
+        ),
+        {
+            ssrKey: 'entries',
+        },
+    );
 
     const todaysEntries = computed((): Entry[] => {
-        const { $moment } = useNuxtApp();
         return [...entries.value]
             .sort((a, b) => {
                 const startA = $moment(a.date + ' ' + a.start_time, 'YYYY-M-D HH:mm');
@@ -38,8 +62,6 @@ export const useIndexStore = defineStore('store', () => {
             .filter((e) => $moment(selectedDay.value).isSame(e.date, 'day'));
     });
     const weekTotal = computed((): string => {
-        const { $moment } = useNuxtApp();
-
         const total = Object.values(weekSummary.value).reduce((acc: moment.Duration, day: string) => {
             acc = $moment.duration(acc).add($moment.duration(day));
             return acc;
@@ -49,15 +71,11 @@ export const useIndexStore = defineStore('store', () => {
         });
     });
     const weekRemaining = computed((): string => {
-        const { $moment } = useNuxtApp();
-
         return $moment.duration(weekObjective.value).subtract($moment.duration(weekTotal.value)).format('HH:mm', {
             trim: false,
         });
     });
     const weekSummary = computed((): Summary => {
-        const { $moment } = useNuxtApp();
-
         const weekStart = $moment(selectedDay.value).startOf('week');
         const weekEnd = $moment(selectedDay.value).endOf('week');
 
@@ -84,29 +102,7 @@ export const useIndexStore = defineStore('store', () => {
                 } as Summary,
             );
     });
-    const weekSummaryColors = computed((): Function => {
-        return (time: string): string => {
-            const { $moment } = useNuxtApp();
-
-            const isZero = $moment.duration(time).asHours() === 0;
-            const isOvertime = $moment.duration(time).asHours() >= $moment.duration(weekObjective.value).asHours() / 5;
-            const isBelow =
-                $moment.duration(time).asHours() >= $moment.duration(weekObjective.value).asHours() / 5 - 0.5;
-
-            if (isZero) {
-                return 'text-gray-400 dark:text-gray-600';
-            } else if (isOvertime) {
-                return 'text-green-500';
-            } else if (isBelow) {
-                return 'text-yellow-500';
-            } else {
-                return 'text-red-500';
-            }
-        };
-    });
     const weeklySummaryByProjects = computed((): [string, string][] => {
-        const { $moment } = useNuxtApp();
-
         const weekStart = $moment(selectedDay.value).startOf('week');
         const weekEnd = $moment(selectedDay.value).endOf('week');
 
@@ -131,8 +127,6 @@ export const useIndexStore = defineStore('store', () => {
         });
     });
     const dailySummaryByProjects = computed((): [string, string][] => {
-        const { $moment } = useNuxtApp();
-
         const projects = [...entries.value]
             .filter((e) => !e.is_creating)
             .filter((e) => $moment(e.date).isSame(selectedDay.value))
@@ -154,7 +148,7 @@ export const useIndexStore = defineStore('store', () => {
         });
     });
     const sortedProjects = computed((): [Project, number][] => {
-        const p = [...projects.value].map((p): [Project, number] => [p, projectEntriesTotal.value(p)]);
+        const p = projects.value.map((p): [Project, number] => [p, projectEntriesTotal(p)]);
         if (sort.value === 'name') {
             return p.sort((a, b) => {
                 return a[0].name.localeCompare(b[0].name);
@@ -171,9 +165,6 @@ export const useIndexStore = defineStore('store', () => {
         }
         return p;
     });
-    const projectEntriesTotal = computed((): Function => {
-        return (project: Project) => entries.value.filter((e) => e?.project?.id === project.id).length;
-    });
     const isLiveClockingEntry = computed((): boolean => {
         return !!entries.value.find((e) => e.is_live_clocking);
     });
@@ -184,10 +175,31 @@ export const useIndexStore = defineStore('store', () => {
         return !isLiveClockingEntry.value && !isCreatingEntry.value;
     });
 
+    const weekSummaryColors = (time: string): string => {
+        const isZero = $moment.duration(time).asHours() === 0;
+        const isOvertime = $moment.duration(time).asHours() >= $moment.duration(weekObjective.value).asHours() / 5;
+        const isBelow = $moment.duration(time).asHours() >= $moment.duration(weekObjective.value).asHours() / 5 - 0.5;
+
+        if (isZero) {
+            return 'text-gray-400 dark:text-gray-600';
+        } else if (isOvertime) {
+            return 'text-green-500';
+        } else if (isBelow) {
+            return 'text-yellow-500';
+        } else {
+            return 'text-red-500';
+        }
+    };
+    const projectEntriesTotal = (project: Project) => {
+        return entries.value.filter((e) => e?.project?.id === project.id).length;
+    };
+
     async function addEntry(entry: Entry) {
         await addDoc(collection(db, 'entries'), {
             ...entry,
             user: user.value?.uid,
+            project: doc(db, 'projects', entry.project.id),
+            date: $moment(entry.date).startOf('day').toDate(),
         });
     }
     async function updateEntry(entry: Entry) {
@@ -196,10 +208,6 @@ export const useIndexStore = defineStore('store', () => {
         });
     }
     async function deleteEntry(entry: Entry, force = false) {
-        const nuxtApp = useNuxtApp();
-        const { t } = nuxtApp.$i18n;
-        const index = entries.value.findIndex((e) => e.id === entry.id);
-
         if (force || confirm(t('Êtes vous certain de vouloir supprimer cette entrée ?'))) {
             await deleteDoc(doc(db, 'entries', entry.id));
         }
@@ -217,13 +225,9 @@ export const useIndexStore = defineStore('store', () => {
         return { id: project.id, name: option.name };
     }
     async function deleteProject(project: Project) {
-        const nuxtApp = useNuxtApp();
-        const { t } = nuxtApp.$i18n;
-
         if (confirm(t('Êtes vous certain de vouloir supprimer ce projet ?'))) {
-            const index = projects.value.findIndex((e) => e.id === project.id);
             await deleteDoc(doc(db, 'projects', project.id));
-            const linkedEntries = projectEntriesTotal.value(project);
+            const linkedEntries = projectEntriesTotal(project);
 
             if (linkedEntries > 0) {
                 if (
@@ -247,17 +251,11 @@ export const useIndexStore = defineStore('store', () => {
         });
     }
     async function deletePriority(priority: Priority, force = false) {
-        const nuxtApp = useNuxtApp();
-        const { t } = nuxtApp.$i18n;
-        const index = priorities.value.findIndex((e) => e.id === priority.id);
-
         if (force || confirm(t('Êtes vous certain de vouloir supprimer cette priorité ?'))) {
             await deleteDoc(doc(db, 'priorities', priority.id));
         }
     }
     function deleteCompletedPriorities() {
-        const nuxtApp = useNuxtApp();
-        const { t } = nuxtApp.$i18n;
         const completed = priorities.value.filter((p: Priority) => p.completed);
 
         if (completed.length !== 0) {
@@ -270,10 +268,6 @@ export const useIndexStore = defineStore('store', () => {
     }
     // TODO
     function downloadAndReset() {
-        const nuxtApp = useNuxtApp();
-        const { t } = nuxtApp.$i18n;
-
-        const { $moment } = useNuxtApp();
         const data = {
             entries: entries.value,
             weekSummary: weekSummary.value,
