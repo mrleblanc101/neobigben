@@ -4,7 +4,7 @@
             <TimeEntriesHeader />
             <div class="mx-auto flex w-full flex-col items-center gap-2">
                 <TimeEntry v-for="(entry, index) in todaysEntries" :key="entry.id" :entry="entry" />
-                <TimeEntry v-if="canCreateEntry" :key="key" @add="key = uuidv4()" />
+                <TimeEntry v-if="canCreateEntry" :key="key" @add="key = Date.now()" />
             </div>
         </div>
         <SummarySidebar />
@@ -12,7 +12,6 @@
 </template>
 
 <script lang="ts" setup>
-import { v4 as uuidv4 } from 'uuid';
 import { useIndexStore } from '@/stores/index';
 import { storeToRefs } from 'pinia';
 import { usePendingPromises } from 'vuefire';
@@ -22,5 +21,5 @@ await usePendingPromises();
 
 const { todaysEntries, canCreateEntry } = storeToRefs(store);
 
-const key = ref(uuidv4());
+const key = ref(Date.now());
 </script>

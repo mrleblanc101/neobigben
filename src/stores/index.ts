@@ -1,7 +1,5 @@
 import { defineStore } from 'pinia';
-import fileSaver from 'file-saver';
-const { saveAs } = fileSaver;
-import { collection, addDoc, updateDoc, deleteDoc, doc, query, where, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, deleteDoc, doc, query, where, writeBatch } from 'firebase/firestore';
 import type { QueryDocumentSnapshot, SnapshotOptions, DocumentData } from 'firebase/firestore';
 
 export const useIndexStore = defineStore('store', () => {
@@ -15,7 +13,7 @@ export const useIndexStore = defineStore('store', () => {
         toFirestore(entry: Entry): DocumentData {
             return {
                 ...entry,
-                date: $moment(entry.date, 'YYYY-MM-DD').toDate(),
+                date: $moment(entry.date).startOf('day').toDate(),
             };
         },
         fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): DocumentData {
@@ -24,8 +22,15 @@ export const useIndexStore = defineStore('store', () => {
         },
     };
 
-    const menuOpened = ref(false);
     const selectedDay = ref(new Date().toLocaleDateString('en-CA'));
+    const weekStart = computed(() => {
+        return $moment(selectedDay.value).startOf('week').toDate();
+    });
+    const weekEnd = computed(() => {
+        return $moment(selectedDay.value).endOf('week').toDate();
+    });
+
+    const menuOpened = ref(false);
     const filter = ref('daily');
     const selectedTabIndex = ref(1);
     const sort = ref('entries');
@@ -40,46 +45,42 @@ export const useIndexStore = defineStore('store', () => {
             ssrKey: 'priorities',
         },
     );
+    // const entries = useCollection<Entry>(
+    //     () =>
+    //         query(
+    //             collection(db, 'entries').withConverter(dateConverter),
+    //             where('user', '==', user.value?.uid),
+    //             where('date', '>', weekStart.value),
+    //             where('date', '<', weekEnd.value),
+    //         ),
+    //     {
+    //         ssrKey: 'entries',
+    //     },
+    // );
     const entries = useCollection<Entry>(
         query(
             collection(db, 'entries').withConverter(dateConverter),
             where('user', '==', user.value?.uid),
-            where('date', '>', $moment(selectedDay.value).startOf('week').toDate()),
-            where('date', '<', $moment(selectedDay.value).endOf('week').toDate()),
+            where('date', '>', weekStart.value),
+            where('date', '<', weekEnd.value),
         ),
         {
             ssrKey: 'entries',
         },
     );
-    watch(
-        () => selectedDay.value,
-        () => {
-            entries.value = useCollection<Entry>(
-                query(
-                    collection(db, 'entries').withConverter(dateConverter),
-                    where('user', '==', user.value?.uid),
-                    where('date', '>', $moment(selectedDay.value).startOf('week').toDate()),
-                    where('date', '<', $moment(selectedDay.value).endOf('week').toDate()),
-                ),
-                {
-                    ssrKey: 'entries',
-                },
-            ).value;
-        },
-    );
-    // const entries = computed(() => {
-    //     return useCollection<Entry>(
-    //         query(
-    //             collection(db, 'entries').withConverter(dateConverter),
-    //             where('user', '==', user.value?.uid),
-    //             where('date', '>', $moment(selectedDay.value).startOf('week').toDate()),
-    //             where('date', '<', $moment(selectedDay.value).endOf('week').toDate()),
-    //         ),
-    //         {
-    //             ssrKey: 'entries',
-    //         },
-    //     ).value;
-    // });
+    watch(selectedDay, () => {
+        entries.value = useCollection<Entry>(
+            query(
+                collection(db, 'entries').withConverter(dateConverter),
+                where('user', '==', user.value?.uid),
+                where('date', '>', weekStart.value),
+                where('date', '<', weekEnd.value),
+            ),
+            {
+                ssrKey: 'entries',
+            },
+        ).value;
+    });
 
     const todaysEntries = computed((): Entry[] => {
         return [...entries.value]
@@ -224,11 +225,10 @@ export const useIndexStore = defineStore('store', () => {
     };
 
     async function addEntry(entry: Entry) {
-        await addDoc(collection(db, 'entries'), {
+        await addDoc(collection(db, 'entries').withConverter(dateConverter), {
             ...entry,
             user: user.value?.uid,
             project: doc(db, 'projects', entry.project.id),
-            date: $moment(entry.date).startOf('day').toDate(),
         });
     }
     async function updateEntry(entry: Entry) {
@@ -255,20 +255,34 @@ export const useIndexStore = defineStore('store', () => {
     }
     async function deleteProject(project: Project) {
         if (confirm(t('Êtes vous certain de vouloir supprimer ce projet ?'))) {
-            await deleteDoc(doc(db, 'projects', project.id));
-            const linkedEntries = projectEntriesTotal(project);
-
-            if (linkedEntries > 0) {
+            const projectRef = doc(db, 'projects', project.id);
+            const { promise: linkedEntriesPromise } = await useCollection<Entry>(
+                query(collection(db, 'entries'), where('project', '==', projectRef)),
+                {
+                    once: true,
+                    wait: true,
+                    ssrKey: 'projectEntries',
+                },
+            );
+            const batch = writeBatch(db);
+            const linkedEntries = await linkedEntriesPromise.value;
+            if (linkedEntries.length > 0) {
                 if (
                     confirm(
                         t(
-                            "Voulez-vous supprimer l'entrée reliée ? | Voulez-vous supprimer les {n} entrées reliées ?",
-                            linkedEntries,
+                            "Cela entrainera la supression de l'entrée liée, êtes-vous certain de vouloir continuer ? | Cela entrainera la supression des {n} entrées liées, êtes-vous certain de vouloir continuer ?",
+                            linkedEntries.length,
                         ),
                     )
                 ) {
-                    entries.value.filter((e) => e.project.id === project.id).forEach((e) => deleteEntry(e, true));
+                    linkedEntries.forEach((entry) => {
+                        batch.delete(doc(db, 'entries', entry.id));
+                    });
+                    await batch.commit();
+                    await deleteDoc(projectRef);
                 }
+            } else {
+                await deleteDoc(projectRef);
             }
         }
     }
@@ -295,30 +309,6 @@ export const useIndexStore = defineStore('store', () => {
             alert(t('Aucune priorité complétée à supprimer'));
         }
     }
-    // TODO
-    function downloadAndReset() {
-        const data = {
-            entries: entries.value,
-            weekSummary: weekSummary.value,
-            weekTotal: weekTotal.value,
-        };
-
-        var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        saveAs(blob, `semaine-${$moment(selectedDay.value).week()}.json`);
-
-        setTimeout(() => {
-            if (
-                confirm(
-                    t(
-                        'Voulez-vous réinitialisé votre feuille de temps ? Ceci remettera à zero votre entrées de temps, mais conservera vos projets.',
-                    ),
-                )
-            ) {
-                entries.value = [];
-            }
-            priorities.value = [];
-        }, 100);
-    }
 
     return {
         menuOpened,
@@ -331,6 +321,8 @@ export const useIndexStore = defineStore('store', () => {
         entries,
         priorities,
         //
+        weekStart,
+        weekEnd,
         todaysEntries,
         weekTotal,
         weekRemaining,
@@ -353,6 +345,5 @@ export const useIndexStore = defineStore('store', () => {
         addPriority,
         deletePriority,
         deleteCompletedPriorities,
-        downloadAndReset,
     };
 });

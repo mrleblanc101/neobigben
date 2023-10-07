@@ -61,14 +61,6 @@
                     </div>
                 </div>
             </div>
-            <button
-                class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded bg-primary-500 px-3 py-2 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-900 dark:ring-gray-600"
-                type="button"
-                @click="onDownload"
-            >
-                {{ $t('Télécharger') }}
-                <IDownload class="w-5 shrink-0" />
-            </button>
         </div>
     </Transition>
 </template>
@@ -76,8 +68,6 @@
 <script lang="ts" setup>
 import ISave from '@/assets/svg/save.svg?component';
 import IEdit from '@/assets/svg/edit.svg?component';
-import IDownload from '@/assets/svg/download.svg?component';
-import ISignOut from '@/assets/svg/signout.svg?component';
 
 import { useIndexStore } from '@/stores/index';
 import { storeToRefs } from 'pinia';
@@ -90,7 +80,7 @@ const user = useCurrentUser();
 const store = useIndexStore();
 const route = useRoute();
 
-const { weekSummaryColors, downloadAndReset } = store;
+const { weekSummaryColors } = store;
 const { weekSummary, weekObjective, weekTotal } = storeToRefs(store);
 
 const is_editing = ref(false);
@@ -115,10 +105,6 @@ watch(
 function onSave() {
     is_editing.value = false;
     weekObjective.value = objective.value;
-}
-function onDownload() {
-    emit('update:is_open', false);
-    downloadAndReset();
 }
 function onClickOutside() {
     emit('update:is_open', false);

@@ -17,7 +17,6 @@
         "@types/file-saver": "^2.0.5",
         "@types/inputmask": "^5.0.3",
         "@types/moment-duration-format": "^2.2.3",
-        "@types/uuid": "^9.0.0",
         "@vueuse/components": "^10.3.0",
         "@vueuse/core": "^10.3.0",
         "@vueuse/nuxt": "^10.3.0",
@@ -32,7 +31,6 @@
         "@tailwindcss/forms": "^0.5.3",
         "@types/node": "^20.5.0",
         "@vueform/multiselect": "^2.5.8",
-        "file-saver": "^2.0.5",
         "firebase": "^10.4.0",
         "inputmask": "^5.0.7",
         "linkify-string": "^4.1.0",
@@ -40,7 +38,6 @@
         "moment": "^2.29.4",
         "moment-duration-format": "^2.3.2",
         "nuxt-vuefire": "^0.4.0",
-        "uuid": "^9.0.0",
         "vue-draggable-next": "^2.1.1",
         "vuefire": "^3.1.17"
     }
