@@ -37,7 +37,6 @@
                 <div class="mb-2 flex items-center justify-end gap-2">
                     <span class="text-xs font-bold uppercase tracking-wide opacity-60">{{ $t('Tri') }}</span>
                     <select v-model="sort" class="form-control form-select-bordered form-select pr-12">
-                        <option value="entries">{{ $t("Nb. d'entrées") }}</option>
                         <option value="name">{{ $t('Alphabétique') }}</option>
                         <option value="creation">{{ $t('Date de création') }}</option>
                     </select>
@@ -45,14 +44,11 @@
 
                 <div
                     v-if="sortedProjects && sortedProjects.length"
-                    v-for="[project, entries] in sortedProjects"
+                    v-for="[project] in sortedProjects"
                     :key="project.id"
                     class="relative flex w-full items-center justify-between gap-4 rounded bg-gray-100 p-4 pr-16 dark:bg-gray-800"
                 >
                     <span class="font-bold">{{ project.name }}</span>
-                    <span class="shrink-0 text-xs font-bold opacity-60">
-                        {{ $t('Aucune entrée | {n} entrée | {n} entrées', entries) }}
-                    </span>
                     <button
                         type="button"
                         class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 dark:text-gray-800 dark:ring-gray-600"

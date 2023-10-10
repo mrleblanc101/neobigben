@@ -43,6 +43,7 @@
         </div>
         <div>
             <label>{{ $t('Projet') }}<span class="text-red-500">*</span></label>
+            <!-- TODO: Fix type error in @create -->
             <Multiselect
                 v-model="model.project"
                 :options="projects"
@@ -57,14 +58,12 @@
                 createOption
                 @create="addProject"
             />
-            <!-- TODO: Fix Type here -->
         </div>
         <div>
             <label>{{ $t('Description') }}</label>
             <textarea
                 v-model="model.description"
-                class="form-control form-input-bordered form-input block h-auto w-full py-3"
-                style="form-sizing: normal"
+                class="form-control form-input-bordered form-input block h-auto w-full py-3 [form-sizing:content]"
                 rows="2"
                 :placeholder="`${$t('Description')}...`"
             ></textarea>
@@ -208,7 +207,6 @@ const { projects, selectedDay, todaysEntries } = storeToRefs(store);
 
 const props = withDefaults(defineProps<{ entry?: Entry }>(), {
     entry: () => ({
-        id: '',
         is_creating: true,
         is_editing: false,
         is_synced: false,
@@ -226,7 +224,7 @@ const emit = defineEmits<{
     (e: 'add'): void;
 }>();
 
-const model = ref(Object.assign({}, props.entry));
+const model = ref(JSON.parse(JSON.stringify(props.entry)));
 const placeholder = ref('00:00:00');
 
 const computedDate = computed(() => {
@@ -381,7 +379,7 @@ function start() {
 function stop() {
     model.value.end_time = model.value.end_time || $moment().format('HH:mm');
     model.value.is_live_clocking = false;
-    updateEntry(model.value);
+    updateEntry(model.value, props.entry);
 }
 
 function add() {
@@ -393,7 +391,7 @@ function add() {
 function edit() {
     model.value.is_creating = false;
     model.value.is_editing = false;
-    updateEntry(model.value);
+    updateEntry(model.value, props.entry);
 }
 
 function cancel() {

@@ -1,11 +1,11 @@
 type Entry = {
-    readonly id: string;
+    id?: Nullable<string>;
     project: Nullable<Project>;
     is_live_clocking: boolean;
     is_creating: boolean;
     is_editing: boolean;
     is_synced: boolean;
-    date: string;
+    date: Nullable<Date>;
     start_time: string;
     end_time: string;
     duration: string;
