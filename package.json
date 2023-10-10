@@ -13,7 +13,6 @@
         "@nuxtjs/google-fonts": "^3.0.0-1",
         "@nuxtjs/i18n": "^8.0.0-beta.9",
         "@nuxtjs/tailwindcss": "^6.2.0",
-        "@pinia-plugin-persistedstate/nuxt": "^1.0.0",
         "@types/inputmask": "^5.0.3",
         "@types/moment-duration-format": "^2.2.3",
         "@vueuse/components": "^10.3.0",

@@ -13,7 +13,6 @@ export default defineNuxtConfig({
         '@nuxtjs/color-mode',
         '@nuxtjs/google-fonts',
         '@pinia/nuxt',
-        '@pinia-plugin-persistedstate/nuxt',
         '@vueuse/nuxt',
         'nuxt-vuefire',
     ],

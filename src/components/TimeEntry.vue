@@ -224,7 +224,7 @@ const emit = defineEmits<{
     (e: 'add'): void;
 }>();
 
-const model = ref(JSON.parse(JSON.stringify(props.entry)));
+const model = ref(Object.create(null, Object.getOwnPropertyDescriptors(props.entry)));
 const placeholder = ref('00:00:00');
 
 const computedDate = computed(() => {
@@ -379,7 +379,7 @@ function start() {
 function stop() {
     model.value.end_time = model.value.end_time || $moment().format('HH:mm');
     model.value.is_live_clocking = false;
-    updateEntry(model.value, props.entry);
+    updateEntry(model.value);
 }
 
 function add() {
@@ -391,7 +391,7 @@ function add() {
 function edit() {
     model.value.is_creating = false;
     model.value.is_editing = false;
-    updateEntry(model.value, props.entry);
+    updateEntry(model.value);
 }
 
 function cancel() {
