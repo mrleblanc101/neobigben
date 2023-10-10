@@ -28,7 +28,7 @@ export const useIndexStore = defineStore('store', () => {
     const selectedDay = useLocalStorage('selectedDay', ref(new Date().toLocaleDateString('en-CA')));
     const filter = useLocalStorage('filter', ref('daily'));
     const selectedTabIndex = useLocalStorage('selectedTabIndex', ref(0));
-    const sort = useLocalStorage('entries', ref('entries'));
+    const sort = useLocalStorage('entries', ref('name'));
     const weekObjective = useLocalStorage('weekObjective', ref('40:00'));
     const menuOpened = ref(false);
 
