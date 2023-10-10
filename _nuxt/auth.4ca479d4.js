@@ -1,0 +1,1 @@
+import{as as s,ag as u,at as o,au as i,n as a,av as h}from"./entry.a3794ae4.js";const r=new s,c=u("auth",()=>{function n(){const t=o();i(t,r).then(()=>{a({path:"/"})})}function e(){const t=o();h(t).then(()=>{a({path:"/login"})})}return{login:n,logout:e}});export{c as u};
