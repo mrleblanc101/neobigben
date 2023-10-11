@@ -8,30 +8,21 @@ import { useIndexStore } from '@/stores/index';
 export const useAuthStore = defineStore('auth', () => {
     async function login() {
         const auth = useFirebaseAuth()!;
-        const localeRoute = useLocaleRoute();
+        const localePath = useLocalePath();
 
         await signInWithPopup(auth, googleAuthProvider);
         return navigateTo(
-            localeRoute({
+            localePath({
                 name: 'index',
             }),
         );
     }
     async function logout() {
-        const auth = useFirebaseAuth()!;
-        const localeRoute = useLocaleRoute();
-        const store = useIndexStore();
+        const localePath = useLocalePath();
 
-        await navigateTo(
-            localeRoute({
-                name: 'logout',
-            }),
-        );
-        store.$reset();
-        await signOut(auth);
         return navigateTo(
-            localeRoute({
-                name: 'login',
+            localePath({
+                name: 'logout',
             }),
         );
     }

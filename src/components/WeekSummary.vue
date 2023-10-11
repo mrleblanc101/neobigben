@@ -74,8 +74,6 @@ import { storeToRefs } from 'pinia';
 
 import { useAuthStore } from '@/stores/auth';
 const auth = useAuthStore();
-const { logout } = auth;
-const user = useCurrentUser();
 
 const store = useIndexStore();
 const route = useRoute();

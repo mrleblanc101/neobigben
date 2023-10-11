@@ -25,7 +25,7 @@ export const useIndexStore = defineStore('store', () => {
         },
     };
 
-    const selectedDay = useLocalStorage('selectedDay', ref(new Date().toLocaleDateString('en-CA')));
+    const selectedDay = ref(new Date().toLocaleDateString('en-CA'));
     const filter = useLocalStorage('filter', ref('daily'));
     const selectedTabIndex = useLocalStorage('selectedTabIndex', ref(0));
     const sort = useLocalStorage('sort', ref('name'));
@@ -38,23 +38,28 @@ export const useIndexStore = defineStore('store', () => {
     const weekEnd = computed(() => {
         return $moment(selectedDay.value).endOf('week').toDate();
     });
-    const projects = useCollection<Project>(query(collection(db, 'projects'), where('user', '==', user.value?.uid)), {
-        ssrKey: 'projects',
-    });
+    const projects = useCollection<Project>(
+        user.value ? query(collection(db, 'projects'), where('user', '==', user.value?.uid)) : null,
+        {
+            ssrKey: 'projects',
+        },
+    );
     const priorities = useCollection<Priority>(
-        query(collection(db, 'priorities'), where('user', '==', user.value?.uid)),
+        user.value ? query(collection(db, 'priorities'), where('user', '==', user.value?.uid)) : null,
         {
             ssrKey: 'priorities',
         },
     );
     const entries = useCollection<Entry>(
         computed(() =>
-            query(
-                collection(db, 'entries').withConverter(dateConverter),
-                where('user', '==', user.value?.uid),
-                where('date', '>=', weekStart.value),
-                where('date', '<=', weekEnd.value),
-            ),
+            user.value
+                ? query(
+                      collection(db, 'entries').withConverter(dateConverter),
+                      where('user', '==', user.value?.uid),
+                      where('date', '>=', weekStart.value),
+                      where('date', '<=', weekEnd.value),
+                  )
+                : null,
         ),
         {
             ssrKey: 'entries',
@@ -87,7 +92,6 @@ export const useIndexStore = defineStore('store', () => {
     const weekSummary = computed((): Summary => {
         return entries.value
             .filter((e) => !e.is_creating)
-            .filter((e) => $moment(e.date).isBetween(weekStart.value, weekEnd.value, 'day', '[]'))
             .reduce(
                 (acc: Summary, e: Entry) => {
                     const day = $moment(e.date).locale('en').format('dddd').toLowerCase() as keyof Summary;
@@ -111,7 +115,6 @@ export const useIndexStore = defineStore('store', () => {
     const weeklySummaryByProjects = computed((): [string, string][] => {
         const projects = [...entries.value]
             .filter((e) => !e.is_creating)
-            // .filter((e) => $moment(e.date).isBetween(weekStart, weekEnd, 'day', '[]'))
             .reduce((acc: { [key: string]: string }, e: Entry) => {
                 const project = e.project;
 
@@ -193,13 +196,13 @@ export const useIndexStore = defineStore('store', () => {
         await addDoc(collection(db, 'entries').withConverter(dateConverter), {
             ...entry,
             user: user.value?.uid,
-            project: doc(db, 'projects', entry.project.id),
+            project: entry.project?.id ? doc(db, 'projects', entry.project.id) : null,
         });
     }
     async function updateEntry(entry: Entry) {
         await updateDoc(doc(db, 'entries', entry.id), {
             ...entry,
-            project: doc(db, 'projects', entry.project.id),
+            project: entry.project?.id ? doc(db, 'projects', entry.project.id) : null,
             date: $moment(entry.date).startOf('day').toDate(),
         });
     }
@@ -284,6 +287,7 @@ export const useIndexStore = defineStore('store', () => {
 
     return {
         // state
+        user,
         menuOpened,
         selectedDay,
         filter,

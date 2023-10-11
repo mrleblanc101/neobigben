@@ -5,6 +5,9 @@
 </template>
 
 <script lang="ts" setup>
+import { signOut } from 'firebase/auth';
+import { useIndexStore } from '@/stores/index';
+
 definePageMeta({
     layout: 'login',
 });
@@ -14,5 +17,20 @@ defineI18nRoute({
         fr: '/deconnexion',
         en: '/logout',
     },
+});
+
+const auth = useFirebaseAuth()!;
+const store = useIndexStore();
+const localePath = useLocalePath();
+
+onMounted(async () => {
+    await nextTick();
+    await signOut(auth);
+    store.$reset();
+    navigateTo(
+        localePath({
+            name: 'login',
+        }),
+    );
 });
 </script>
