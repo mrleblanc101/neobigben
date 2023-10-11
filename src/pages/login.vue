@@ -13,6 +13,7 @@
 <script lang="ts" setup>
 definePageMeta({
     layout: 'login',
+    auth: 'guest',
 });
 
 defineI18nRoute({

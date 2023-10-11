@@ -37,5 +37,6 @@
     "Déconnexion": "Logout",
     "Sombre": "Dark",
     "Clair": "Light",
-    "Système": "System"
+    "Système": "System",
+    "Déconnexion...": "Loggin out..."
 }

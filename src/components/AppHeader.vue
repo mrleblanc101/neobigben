@@ -22,10 +22,10 @@
                 <button
                     type="button"
                     class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 bg-cover font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-gray-800 dark:ring-gray-600"
-                    :style="{ backgroundImage: `url('${user.photoURL}')` }"
+                    :style="{ backgroundImage: `url('${user?.photoURL}')` }"
                     @click.stop="is_user_menu_open = !is_user_menu_open"
                 >
-                    <IUser v-if="!user.photoURL" class="h-6" />
+                    <IUser v-if="!user?.photoURL" class="h-6" />
                 </button>
                 <UserMenu v-model:is_open="is_user_menu_open" />
 

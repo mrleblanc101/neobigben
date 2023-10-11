@@ -3,24 +3,37 @@ import { GoogleAuthProvider } from 'firebase/auth';
 export const googleAuthProvider = new GoogleAuthProvider();
 import { signInWithPopup, signOut } from 'firebase/auth';
 import { useFirebaseAuth } from 'vuefire';
+import { useIndexStore } from '@/stores/index';
 
 export const useAuthStore = defineStore('auth', () => {
-    function login() {
+    async function login() {
         const auth = useFirebaseAuth()!;
+        const localeRoute = useLocaleRoute();
 
-        signInWithPopup(auth, googleAuthProvider).then(() => {
-            navigateTo({
-                path: '/',
-            });
-        });
+        await signInWithPopup(auth, googleAuthProvider);
+        return navigateTo(
+            localeRoute({
+                name: 'index',
+            }),
+        );
     }
-    function logout() {
+    async function logout() {
         const auth = useFirebaseAuth()!;
-        signOut(auth).then(() => {
-            navigateTo({
-                path: '/login',
-            });
-        });
+        const localeRoute = useLocaleRoute();
+        const store = useIndexStore();
+
+        await navigateTo(
+            localeRoute({
+                name: 'logout',
+            }),
+        );
+        store.$reset();
+        await signOut(auth);
+        return navigateTo(
+            localeRoute({
+                name: 'login',
+            }),
+        );
     }
 
     return {

@@ -367,31 +367,31 @@ function onSave() {
     }
 }
 
-function start() {
+async function start() {
     if (!model.value.start_time) {
         model.value.start_time = $moment().format('HH:mm');
     }
     model.value.is_live_clocking = true;
     startTimer();
-    commitEntry(model.value);
+    await commitEntry(model.value);
 }
 
-function stop() {
+async function stop() {
     model.value.end_time = model.value.end_time || $moment().format('HH:mm');
     model.value.is_live_clocking = false;
-    updateEntry(model.value);
+    await updateEntry(model.value);
 }
 
-function add() {
+async function add() {
     model.value.is_creating = false;
-    commitEntry(model.value);
+    await commitEntry(model.value);
     emit('add');
 }
 
-function edit() {
+async function edit() {
     model.value.is_creating = false;
     model.value.is_editing = false;
-    updateEntry(model.value);
+    await updateEntry(model.value);
 }
 
 function cancel() {

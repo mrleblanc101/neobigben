@@ -276,6 +276,11 @@ export const useIndexStore = defineStore('store', () => {
             alert(t('Aucune priorité complétée à supprimer'));
         }
     }
+    function $reset() {
+        projects.value = [];
+        priorities.value = [];
+        entries.value = [];
+    }
 
     return {
         // state
@@ -313,5 +318,6 @@ export const useIndexStore = defineStore('store', () => {
         addPriority,
         deletePriority,
         deleteCompletedPriorities,
+        $reset,
     };
 });
