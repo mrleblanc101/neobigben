@@ -17,15 +17,15 @@
                     <div>
                         <div class="text-xs font-bold uppercase opacity-80">{{ $t('Mon objectif') }}</div>
                         <div v-if="!is_editing" class="mt-1 block text-3xl font-bold tabular-nums">
-                            {{ weekObjective }}
+                            {{ weekTarget }}
                         </div>
-                        <TimeInput v-else class="mt-1" v-model="objective" mask="99:99" />
+                        <TimeInput v-else class="mt-1" v-model="target" mask="99:99" />
                     </div>
                     <button
                         v-if="!is_editing"
                         type="button"
                         class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-gray-800 dark:ring-gray-600"
-                        @click="is_editing = true"
+                        @click="onEdit"
                     >
                         <IEdit class="h-5" />
                     </button>
@@ -79,10 +79,10 @@ const store = useIndexStore();
 const route = useRoute();
 
 const { weekSummaryColors } = store;
-const { weekSummary, weekObjective, weekTotal } = storeToRefs(store);
+const { weekSummary, weekTarget, weekTotal } = storeToRefs(store);
 
 const is_editing = ref(false);
-const objective = ref(weekObjective.value);
+const target = ref('');
 
 const props = withDefaults(
     defineProps<{
@@ -100,9 +100,13 @@ watch(
         emit('update:is_open', false);
     },
 );
-function onSave() {
+function onEdit() {
+    is_editing.value = true;
+    target.value = weekTarget.value;
+}
+async function onSave() {
+    await store.updateWeekTarget(target.value);
     is_editing.value = false;
-    weekObjective.value = objective.value;
 }
 function onClickOutside() {
     emit('update:is_open', false);

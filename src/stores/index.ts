@@ -1,7 +1,19 @@
 import { defineStore } from 'pinia';
-import { collection, addDoc, updateDoc, deleteDoc, doc, query, where, writeBatch } from 'firebase/firestore';
+import {
+    collection,
+    addDoc,
+    updateDoc,
+    deleteDoc,
+    doc,
+    query,
+    where,
+    writeBatch,
+    getDoc,
+    setDoc,
+} from 'firebase/firestore';
 import type { QueryDocumentSnapshot, SnapshotOptions, DocumentData } from 'firebase/firestore';
 import { firestoreDefaultConverter } from 'vuefire';
+import type { UserCredential } from 'firebase/auth';
 
 export const useIndexStore = defineStore('store', () => {
     const db = useFirestore();
@@ -29,8 +41,11 @@ export const useIndexStore = defineStore('store', () => {
     const filter = useLocalStorage('filter', ref('daily'));
     const selectedTabIndex = useLocalStorage('selectedTabIndex', ref(0));
     const sort = useLocalStorage('sort', ref('name'));
-    const weekObjective = useLocalStorage('weekObjective', ref('40:00'));
+    const userInfo = useDocument(
+        computed(() => (user.value?.uid ? doc(collection(db, 'users'), user.value.uid) : null)),
+    );
     const menuOpened = ref(false);
+    const weekTarget = computed(() => userInfo.value?.weekTarget || '40:00');
 
     const weekStart = computed(() => {
         return $moment(selectedDay.value).startOf('week').toDate();
@@ -39,14 +54,16 @@ export const useIndexStore = defineStore('store', () => {
         return $moment(selectedDay.value).endOf('week').toDate();
     });
     const projects = useCollection<Project>(
-        computed(() => (user.value ? query(collection(db, 'projects'), where('user', '==', user.value?.uid)) : null)),
+        computed(() => (user.value ? query(collection(db, 'projects'), where('user', '==', user.value.uid)) : null)),
         {
+            wait: true,
             ssrKey: 'projects',
         },
     );
     const priorities = useCollection<Priority>(
-        computed(() => (user.value ? query(collection(db, 'priorities'), where('user', '==', user.value?.uid)) : null)),
+        computed(() => (user.value ? query(collection(db, 'priorities'), where('user', '==', user.value.uid)) : null)),
         {
+            wait: true,
             ssrKey: 'priorities',
         },
     );
@@ -55,13 +72,14 @@ export const useIndexStore = defineStore('store', () => {
             user.value
                 ? query(
                       collection(db, 'entries').withConverter(dateConverter),
-                      where('user', '==', user.value?.uid),
+                      where('user', '==', user.value.uid),
                       where('date', '>=', weekStart.value),
                       where('date', '<=', weekEnd.value),
                   )
                 : null,
         ),
         {
+            wait: true,
             ssrKey: 'entries',
         },
     );
@@ -85,7 +103,7 @@ export const useIndexStore = defineStore('store', () => {
         });
     });
     const weekRemaining = computed((): string => {
-        return $moment.duration(weekObjective.value).subtract($moment.duration(weekTotal.value)).format('HH:mm', {
+        return $moment.duration(weekTarget.value).subtract($moment.duration(weekTotal.value)).format('HH:mm', {
             trim: false,
         });
     });
@@ -175,12 +193,15 @@ export const useIndexStore = defineStore('store', () => {
 
     const weekSummaryColors = (time: string): string => {
         const isZero = $moment.duration(time).asHours() === 0;
-        const isOvertime = $moment.duration(time).asHours() >= $moment.duration(weekObjective.value).asHours() / 5;
-        const isBelow = $moment.duration(time).asHours() >= $moment.duration(weekObjective.value).asHours() / 5 - 0.5;
+        const isGoal = $moment.duration(time).asHours() === $moment.duration(weekTarget.value).asHours() / 5;
+        const isOvertime = $moment.duration(time).asHours() > $moment.duration(weekTarget.value).asHours() / 5;
+        const isBelow = $moment.duration(time).asHours() >= $moment.duration(weekTarget.value).asHours() / 5 - 0.5;
 
         if (isZero) {
             return 'text-gray-400 dark:text-gray-600';
         } else if (isOvertime) {
+            return 'text-lime-500';
+        } else if (isGoal) {
             return 'text-green-500';
         } else if (isBelow) {
             return 'text-yellow-500';
@@ -195,7 +216,7 @@ export const useIndexStore = defineStore('store', () => {
     async function addEntry(entry: Entry) {
         await addDoc(collection(db, 'entries').withConverter(dateConverter), {
             ...entry,
-            user: user.value?.uid,
+            user: user.value!.uid,
             project: entry.project?.id ? doc(db, 'projects', entry.project.id) : null,
         });
     }
@@ -219,7 +240,7 @@ export const useIndexStore = defineStore('store', () => {
     async function addProject(option: Project) {
         const project = await addDoc(collection(db, 'projects'), {
             name: option.name,
-            user: user.value?.uid,
+            user: user.value!.uid,
         });
         return { id: project.id, name: option.name };
     }
@@ -260,7 +281,7 @@ export const useIndexStore = defineStore('store', () => {
         await addDoc(collection(db, 'priorities'), {
             name,
             completed: false,
-            user: user.value?.uid,
+            user: user.value!.uid,
         });
     }
     async function deletePriority(priority: Priority, force = false) {
@@ -279,10 +300,25 @@ export const useIndexStore = defineStore('store', () => {
             alert(t('Aucune priorité complétée à supprimer'));
         }
     }
+    async function createUserInfo(result: UserCredential) {
+        const docRef = doc(db, 'users', result.user.uid);
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) {
+            await setDoc(docRef, {
+                weekTarget: '40:00',
+            });
+        }
+    }
+    async function updateWeekTarget(weekTarget: string) {
+        await updateDoc(doc(db, 'users', user.value!.uid), {
+            weekTarget,
+        });
+    }
     function $reset() {
         projects.value = [];
         priorities.value = [];
         entries.value = [];
+        userInfo.value = {};
     }
 
     return {
@@ -293,11 +329,12 @@ export const useIndexStore = defineStore('store', () => {
         filter,
         selectedTabIndex,
         sort,
-        weekObjective,
+        userInfo,
         projects,
         entries,
         priorities,
         // getters
+        weekTarget,
         weekStart,
         weekEnd,
         todaysEntries,
@@ -322,6 +359,8 @@ export const useIndexStore = defineStore('store', () => {
         addPriority,
         deletePriority,
         deleteCompletedPriorities,
+        createUserInfo,
+        updateWeekTarget,
         $reset,
     };
 });

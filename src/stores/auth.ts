@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { GoogleAuthProvider } from 'firebase/auth';
 export const googleAuthProvider = new GoogleAuthProvider();
-import { signInWithPopup, signOut } from 'firebase/auth';
+import { signInWithPopup } from 'firebase/auth';
 import { useFirebaseAuth } from 'vuefire';
 import { useIndexStore } from '@/stores/index';
 
@@ -10,12 +10,15 @@ export const useAuthStore = defineStore('auth', () => {
         const auth = useFirebaseAuth()!;
         const localePath = useLocalePath();
 
-        await signInWithPopup(auth, googleAuthProvider);
-        return navigateTo(
-            localePath({
-                name: 'index',
-            }),
-        );
+        return signInWithPopup(auth, googleAuthProvider).then(async (result) => {
+            const store = useIndexStore();
+            await store.createUserInfo(result);
+            navigateTo(
+                localePath({
+                    name: 'index',
+                }),
+            );
+        });
     }
     async function logout() {
         const localePath = useLocalePath();
