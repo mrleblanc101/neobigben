@@ -39,13 +39,13 @@ export const useIndexStore = defineStore('store', () => {
         return $moment(selectedDay.value).endOf('week').toDate();
     });
     const projects = useCollection<Project>(
-        user.value ? query(collection(db, 'projects'), where('user', '==', user.value?.uid)) : null,
+        computed(() => (user.value ? query(collection(db, 'projects'), where('user', '==', user.value?.uid)) : null)),
         {
             ssrKey: 'projects',
         },
     );
     const priorities = useCollection<Priority>(
-        user.value ? query(collection(db, 'priorities'), where('user', '==', user.value?.uid)) : null,
+        computed(() => (user.value ? query(collection(db, 'priorities'), where('user', '==', user.value?.uid)) : null)),
         {
             ssrKey: 'priorities',
         },

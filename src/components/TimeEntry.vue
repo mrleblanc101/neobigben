@@ -224,7 +224,15 @@ const emit = defineEmits<{
     (e: 'add'): void;
 }>();
 
-const model = ref(Object.create(null, Object.getOwnPropertyDescriptors(props.entry)));
+const model = ref();
+watch(
+    () => props.entry.project,
+    () => {
+        model.value = Object.create(null, Object.getOwnPropertyDescriptors(props.entry));
+    },
+    { immediate: true },
+);
+
 const placeholder = ref('00:00:00');
 
 const computedDate = computed(() => {
