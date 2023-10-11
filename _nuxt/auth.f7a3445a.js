@@ -1,0 +1,1 @@
+import{aa as u,ab as c,a2 as i,a3 as t,ac as h,n as e}from"./entry.2efdeb07.js";import{u as l}from"./index.bafef1ea.js";const g=new u,d=c("auth",()=>{async function a(){const o=i(),s=t();return h(o,g).then(async r=>{await l().createUserInfo(r),e(s({name:"index"}))})}async function n(){const o=t();return e(o({name:"logout"}))}return{login:a,logout:n}});export{d as u};
