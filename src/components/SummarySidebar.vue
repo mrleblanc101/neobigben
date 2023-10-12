@@ -7,7 +7,7 @@
     >
         <Tabs
             v-if="isXlOrGreater || menuOpened"
-            class="fixed bottom-0 right-0 top-16 z-30 flex w-full shrink-0 flex-col border-l bg-white shadow-lg dark:border-gray-800 dark:bg-gray-900 sm:w-[28rem] xl:shadow-none"
+            class="fixed bottom-0 right-0 top-16 z-30 flex w-full shrink-0 flex-col border-l bg-stone-50 shadow-lg dark:border-gray-800 dark:bg-gray-900 sm:w-[28rem] xl:shadow-none"
             v-on-click-outside.bubble="onClickOutside"
         >
             <Tab :title="$t('Résumé')">
@@ -21,7 +21,7 @@
                 <div
                     v-if="summary && summary.length"
                     v-for="[project, duration] in summary"
-                    class="flex w-full items-center justify-between gap-4 rounded bg-gray-100 p-4 font-bold dark:bg-gray-800"
+                    class="flex w-full items-center justify-between gap-4 rounded bg-stone-100 p-4 font-bold dark:bg-gray-800"
                 >
                     <span>{{ project }}</span>
                     <span>{{ duration }}</span>
@@ -46,7 +46,7 @@
                     v-if="sortedProjects && sortedProjects.length"
                     v-for="[project] in sortedProjects"
                     :key="project.id"
-                    class="relative flex w-full items-center justify-between gap-4 rounded bg-gray-100 p-4 pr-16 dark:bg-gray-800"
+                    class="relative flex w-full items-center justify-between gap-4 rounded bg-stone-100 p-4 pr-16 dark:bg-gray-800"
                 >
                     <span class="font-bold">{{ project.name }}</span>
                     <button
@@ -84,7 +84,7 @@
                                 class="form-control form-input-bordered form-input h-6 w-6 rounded-full p-0 text-primary-500 disabled:opacity-30 dark:text-primary-500 dark:checked:bg-primary-500"
                             />
                             <div
-                                class="relative flex w-full items-center justify-between gap-4 rounded bg-gray-100 p-4 pr-16 dark:bg-gray-800"
+                                class="relative flex w-full items-center justify-between gap-4 rounded bg-stone-100 p-4 pr-16 dark:bg-gray-800"
                             >
                                 <span class="font-bold">{{ index + 1 }}. {{ priority.name }}</span>
                             </div>

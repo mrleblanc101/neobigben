@@ -1,7 +1,7 @@
 export default {
     container:
-        'relative h-9 mx-auto w-full flex items-center justify-end box-border cursor-pointer rounded text-sm leading-snug outline-none bg-white dark:bg-gray-900 dark:focus:bg-gray-900 border border-gray-300 dark:border-gray-700 dark:focus:border-gray-500',
-    containerDisabled: 'cursor-default bg-gray-100',
+        'relative h-9 mx-auto w-full flex items-center justify-end box-border cursor-pointer rounded text-sm leading-snug outline-none bg-stone-50 dark:bg-gray-900 dark:focus:bg-gray-900 border border-gray-300 dark:border-gray-700 dark:focus:border-gray-500',
+    containerDisabled: 'cursor-default bg-stone-100',
     containerOpen: 'rounded-b-none border-primary-300 dark:!border-gray-500',
     containerOpenTop: 'rounded-t-none border-primary-300 dark:!border-gray-500',
     containerActive: 'ring ring-primary-200 dark:ring-gray-600 border-primary-300 dark:border-gray-500',
@@ -31,7 +31,7 @@ export default {
     inifiteSpinner:
         'bg-multiselect-spinner bg-center bg-no-repeat w-4 h-4 z-10 animate-spin flex-shrink-0 flex-grow-0 m-3.5',
     dropdown:
-        'max-h-60 absolute -left-px -right-px bottom-0 transform translate-y-full border border-primary-300 dark:border-gray-500 dark:focus:border-gray-500 -mt-px overflow-y-scroll z-50 bg-white dark:bg-gray-900 flex flex-col rounded-b',
+        'max-h-60 absolute -left-px -right-px bottom-0 transform translate-y-full border border-primary-300 dark:border-gray-500 dark:focus:border-gray-500 -mt-px overflow-y-scroll z-50 bg-stone-50 dark:bg-gray-900 flex flex-col rounded-b',
     dropdownTop: '-translate-y-full top-px bottom-auto rounded-b-none rounded-t',
     dropdownHidden: 'hidden',
     options: 'flex flex-col p-0 m-0 list-none',
@@ -42,7 +42,7 @@ export default {
     groupLabelPointable: 'cursor-pointer',
     groupLabelPointed: 'bg-gray-300 text-gray-700',
     groupLabelSelected: 'bg-primary-600 text-white',
-    groupLabelDisabled: 'bg-gray-100 text-gray-300 cursor-not-allowed',
+    groupLabelDisabled: 'bg-stone-100 text-gray-300 cursor-not-allowed',
     groupLabelSelectedPointed: 'bg-primary-600 text-white opacity-90',
     groupLabelSelectedDisabled: 'text-green-100 bg-primary-600 bg-opacity-50 cursor-not-allowed',
     groupOptions: 'p-0 m-0',
@@ -52,8 +52,8 @@ export default {
     optionDisabled: 'text-gray-300 cursor-not-allowed',
     optionSelectedPointed: 'text-white bg-primary-500 opacity-90 font-bold',
     optionSelectedDisabled: 'text-green-100 bg-primary-500 bg-opacity-50 cursor-not-allowed',
-    noOptions: 'py-2 px-3 text-gray-600 bg-white dark:bg-gray-900 text-left',
-    noResults: 'py-2 px-3 text-gray-600 bg-white dark:bg-gray-900 text-left',
+    noOptions: 'py-2 px-3 text-gray-600 bg-stone-50 dark:bg-gray-900 text-left',
+    noResults: 'py-2 px-3 text-gray-600 bg-stone-50 dark:bg-gray-900 text-left',
     fakeInput:
         'bg-transparent absolute left-0 right-0 -bottom-px w-full h-px border-0 p-0 appearance-none outline-none text-transparent',
     spacer: 'h-9 py-px box-content',

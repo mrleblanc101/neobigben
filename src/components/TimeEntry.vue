@@ -1,7 +1,7 @@
 <template>
     <form
         v-if="model.is_creating || model.is_editing"
-        class="relative flex w-full flex-col gap-2 rounded border bg-gray-100 p-4 dark:bg-gray-800"
+        class="relative flex w-full flex-col gap-2 rounded border bg-stone-100 p-4 dark:bg-gray-800"
         :class="[
             has_overlap_previous || has_overlap_next ? 'border-red-500' : 'border-transparent',
             {
@@ -112,7 +112,7 @@
     </form>
     <div
         v-else
-        class="relative flex w-full flex-col gap-2 rounded border bg-gray-100 p-4 dark:bg-gray-800"
+        class="relative flex w-full flex-col gap-2 rounded border bg-stone-100 p-4 dark:bg-gray-800"
         :class="[
             has_overlap_previous || has_overlap_next ? 'border-red-500' : 'border-transparent',
             {
@@ -435,7 +435,7 @@ label {
 }
 .has-gap::before {
     content: attr(data-gap-duration);
-    @apply absolute -top-6 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded bg-gray-100 px-2 font-bold dark:bg-gray-800;
+    @apply absolute -top-6 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded bg-stone-100 px-2 font-bold dark:bg-gray-800;
 }
 .has-gap::after {
     content: '';

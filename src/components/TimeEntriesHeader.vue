@@ -1,6 +1,6 @@
 <template>
     <div
-        class="sticky top-16 z-20 -mt-6 mb-3 flex w-full min-w-0 justify-between gap-2 bg-white pb-3 pt-6 dark:bg-gray-900"
+        class="sticky top-16 z-20 -mt-6 mb-3 flex w-full min-w-0 justify-between gap-2 bg-stone-50 pb-3 pt-6 dark:bg-gray-900"
     >
         <button
             type="button"
@@ -10,7 +10,7 @@
             <IArrowLeft class="h-3" />
         </button>
         <label
-            class="relative min-w-0 shrink cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap rounded border border-gray-100 px-5 text-center font-medium leading-10 ring-primary-200 transition hover:bg-gray-100 focus:outline-none focus:ring dark:border-gray-800 dark:ring-gray-600 dark:hover:bg-gray-800"
+            class="relative min-w-0 shrink cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap rounded border px-5 text-center font-medium leading-10 ring-primary-200 transition hover:bg-stone-100 focus:outline-none focus:ring dark:border-gray-800 dark:ring-gray-600 dark:hover:bg-gray-800"
             tabindex="0"
         >
             <span class="capitalize">{{ $moment(selectedDay).format('dddd') }}, </span>

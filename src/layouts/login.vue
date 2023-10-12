@@ -1,5 +1,5 @@
 <template>
-    <header class="fixed top-0 z-40 w-full border-b bg-white dark:border-gray-800 dark:bg-gray-900">
+    <header class="fixed top-0 z-40 w-full border-b bg-stone-50 dark:border-gray-800 dark:bg-gray-900">
         <div class="flex h-16 items-center justify-between px-4 lg:px-8">
             <button
                 type="button"

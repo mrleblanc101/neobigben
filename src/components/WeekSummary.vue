@@ -9,7 +9,7 @@
     >
         <div
             v-if="is_open"
-            class="absolute right-0 top-full flex w-64 min-w-full translate-y-2 flex-col gap-6 rounded border border-gray-100 bg-white p-4 dark:border-gray-800 dark:bg-gray-900"
+            class="absolute right-0 top-full flex w-64 min-w-full translate-y-2 flex-col gap-6 rounded border bg-stone-50 p-4 dark:border-gray-800 dark:bg-gray-900"
             v-on-click-outside.bubble="onClickOutside"
         >
             <div class="flex flex-col gap-2">
