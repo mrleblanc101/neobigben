@@ -18,14 +18,15 @@
                         <option value="weekly">{{ $t('Semaine courante') }}</option>
                     </select>
                 </div>
-                <div
-                    v-if="summary && summary.length"
-                    v-for="[project, duration] in summary"
-                    class="flex w-full items-center justify-between gap-4 rounded bg-stone-100 p-4 font-bold dark:bg-gray-800"
-                >
-                    <span>{{ project }}</span>
-                    <span>{{ duration }}</span>
-                </div>
+                <template v-if="summary && summary.length">
+                    <div
+                        v-for="[project, duration] in summary"
+                        class="flex w-full items-center justify-between gap-4 rounded bg-stone-100 p-4 font-bold dark:bg-gray-800"
+                    >
+                        <span>{{ project }}</span>
+                        <span>{{ duration }}</span>
+                    </div>
+                </template>
                 <div
                     class="absolute left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 text-center leading-tight opacity-60"
                     v-else
@@ -41,22 +42,22 @@
                         <option value="creation">{{ $t('Date de création') }}</option>
                     </select>
                 </div>
-
-                <div
-                    v-if="sortedProjects && sortedProjects.length"
-                    v-for="[project] in sortedProjects"
-                    :key="project.id"
-                    class="relative flex w-full items-center justify-between gap-4 rounded bg-stone-100 p-4 pr-16 dark:bg-gray-800"
-                >
-                    <span class="font-bold">{{ project.name }}</span>
-                    <button
-                        type="button"
-                        class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 dark:text-gray-800 dark:ring-gray-600"
-                        @click="deleteProject(project)"
+                <template v-if="sortedProjects && sortedProjects.length">
+                    <div
+                        v-for="[project] in sortedProjects"
+                        :key="project.id"
+                        class="relative flex w-full items-center justify-between gap-4 rounded bg-stone-100 p-4 pr-16 dark:bg-gray-800"
                     >
-                        <IDelete class="h-5" />
-                    </button>
-                </div>
+                        <span class="font-bold">{{ project.name }}</span>
+                        <button
+                            type="button"
+                            class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 dark:text-gray-800 dark:ring-gray-600"
+                            @click="deleteProject(project)"
+                        >
+                            <IDelete class="h-5" />
+                        </button>
+                    </div>
+                </template>
                 <div
                     v-else
                     class="absolute left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 text-center leading-tight opacity-60"
