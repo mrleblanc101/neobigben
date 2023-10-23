@@ -1,1 +1,0 @@
-import{ab as u,ac as c,a2 as i,a3 as t,ad as h,m as e}from"./entry.4b918e9b.js";import{u as l}from"./index.8340975a.js";const g=new u,P=c("auth",()=>{async function a(){const o=i(),s=t();return h(o,g).then(async r=>{await l().createUserInfo(r),e(s({name:"index"}))})}async function n(){const o=t();return e(o({name:"logout"}))}return{login:a,logout:n}});export{P as u};
