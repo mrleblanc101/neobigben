@@ -224,18 +224,7 @@ const emit = defineEmits<{
     (e: 'add'): void;
 }>();
 
-const model = ref({
-    is_creating: true,
-    is_editing: false,
-    is_synced: false,
-    is_live_clocking: false,
-    start_time: '',
-    end_time: '',
-    duration: '',
-    date: '',
-    description: '',
-    project: null,
-});
+const model = ref(Object.create(null, Object.getOwnPropertyDescriptors(props.entry)));
 
 const placeholder = ref('00:00:00');
 
