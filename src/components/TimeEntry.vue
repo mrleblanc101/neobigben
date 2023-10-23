@@ -63,7 +63,7 @@
             <label>{{ $t('Description') }}</label>
             <textarea
                 v-model="model.description"
-                class="form-control form-input-bordered form-input block h-auto w-full py-3 [form-sizing:content]"
+                class="form-control form-input-bordered form-input block h-auto w-full py-3 [field-sizing:content]"
                 rows="2"
                 :placeholder="`${$t('Description')}...`"
             ></textarea>
@@ -241,7 +241,7 @@ const computedDate = computed(() => {
 
 const computedDuration = computed({
     get() {
-        const date = !model.value.is_live_clocking ? computedDate.value : new Date().toLocaleDateString('en-CA');
+        const date = !model.value.is_live_clocking ? computedDate.value : $moment().format('YYYY-MM-DD');
         const start = $moment(computedDate.value + ' ' + model.value.start_time, 'YYYY-M-D HH:mm');
         const end = (model.value.end_time !== '00:00' ? $moment(date) : $moment(date).add(1, 'day')).set({
             hours: parseInt(model.value.end_time.split(':')[0]),
@@ -321,8 +321,6 @@ const has_gap = computed(() => {
             .duration($moment(model.value.start_time, 'HH:mm').diff($moment(previousEntry.value.end_time, 'HH:mm')))
             .format('HH:mm', { trim: false });
         return hasGap ? gapDuration : false;
-
-        return;
     }
     return false;
 });
@@ -336,7 +334,7 @@ const end_time_error = computed(() => {
 });
 
 const duration_error = computed(() => {
-    const date = !model.value.is_live_clocking ? computedDate.value : new Date().toLocaleDateString('en-CA');
+    const date = !model.value.is_live_clocking ? computedDate.value : $moment().format('YYYY-MM-DD');
     const start = $moment(computedDate.value + ' ' + model.value.start_time, 'YYYY-M-D HH:mm');
     const end = (model.value.end_time !== '00:00' ? $moment(date) : $moment(date).add(1, 'day')).set({
         hours: parseInt(model.value.end_time.split(':')[0]),

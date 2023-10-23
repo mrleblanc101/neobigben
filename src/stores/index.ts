@@ -37,7 +37,7 @@ export const useIndexStore = defineStore('store', () => {
         },
     };
 
-    const selectedDay = ref(new Date().toLocaleDateString('en-CA'));
+    const selectedDay = ref($moment().format('YYYY-MM-DD'));
     const filter = useLocalStorage('filter', ref('daily'));
     const selectedTabIndex = useLocalStorage('selectedTabIndex', ref(0));
     const sort = useLocalStorage('sort', ref('name'));
