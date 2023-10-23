@@ -125,7 +125,7 @@
         <div class="flex items-start justify-between gap-2">
             <div>
                 <label>{{ $t('Projet') }}</label>
-                <strong class="block">{{ model.project.name }}</strong>
+                <strong class="block">{{ entry.project?.name }}</strong>
             </div>
             <div class="flex gap-2">
                 <button
@@ -138,7 +138,7 @@
                 <button
                     type="button"
                     class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-gray-800 dark:ring-gray-600"
-                    @click="model.is_editing = true"
+                    @click="toggleEditing"
                 >
                     <IEdit class="h-5" />
                 </button>
@@ -154,27 +154,27 @@
         <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
             <div>
                 <label>{{ $t('Début') }}</label>
-                <strong class="block" :class="{ 'text-red-500': start_time_error }">{{ model.start_time }}</strong>
+                <strong class="block" :class="{ 'text-red-500': start_time_error }">{{ entry.start_time }}</strong>
             </div>
             <div>
                 <label>{{ $t('Fin') }}</label>
-                <strong class="block" :class="{ 'text-red-500': end_time_error }">{{ model.end_time }}</strong>
+                <strong class="block" :class="{ 'text-red-500': end_time_error }">{{ entry.end_time }}</strong>
             </div>
             <div>
                 <label>{{ $t('Durée') }}</label>
-                <strong class="block" :class="{ 'text-red-500': duration_error }">{{ model.duration }}</strong>
+                <strong class="block" :class="{ 'text-red-500': duration_error }">{{ entry.duration }}</strong>
             </div>
             <div>
                 <label>{{ $t('Date') }}</label>
-                <strong class="block">{{ $moment(model.date).format('L') }}</strong>
+                <strong class="block">{{ $moment(entry.date).format('L') }}</strong>
             </div>
         </div>
-        <div v-if="model.description">
+        <div v-if="entry.description">
             <label>{{ $t('Description') }}</label>
             <strong
                 class="v-html block"
                 v-html="
-                    linkify(model.description, {
+                    linkify(entry.description, {
                         defaultProtocol: 'https',
                         target: '_blank',
                         nl2br: true,
@@ -224,14 +224,18 @@ const emit = defineEmits<{
     (e: 'add'): void;
 }>();
 
-const model = ref();
-watch(
-    () => props.entry.project,
-    () => {
-        model.value = Object.create(null, Object.getOwnPropertyDescriptors(props.entry));
-    },
-    { immediate: true },
-);
+const model = ref({
+    is_creating: true,
+    is_editing: false,
+    is_synced: false,
+    is_live_clocking: false,
+    start_time: '',
+    end_time: '',
+    duration: '',
+    date: '',
+    description: '',
+    project: null,
+});
 
 const placeholder = ref('00:00:00');
 
@@ -422,6 +426,11 @@ function commitEntry(entry: Entry) {
         ...entry,
         date: computedDate.value,
     });
+}
+
+function toggleEditing() {
+    model.value = Object.create(null, Object.getOwnPropertyDescriptors(props.entry));
+    model.value.is_editing = true;
 }
 </script>
 
