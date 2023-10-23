@@ -1,6 +1,6 @@
 <template>
     <div
-        class="sticky top-16 z-20 -mt-6 mb-3 flex w-full min-w-0 justify-between gap-2 bg-stone-50 pb-3 pt-6 dark:bg-gray-900"
+        class="sticky top-16 z-20 -mt-3 flex w-full min-w-0 justify-between gap-2 bg-stone-50 py-3 dark:bg-gray-900 md:-mt-6 md:pt-6"
     >
         <button
             type="button"
