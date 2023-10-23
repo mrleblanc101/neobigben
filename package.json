@@ -8,7 +8,6 @@
         "postinstall": "nuxt prepare"
     },
     "devDependencies": {
-        "@nuxt/devtools": "^1.0.0-beta.0",
         "@nuxtjs/color-mode": "^3.2.0",
         "@nuxtjs/google-fonts": "^3.0.0-1",
         "@nuxtjs/i18n": "^8.0.0-beta.9",
@@ -18,14 +17,14 @@
         "@vueuse/components": "^10.3.0",
         "@vueuse/core": "^10.3.0",
         "@vueuse/nuxt": "^10.3.0",
-        "nuxt": "^3.7.0",
+        "nuxt": "^3.8.0",
         "postcss-import": "^15.1.0",
         "prettier": "^3.0.3",
         "prettier-plugin-tailwindcss": "^0.5.5",
         "vite-svg-loader": "^4.0.0"
     },
     "dependencies": {
-        "@pinia/nuxt": "^0.4.6",
+        "@pinia/nuxt": "^0.5.1",
         "@tailwindcss/forms": "^0.5.3",
         "@types/node": "^20.5.0",
         "@vueform/multiselect": "^2.5.8",
