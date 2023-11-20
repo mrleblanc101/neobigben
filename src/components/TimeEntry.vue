@@ -43,7 +43,6 @@
         </div>
         <div>
             <label>{{ $t('Projet') }}<span class="text-red-500">*</span></label>
-            <!-- TODO: Fix type error in @create -->
             <Multiselect
                 v-model="model.project"
                 :options="projects"

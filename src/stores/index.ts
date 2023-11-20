@@ -305,8 +305,17 @@ export const useIndexStore = defineStore('store', () => {
         const docSnap = await getDoc(docRef);
         if (!docSnap.exists()) {
             await setDoc(docRef, {
+                displayName: result.user.displayName,
+                email: result.user.email,
+                photoURL: result.user.photoURL,
                 weekTarget: '40:00',
             });
+        } else {
+            await updateDoc(docRef, {
+                displayName: result.user.displayName,
+                email: result.user.email,
+                photoURL: result.user.photoURL,
+            })
         }
     }
     async function updateWeekTarget(weekTarget: string) {
