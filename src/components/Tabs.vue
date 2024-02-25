@@ -3,10 +3,15 @@ import { useIndexStore } from '@/stores/index';
 import { storeToRefs } from 'pinia';
 
 export default defineComponent({
-    setup() {
+    emits: ['change'],
+    setup(props, ctx) {
         const slots = useSlots();
         const store = useIndexStore();
         const { selectedTabIndex } = storeToRefs(store);
+
+        watch(selectedTabIndex, () => {
+            ctx.emit('change');
+        });
 
         return () => {
             const children = slots.default ? slots.default() : null;

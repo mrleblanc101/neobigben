@@ -11,8 +11,8 @@
             v-on-click-outside.bubble="onClickOutside"
         >
             <Tab :title="$t('Résumé')">
-                <div class="mb-2 flex items-center justify-end gap-2">
-                    <span class="text-xs font-bold uppercase tracking-wide opacity-60">{{ $t('Filtrer') }}</span>
+                <div class="mb-2 flex items-center gap-2">
+                    <span class="text-xs font-medium uppercase tracking-wider opacity-60">{{ $t('Filtrer') }}</span>
                     <select v-model="filter" class="form-control form-select-bordered form-select pr-12">
                         <option value="daily">{{ $t('Journée courante') }}</option>
                         <option value="weekly">{{ $t('Semaine courante') }}</option>
@@ -35,8 +35,8 @@
                 </div>
             </Tab>
             <Tab :title="$t('Projets')">
-                <div class="mb-2 flex items-center justify-end gap-2">
-                    <span class="text-xs font-bold uppercase tracking-wide opacity-60">{{ $t('Tri') }}</span>
+                <div class="mb-2 flex items-center gap-2">
+                    <span class="text-xs font-medium uppercase tracking-wider opacity-60">{{ $t('Tri') }}</span>
                     <select v-model="sort" class="form-control form-select-bordered form-select pr-12">
                         <option value="name">{{ $t('Alphabétique') }}</option>
                         <option value="creation">{{ $t('Date de création') }}</option>
@@ -65,38 +65,44 @@
                     {{ $t("Aucune donnée pour l'instant") }}
                 </div>
             </Tab>
-            <Tab :title="$t('Priorités')">
-                <div class="mb-2 flex items-center justify-end gap-2">
+            <Tab :title="$t('Raccourcis')">
+                <div v-if="!isCreating" class="mb-2 flex items-center justify-end gap-2">
                     <button
                         type="button"
                         class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-primary-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-900 dark:ring-gray-600"
-                        @click="deleteCompletedPriorities"
+                        @click="isCreating = !isCreating"
                     >
-                        {{ $t('Cleanup') }}
-                        <IClear class="h-6 w-6" />
+                        {{ $t('Ajouter') }}
                     </button>
                 </div>
-                <draggable item-key="name" v-model="priorities" handle=".handle" class="flex flex-col gap-2">
-                    <div v-for="(priority, index) in priorities" class="flex items-center gap-2">
-                        <label class="relative flex w-full items-center gap-2">
-                            <input
-                                type="checkbox"
-                                v-model="priority.completed"
-                                class="form-control form-input-bordered form-input h-6 w-6 rounded-full p-0 text-primary-500 disabled:opacity-30 dark:text-primary-500 dark:checked:bg-primary-500"
-                            />
+                <draggable
+                    v-if="bookmarks && bookmarks.length && !isCreating"
+                    item-key="name"
+                    v-model="bookmarks"
+                    handle=".handle"
+                    class="flex flex-col gap-2"
+                >
+                    <div v-for="bookmark in bookmarks" class="flex items-center gap-2">
+                        <div class="relative w-full">
                             <div
-                                class="relative flex w-full items-center justify-between gap-4 rounded bg-stone-100 p-4 pr-16 dark:bg-gray-800"
+                                class="relative flex w-full items-center justify-between gap-4 rounded bg-stone-100 pr-14 dark:bg-gray-800"
                             >
-                                <span class="font-bold">{{ index + 1 }}. {{ priority.name }}</span>
+                                <a
+                                    :href="bookmark.url || '#'"
+                                    target="_blank"
+                                    class="w-full p-4 pr-0 font-bold text-primary-500 hover:text-primary-600 hover:dark:text-primary-400"
+                                >
+                                    {{ bookmark.name }}
+                                </a>
                             </div>
                             <button
                                 type="button"
                                 class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 dark:text-gray-800 dark:ring-gray-600"
-                                @click="deletePriority(priority)"
+                                @click="deleteBookmark(bookmark)"
                             >
                                 <IDelete class="h-5" />
                             </button>
-                        </label>
+                        </div>
                         <div
                             class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded font-bold text-gray-400 ring-primary-200 transition hover:text-primary-400 focus:outline-none focus:ring active:text-primary-400 dark:ring-gray-600"
                         >
@@ -104,27 +110,49 @@
                         </div>
                     </div>
                 </draggable>
-                <form @submit.prevent="onAddPriority" class="flex gap-2">
-                    <div class="flex w-full items-center gap-2">
+                <div
+                    class="absolute left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 text-center leading-tight opacity-60"
+                    v-else-if="!isCreating"
+                >
+                    {{ $t("Aucune donnée pour l'instant") }}
+                </div>
+                <form
+                    v-if="isCreating"
+                    @submit.prevent="onAddBookmark"
+                    class="flex flex-col gap-2 rounded bg-gray-800 p-4"
+                >
+                    <div>
+                        <label class="text-xs font-medium uppercase opacity-60">{{ $t('Nom') }}</label>
                         <input
-                            type="checkbox"
-                            disabled
-                            class="form-control form-input-bordered form-input h-6 w-6 rounded-full border-gray-400 p-0 text-primary-500 ring-primary-200 focus:outline-none focus:ring disabled:opacity-30 dark:bg-gray-800 dark:text-primary-500 dark:ring-gray-600 dark:checked:bg-primary-500"
+                            v-model="bookmark.name"
+                            type="text"
+                            :placeholder="$t('Nom du raccourci')"
+                            class="form-control form-input-bordered form-input h-10 w-full"
                         />
-                        <label class="flex w-full items-center gap-2">
-                            <span class="sr-only">{{ $t('Priorité') }}</span>
-                            <input
-                                v-model="priority"
-                                type="text"
-                                placeholder="Ajouter une priorité"
-                                class="form-control form-input-bordered form-input h-10 w-full"
-                            />
-                            <div
-                                class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded font-bold text-gray-400 opacity-50 ring-primary-200 transition focus:outline-none focus:ring dark:ring-gray-600"
-                            >
-                                <IHandle class="handle h-5 w-5 shrink-0" />
-                            </div>
-                        </label>
+                    </div>
+                    <div>
+                        <label class="text-xs font-medium uppercase opacity-60">{{ $t('Url') }}</label>
+                        <input
+                            v-model="bookmark.url"
+                            type="text"
+                            :placeholder="$t('Url du raccourci')"
+                            class="form-control form-input-bordered form-input h-10 w-full"
+                        />
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button
+                            type="button"
+                            class="appearance-none bg-transparent px-2 text-sm font-bold text-gray-400 transition hover:text-gray-300 active:text-gray-500 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-400 dark:active:text-gray-600"
+                            @click="cancel"
+                        >
+                            {{ $t('Annuler') }}
+                        </button>
+                        <button
+                            type="submit"
+                            class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-primary-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-900 dark:ring-gray-600"
+                        >
+                            {{ $t('Ajouter') }}
+                        </button>
                     </div>
                 </form>
             </Tab>
@@ -135,7 +163,6 @@
 <script lang="ts" setup>
 import IDelete from '@/assets/svg/delete.svg?component';
 import IHandle from '@/assets/svg/hamburger.svg?component';
-import IClear from '@/assets/svg/clear.svg?component';
 import { VueDraggableNext as draggable } from 'vue-draggable-next';
 
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
@@ -145,20 +172,32 @@ import { storeToRefs } from 'pinia';
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const store = useIndexStore();
 
-const { weeklySummaryByProjects, dailySummaryByProjects, menuOpened, filter, sort, sortedProjects, priorities } =
+const { weeklySummaryByProjects, dailySummaryByProjects, menuOpened, filter, sort, sortedProjects, bookmarks } =
     storeToRefs(store);
-const { deleteProject, deletePriority, deleteCompletedPriorities, addPriority } = store;
+const { deleteProject, deleteBookmark, addBookmark } = store;
 const isXlOrGreater = breakpoints.greaterOrEqual('xl');
 
-const priority = ref('');
+const bookmark = ref({
+    name: '',
+    url: '',
+});
+const isCreating = ref(false);
 
 const summary = computed((): [string, string][] => {
     return filter.value === 'daily' ? dailySummaryByProjects.value : weeklySummaryByProjects.value;
 });
 
-function onAddPriority() {
-    addPriority(priority.value);
-    priority.value = '';
+function onAddBookmark() {
+    addBookmark(bookmark.value);
+    bookmark.value.name = '';
+    bookmark.value.url = '';
+    isCreating.value = false;
+}
+
+function cancel() {
+    bookmark.value.name = '';
+    bookmark.value.url = '';
+    isCreating.value = false;
 }
 
 function onClickOutside() {

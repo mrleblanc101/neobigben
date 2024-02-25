@@ -57,11 +57,11 @@ export const useIndexStore = defineStore('store', () => {
             ssrKey: 'projects',
         },
     );
-    const priorities = useCollection<Priority>(
-        computed(() => (user.value ? query(collection(db, 'priorities'), where('user', '==', user.value.uid), orderBy('created_at')) : null)),
+    const bookmarks = useCollection<Bookmark>(
+        computed(() => (authUser.value ? query(collection(db, 'bookmarks'), where('user', '==', authUser.value.uid), orderBy('created_at')) : null)),
         {
             wait: true,
-            ssrKey: 'priorities',
+            ssrKey: 'bookmarks',
         },
     );
     const entries = useCollection<Entry>(
@@ -169,7 +169,6 @@ export const useIndexStore = defineStore('store', () => {
         });
     });
     const sortedProjects = computed((): [Project, number][] => {
-        // TODO: Sort by creation date
         const p = projects.value.map((p): [Project, number] => [p, projectEntriesTotal(p)]);
         if (sort.value === 'name') {
             return p.sort((a, b) => {
@@ -273,27 +272,23 @@ export const useIndexStore = defineStore('store', () => {
             }
         }
     }
-    async function addPriority(name: string) {
-        await addDoc(collection(db, 'priorities').withConverter(addDefaultFields), {
-            name,
-            completed: false,
-            user: user.value!.uid,
+    async function addBookmark(bookmark: Bookmark) {
+        const addhttp = (url: string) => {
+            if (!/^(?:f|ht)tps?\:\/\//.test(url)) {
+                url = "https://" + url;
+            }
+            return url;
+        }
+
+        await addDoc(collection(db, 'bookmarks').withConverter(addDefaultFields), {
+            ...bookmark,
+            url: addhttp(bookmark.url),
+            user: authUser.value!.uid,
         });
     }
-    async function deletePriority(priority: Priority, force = false) {
-        if (force || confirm(t('Êtes vous certain de vouloir supprimer cette priorité ?'))) {
-            await deleteDoc(doc(db, 'priorities', priority.id));
-        }
-    }
-    function deleteCompletedPriorities() {
-        const completed = priorities.value.filter((p: Priority) => p.completed);
-
-        if (completed.length !== 0) {
-            if (confirm(t('Êtes vous certain de vouloir supprimer les priorités complétées ?'))) {
-                completed.forEach((p) => deletePriority(p, true));
-            }
-        } else {
-            alert(t('Aucune priorité complétée à supprimer'));
+    async function deleteBookmark(bookmark: Bookmark, force = false) {
+        if (force || confirm(t('Êtes vous certain de vouloir supprimer ce raccourci ?'))) {
+            await deleteDoc(doc(db, 'bookmarks', bookmark.id));
         }
     }
     async function createUserInfo(result: UserCredential) {
@@ -317,7 +312,7 @@ export const useIndexStore = defineStore('store', () => {
     }
     function $reset() {
         projects.value = [];
-        priorities.value = [];
+        bookmarks.value = [];
         entries.value = [];
         user.value = null;
     }
@@ -332,7 +327,7 @@ export const useIndexStore = defineStore('store', () => {
         sort,
         projects,
         entries,
-        priorities,
+        bookmarks,
         // getters
         weekStart,
         weekEnd,
@@ -355,9 +350,8 @@ export const useIndexStore = defineStore('store', () => {
         toggleEntrySynced,
         addProject,
         deleteProject,
-        addPriority,
-        deletePriority,
-        deleteCompletedPriorities,
+        addBookmark,
+        deleteBookmark,
         createUserInfo,
         updateWeekTarget,
         $reset,

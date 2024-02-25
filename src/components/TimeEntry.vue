@@ -433,7 +433,7 @@ function toggleEditing() {
 
 <style lang="postcss" scoped>
 label {
-    @apply text-xs font-medium uppercase opacity-60;
+    @apply text-xs font-medium uppercase tracking-wider opacity-60;
 }
 .has-gap::before {
     content: attr(data-gap-duration);
@@ -445,7 +445,7 @@ label {
 }
 .v-html {
     :deep(a) {
-        @apply text-primary-500;
+        @apply text-primary-500 hover:text-primary-600 hover:dark:text-primary-400;
         overflow-wrap: break-word;
     }
 }
