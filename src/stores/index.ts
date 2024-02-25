@@ -13,7 +13,7 @@ import {
     setDoc,
     serverTimestamp,
 } from 'firebase/firestore';
-import type { QueryDocumentSnapshot, SnapshotOptions, DocumentData } from 'firebase/firestore';
+import type { DocumentData } from 'firebase/firestore';
 import { globalFirestoreOptions, firestoreDefaultConverter } from 'vuefire';
 import type { UserCredential } from 'firebase/auth';
 
@@ -34,21 +34,6 @@ export const useIndexStore = defineStore('store', () => {
     const { $moment } = nuxtApp;
     const { t } = nuxtApp.$i18n;
 
-    const dateConverter = {
-        toFirestore(entry: Entry): DocumentData {
-            delete entry.id;
-            return {
-                ...entry,
-                date: $moment(entry.date).startOf('day').toDate(),
-            };
-        },
-        fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): DocumentData {
-            const data = firestoreDefaultConverter.fromFirestore(snapshot)!;
-            data.date = $moment(data.date.toDate()).format('YYYY-MM-DD');
-            return data;
-        },
-    };
-
     const selectedDay = ref($moment().format('YYYY-MM-DD'));
     const filter = useLocalStorage('filter', ref('daily'));
     const selectedTabIndex = useLocalStorage('selectedTabIndex', ref(0));
@@ -60,10 +45,10 @@ export const useIndexStore = defineStore('store', () => {
     const weekTarget = computed(() => userInfo.value?.weekTarget || '40:00');
 
     const weekStart = computed(() => {
-        return $moment(selectedDay.value).startOf('week').toDate();
+        return $moment(selectedDay.value).startOf('week').format('YYYY-MM-DD');
     });
     const weekEnd = computed(() => {
-        return $moment(selectedDay.value).endOf('week').toDate();
+        return $moment(selectedDay.value).endOf('week').format('YYYY-MM-DD');
     });
     const projects = useCollection<Project>(
         computed(() => (user.value ? query(collection(db, 'projects'), where('user', '==', user.value.uid), orderBy('created_at')) : null)),
@@ -83,7 +68,7 @@ export const useIndexStore = defineStore('store', () => {
         computed(() =>
             user.value
                 ? query(
-                      collection(db, 'entries').withConverter(dateConverter),
+                      collection(db, 'entries'),
                       where('user', '==', user.value.uid),
                       where('date', '>=', weekStart.value),
                       where('date', '<=', weekEnd.value),
@@ -226,7 +211,7 @@ export const useIndexStore = defineStore('store', () => {
     };
 
     async function addEntry(entry: Entry) {
-        await addDoc(collection(db, 'entries').withConverter(dateConverter), {
+        await addDoc(collection(db, 'entries').withConverter(addDefaultFields), {
             ...entry,
             user: user.value!.uid,
             project: entry.project?.id ? doc(db, 'projects', entry.project.id) : null,
@@ -236,7 +221,6 @@ export const useIndexStore = defineStore('store', () => {
         await updateDoc(doc(db, 'entries', entry.id), {
             ...entry,
             project: entry.project?.id ? doc(db, 'projects', entry.project.id) : null,
-            date: $moment(entry.date).startOf('day').toDate(),
         });
     }
     async function deleteEntry(entry: Entry, force = false) {
