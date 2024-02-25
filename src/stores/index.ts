@@ -234,7 +234,7 @@ export const useIndexStore = defineStore('store', () => {
     }
     async function toggleEntrySynced(entry: Entry) {
         await updateDoc(doc(db, 'entries', entry.id), {
-            is_synced: !entry.is_synced ?? true,
+            is_synced: !entry.is_synced || true,
         });
     }
     async function addProject(option: Project) {
