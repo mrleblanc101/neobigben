@@ -1,9 +1,13 @@
 import { defineStore } from 'pinia';
 import { GoogleAuthProvider } from 'firebase/auth';
-export const googleAuthProvider = new GoogleAuthProvider();
 import { signInWithPopup } from 'firebase/auth';
 import { useFirebaseAuth } from 'vuefire';
 import { useIndexStore } from '@/stores/index';
+
+export const googleAuthProvider = new GoogleAuthProvider();
+googleAuthProvider.setCustomParameters({
+    prompt: 'select_account'
+});
 
 export const useAuthStore = defineStore('auth', () => {
     async function login() {
