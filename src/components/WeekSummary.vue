@@ -13,7 +13,11 @@
             v-on-click-outside.bubble="onClickOutside"
         >
             <div class="flex flex-col gap-2">
-                <div class="flex items-end justify-between border-b pb-2 dark:border-gray-800">
+                <component
+                    :is="!is_editing ? 'div' : 'form'"
+                    @submit.prevent="onSave"
+                    class="flex items-end justify-between gap-2 border-b pb-2 dark:border-gray-800"
+                >
                     <div>
                         <div class="text-xs font-bold uppercase opacity-80">{{ $t('Mon objectif') }}</div>
                         <div v-if="!is_editing" class="mt-1 block text-3xl font-bold tabular-nums">
@@ -31,13 +35,12 @@
                     </button>
                     <button
                         v-else
-                        type="button"
+                        type="submit"
                         class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-gray-800 dark:ring-gray-600"
-                        @click="onSave"
                     >
                         <ISave class="h-5" />
                     </button>
-                </div>
+                </component>
                 <div class="flex flex-col gap-2">
                     <div
                         v-for="(day, index) in Object.values(weekSummary)"
@@ -101,6 +104,7 @@ watch(
     },
 );
 function onEdit() {
+    (document.activeElement as HTMLElement)?.blur();
     is_editing.value = true;
     target.value = user.value?.week_target || '';
 }

@@ -70,16 +70,18 @@
         <div class="flex justify-end gap-2">
             <button
                 v-if="isToday && !model.is_live_clocking && !model.end_time"
-                type="submit"
+                type="button"
                 class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-green-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-green-400 focus:outline-none focus:ring active:bg-green-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-900 dark:ring-gray-600"
+                @click="start"
             >
                 {{ $t('Démarrer') }}
                 <IPlay class="h-3 w-4" />
             </button>
             <button
                 v-else-if="isToday && model.is_live_clocking"
-                type="submit"
+                type="button"
                 class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-rose-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-rose-400 focus:outline-none focus:ring active:bg-rose-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-900 dark:ring-gray-600"
+                @click="stop"
             >
                 {{ $t('Arrêter') }}
                 <IStop class="h-3 w-4" />
@@ -223,7 +225,15 @@ const emit = defineEmits<{
     (e: 'add'): void;
 }>();
 
-const model = ref(Object.create(null, Object.getOwnPropertyDescriptors(props.entry)));
+const model = ref();
+
+watch(
+    () => props.entry,
+    () => {
+        model.value = Object.create(null, Object.getOwnPropertyDescriptors(props.entry));
+    },
+    { immediate: true },
+);
 
 const placeholder = ref('00:00:00');
 
@@ -354,11 +364,8 @@ watch(computedDuration, (value) => {
 });
 
 function onSave() {
-    if ((!model.value.start_time || !model.value.end_time) && !model.value.is_live_clocking) {
-        start();
-    } else if (model.value.is_live_clocking) {
-        stop();
-    } else if (!model.value.id) {
+    (document.activeElement as HTMLElement)?.blur();
+    if (!model.value.id) {
         add();
     } else {
         edit();
