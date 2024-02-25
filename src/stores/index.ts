@@ -6,14 +6,26 @@ import {
     deleteDoc,
     doc,
     query,
+    orderBy,
     where,
     writeBatch,
     getDoc,
     setDoc,
+    serverTimestamp,
 } from 'firebase/firestore';
 import type { QueryDocumentSnapshot, SnapshotOptions, DocumentData } from 'firebase/firestore';
-import { firestoreDefaultConverter } from 'vuefire';
+import { globalFirestoreOptions, firestoreDefaultConverter } from 'vuefire';
 import type { UserCredential } from 'firebase/auth';
+
+const addDefaultFields = {
+    toFirestore(docData: DocumentData): DocumentData {
+        return {
+            created_at: serverTimestamp(),
+            ...docData,
+        }
+    },
+    fromFirestore: firestoreDefaultConverter.fromFirestore,
+};
 
 export const useIndexStore = defineStore('store', () => {
     const db = useFirestore();
@@ -54,14 +66,14 @@ export const useIndexStore = defineStore('store', () => {
         return $moment(selectedDay.value).endOf('week').toDate();
     });
     const projects = useCollection<Project>(
-        computed(() => (user.value ? query(collection(db, 'projects'), where('user', '==', user.value.uid)) : null)),
+        computed(() => (user.value ? query(collection(db, 'projects'), where('user', '==', user.value.uid), orderBy('created_at')) : null)),
         {
             wait: true,
             ssrKey: 'projects',
         },
     );
     const priorities = useCollection<Priority>(
-        computed(() => (user.value ? query(collection(db, 'priorities'), where('user', '==', user.value.uid)) : null)),
+        computed(() => (user.value ? query(collection(db, 'priorities'), where('user', '==', user.value.uid), orderBy('created_at')) : null)),
         {
             wait: true,
             ssrKey: 'priorities',
@@ -238,7 +250,7 @@ export const useIndexStore = defineStore('store', () => {
         });
     }
     async function addProject(option: Project) {
-        const project = await addDoc(collection(db, 'projects'), {
+        const project = await addDoc(collection(db, 'projects').withConverter(addDefaultFields), {
             name: option.name,
             user: user.value!.uid,
         });
@@ -278,7 +290,7 @@ export const useIndexStore = defineStore('store', () => {
         }
     }
     async function addPriority(name: string) {
-        await addDoc(collection(db, 'priorities'), {
+        await addDoc(collection(db, 'priorities').withConverter(addDefaultFields), {
             name,
             completed: false,
             user: user.value!.uid,
