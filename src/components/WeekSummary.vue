@@ -17,7 +17,7 @@
                     <div>
                         <div class="text-xs font-bold uppercase opacity-80">{{ $t('Mon objectif') }}</div>
                         <div v-if="!is_editing" class="mt-1 block text-3xl font-bold tabular-nums">
-                            {{ weekTarget }}
+                            {{ user?.week_target }}
                         </div>
                         <TimeInput v-else class="mt-1" v-model="target" mask="99:99" />
                     </div>
@@ -78,8 +78,8 @@ const auth = useAuthStore();
 const store = useIndexStore();
 const route = useRoute();
 
-const { weekSummaryColors } = store;
-const { weekSummary, weekTarget, weekTotal } = storeToRefs(store);
+const { weekSummaryColors, updateWeekTarget } = store;
+const { weekSummary, user, weekTotal } = storeToRefs(store);
 
 const is_editing = ref(false);
 const target = ref('');
@@ -102,10 +102,10 @@ watch(
 );
 function onEdit() {
     is_editing.value = true;
-    target.value = weekTarget.value;
+    target.value = user.value?.week_target || '';
 }
 async function onSave() {
-    await store.updateWeekTarget(target.value);
+    await updateWeekTarget(target.value);
     is_editing.value = false;
 }
 function onClickOutside() {

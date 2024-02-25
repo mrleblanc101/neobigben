@@ -32,3 +32,10 @@ type Priority = {
     name: string;
     completed: boolean;
 };
+
+type User = {
+    display_name: string;
+    email: string;
+    photo_url: string;
+    week_target: string;
+}

@@ -15,8 +15,8 @@
             <div class="flex flex-col gap-2">
                 <div class="border-b pb-2 dark:border-gray-800">
                     <div class="text-xs font-bold uppercase opacity-80">{{ $t('Bonjour') }}</div>
-                    <div v-if="user" class="mt-1 block text-2xl font-black tabular-nums leading-[1]">
-                        {{ user.displayName }}
+                    <div class="mt-1 block text-2xl font-black tabular-nums leading-[1]">
+                        {{ user?.display_name }}
                     </div>
                 </div>
 
@@ -40,8 +40,9 @@ import ILogout from '@/assets/svg/logout.svg?component';
 
 import { useAuthStore } from '@/stores/auth';
 const auth = useAuthStore();
+const store = useIndexStore();
 const { logout } = auth;
-const user = useCurrentUser();
+const { user } = store;
 
 const route = useRoute();
 

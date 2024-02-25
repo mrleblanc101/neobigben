@@ -12,11 +12,12 @@ googleAuthProvider.setCustomParameters({
 export const useAuthStore = defineStore('auth', () => {
     const auth = useFirebaseAuth()!;
     const localePath = useLocalePath();
+    const store = useIndexStore();
+    const { createUserInfo } = store;
 
     async function login() {
         return signInWithPopup(auth, googleAuthProvider).then(async (result) => {
-            const store = useIndexStore();
-            await store.createUserInfo(result);
+            await createUserInfo(result);
             navigateTo(
                 localePath({
                     name: 'index',
