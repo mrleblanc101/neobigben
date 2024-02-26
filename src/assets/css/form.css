@@ -1,13 +1,13 @@
 .form-control {
-    @apply h-9 placeholder-gray-400 dark:placeholder-gray-600;
+    @apply h-9 placeholder-slate-400 dark:placeholder-slate-600;
     line-height: normal;
     box-sizing: border-box;
 }
 .form-input,
 .form-select {
     @apply appearance-none;
-    @apply bg-stone-50 dark:bg-gray-900 px-3 text-gray-600 dark:text-gray-400 rounded;
-    @apply dark:focus:bg-gray-900 focus:outline-none focus:ring !ring-primary-200 dark:!ring-gray-600;
+    @apply bg-white dark:bg-slate-900 px-3 text-slate-600 dark:text-slate-400 rounded;
+    @apply dark:focus:bg-slate-900 focus:outline-none focus:ring !ring-primary-200 dark:!ring-slate-600;
     @apply text-sm;
 }
 .form-select {
@@ -21,8 +21,8 @@
 }
 .form-input-bordered,
 .form-select-bordered {
-    @apply border border-gray-300 focus:border-primary-300;
-    @apply dark:border-gray-700 dark:focus:border-gray-500;
+    @apply border border-slate-200 focus:border-primary-300;
+    @apply dark:border-slate-700 dark:focus:border-slate-500;
 }
 .dark .form-input,
 .dark .form-select,
@@ -31,7 +31,7 @@
 }
 /* placeholder text style */
 input[type='date']::-webkit-datetime-edit {
-    @apply text-gray-600;
+    @apply text-slate-600;
 }
 /* regular text style */
 input[type='date'].has-value::-webkit-datetime-edit {
