@@ -27,7 +27,7 @@ useHead({
             : {},
     ],
     bodyAttrs: {
-        class: 'antialiased overflow-x-clip text-gray-700 leading-normal bg-stone-50 dark:bg-gray-900 dark:text-gray-300',
+        class: 'antialiased overflow-x-clip text-slate-700 leading-normal bg-stone-50 dark:bg-slate-900 dark:text-slate-300',
     },
 });
 </script>

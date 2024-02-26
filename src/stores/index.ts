@@ -194,7 +194,7 @@ export const useIndexStore = defineStore('store', () => {
         const isBelow = $moment.duration(time).asHours() >= $moment.duration(weekTarget.value).asHours() / 5 - 0.5;
 
         if (isZero) {
-            return 'text-gray-400 dark:text-gray-600';
+            return 'text-slate-400 dark:text-slate-600';
         } else if (isOvertime) {
             return 'text-lime-500';
         } else if (isGoal) {

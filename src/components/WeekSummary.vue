@@ -9,14 +9,14 @@
     >
         <div
             v-if="is_open"
-            class="absolute right-0 top-full flex w-64 min-w-full translate-y-2 flex-col gap-6 rounded border bg-stone-50 p-4 dark:border-gray-800 dark:bg-gray-900"
+            class="absolute right-0 top-full flex w-64 min-w-full translate-y-2 flex-col gap-6 rounded border bg-stone-50 p-4 dark:border-slate-800 dark:bg-slate-900"
             v-on-click-outside.bubble="onClickOutside"
         >
             <div class="flex flex-col gap-2">
                 <component
                     :is="!is_editing ? 'div' : 'form'"
                     @submit.prevent="onSave"
-                    class="flex items-end justify-between gap-2 border-b pb-2 dark:border-gray-800"
+                    class="flex items-end justify-between gap-2 border-b pb-2 dark:border-slate-800"
                 >
                     <div>
                         <div class="text-xs font-bold uppercase opacity-80">{{ $t('Mon objectif') }}</div>
@@ -28,7 +28,7 @@
                     <button
                         v-if="!is_editing"
                         type="button"
-                        class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-gray-800 dark:ring-gray-600"
+                        class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600"
                         @click="onEdit"
                     >
                         <IEdit class="h-5" />
@@ -36,7 +36,7 @@
                     <button
                         v-else
                         type="submit"
-                        class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-gray-800 dark:ring-gray-600"
+                        class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600"
                     >
                         <ISave class="h-5" />
                     </button>
@@ -57,7 +57,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="mt-2 flex items-end justify-between gap-8 border-t pt-2 dark:border-gray-800">
+                <div class="mt-2 flex items-end justify-between gap-8 border-t pt-2 dark:border-slate-800">
                     <div class="font-bold uppercase">{{ $t('Total') }}</div>
                     <div class="font-bold tabular-nums">
                         {{ weekTotal }}
@@ -74,9 +74,6 @@ import IEdit from '@/assets/svg/edit.svg?component';
 
 import { useIndexStore } from '@/stores/index';
 import { storeToRefs } from 'pinia';
-
-import { useAuthStore } from '@/stores/auth';
-const auth = useAuthStore();
 
 const store = useIndexStore();
 const route = useRoute();

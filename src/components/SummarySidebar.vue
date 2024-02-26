@@ -7,7 +7,7 @@
     >
         <Tabs
             v-if="isXlOrGreater || menuOpened"
-            class="fixed bottom-0 right-0 top-16 z-30 flex w-full shrink-0 flex-col border-l bg-stone-50 shadow-lg dark:border-gray-800 dark:bg-gray-900 sm:w-[28rem] xl:shadow-none"
+            class="fixed bottom-0 right-0 top-16 z-30 flex w-full shrink-0 flex-col border-l bg-stone-50 shadow-lg dark:border-slate-800 dark:bg-slate-900 sm:w-[28rem] xl:shadow-none"
             v-on-click-outside.bubble="onClickOutside"
         >
             <Tab :title="$t('Résumé')">
@@ -21,7 +21,7 @@
                 <template v-if="summary && summary.length">
                     <div
                         v-for="[project, duration] in summary"
-                        class="flex w-full items-center justify-between gap-4 rounded bg-stone-100 p-4 font-bold dark:bg-gray-800"
+                        class="flex w-full items-center justify-between gap-4 rounded border bg-stone-100 p-4 font-bold dark:border-slate-700 dark:bg-slate-800"
                     >
                         <span>{{ project }}</span>
                         <span>{{ duration }}</span>
@@ -46,12 +46,12 @@
                     <div
                         v-for="[project] in sortedProjects"
                         :key="project.id"
-                        class="relative flex w-full items-center justify-between gap-4 rounded bg-stone-100 p-4 pr-16 dark:bg-gray-800"
+                        class="relative flex w-full items-center justify-between gap-4 rounded border bg-stone-100 p-4 pr-16 dark:border-slate-700 dark:bg-slate-800"
                     >
                         <span class="font-bold">{{ project.name }}</span>
                         <button
                             type="button"
-                            class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 dark:text-gray-800 dark:ring-gray-600"
+                            class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
                             @click="deleteProject(project)"
                         >
                             <IDelete class="h-5" />
@@ -69,7 +69,7 @@
                 <div v-if="!isCreating" class="mb-2 flex items-center justify-end gap-2">
                     <button
                         type="button"
-                        class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-primary-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-900 dark:ring-gray-600"
+                        class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-primary-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-900 dark:ring-slate-600"
                         @click="isCreating = !isCreating"
                     >
                         {{ $t('Ajouter') }}
@@ -85,26 +85,26 @@
                     <div v-for="bookmark in bookmarks" class="flex items-center gap-2">
                         <div class="relative w-full">
                             <div
-                                class="relative flex w-full items-center justify-between gap-4 rounded bg-stone-100 pr-14 dark:bg-gray-800"
+                                class="relative flex w-full items-center justify-between gap-4 rounded border bg-stone-100 pr-14 dark:border-slate-700 dark:bg-slate-800"
                             >
                                 <a
                                     :href="bookmark.url || '#'"
                                     target="_blank"
-                                    class="w-full p-4 pr-0 font-bold text-primary-500 hover:text-primary-600 hover:dark:text-primary-400"
+                                    class="w-full p-4 pr-0 font-bold text-primary-500 hover:text-primary-400"
                                 >
                                     {{ bookmark.name }}
                                 </a>
                             </div>
                             <button
                                 type="button"
-                                class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 dark:text-gray-800 dark:ring-gray-600"
+                                class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
                                 @click="deleteBookmark(bookmark)"
                             >
                                 <IDelete class="h-5" />
                             </button>
                         </div>
                         <div
-                            class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded font-bold text-gray-400 ring-primary-200 transition hover:text-primary-400 focus:outline-none focus:ring active:text-primary-400 dark:ring-gray-600"
+                            class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded font-bold text-slate-400 ring-primary-200 transition hover:text-primary-400 focus:outline-none focus:ring active:text-primary-400 dark:ring-slate-600"
                         >
                             <IHandle class="handle h-5 w-5 shrink-0 cursor-move" />
                         </div>
@@ -119,7 +119,7 @@
                 <form
                     v-if="isCreating"
                     @submit.prevent="onAddBookmark"
-                    class="flex flex-col gap-2 rounded bg-gray-800 p-4"
+                    class="flex flex-col gap-2 rounded border bg-stone-100 p-4 dark:border-slate-700 dark:bg-slate-800"
                 >
                     <div>
                         <label class="text-xs font-medium uppercase opacity-60">{{ $t('Nom') }}</label>
@@ -135,21 +135,21 @@
                         <input
                             v-model="bookmark.url"
                             type="text"
-                            :placeholder="$t('Url du raccourci')"
+                            :placeholder="$t('https://...')"
                             class="form-control form-input-bordered form-input h-10 w-full"
                         />
                     </div>
                     <div class="flex justify-end gap-2">
                         <button
                             type="button"
-                            class="appearance-none bg-transparent px-2 text-sm font-bold text-gray-400 transition hover:text-gray-300 active:text-gray-500 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-400 dark:active:text-gray-600"
+                            class="appearance-none bg-transparent px-2 text-sm font-bold text-slate-400 transition hover:text-slate-300 active:text-slate-500 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-400 dark:active:text-slate-600"
                             @click="cancel"
                         >
                             {{ $t('Annuler') }}
                         </button>
                         <button
                             type="submit"
-                            class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-primary-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-900 dark:ring-gray-600"
+                            class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-primary-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-900 dark:ring-slate-600"
                         >
                             {{ $t('Ajouter') }}
                         </button>
