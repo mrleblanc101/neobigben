@@ -7,7 +7,7 @@
     >
         <Tabs
             v-if="isXlOrGreater || menuOpened"
-            class="fixed bottom-0 right-0 top-16 z-30 flex w-full shrink-0 flex-col border-l bg-stone-50 shadow-lg dark:border-slate-800 dark:bg-slate-900 sm:w-[28rem] xl:shadow-none"
+            class="fixed bottom-0 right-0 top-16 z-30 flex w-full shrink-0 flex-col border-l bg-stone-50 shadow-lg dark:border-slate-800 dark:bg-slate-900 sm:w-[32rem] xl:shadow-none"
             v-on-click-outside.bubble="onClickOutside"
         >
             <Tab :title="$t('Résumé')">
