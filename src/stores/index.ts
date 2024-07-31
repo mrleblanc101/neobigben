@@ -219,6 +219,7 @@ export const useIndexStore = defineStore('store', () => {
     async function updateEntry(entry: Entry) {
         await updateDoc(doc(db, 'entries', entry.id), {
             ...entry,
+            user: doc(db, 'users', authUser.value!.uid),
             project: entry.project?.id ? doc(db, 'projects', entry.project.id) : null,
         });
     }
