@@ -1,22 +1,23 @@
 import ViteSvgLoader from 'vite-svg-loader';
 
-const vueFireConfig = process.env.NODE_ENV === 'development' ?
-    {
-        apiKey: "AIzaSyDYaC0AbDjuzAsQ4t2-QzbYgYMIWHNWHmc",
-        authDomain: "neobigben-dev.firebaseapp.com",
-        projectId: "neobigben-dev",
-        storageBucket: "neobigben-dev.appspot.com",
-        messagingSenderId: "325271235170",
-        appId: "1:325271235170:web:398500c92cc2664e44bf3b"
-    } :
-    {
-        apiKey: 'AIzaSyArKefxLB6DdSkXhewC3_EzcOplCGGhuRs',
-        authDomain: 'neobigben.firebaseapp.com',
-        projectId: 'neobigben',
-        storageBucket: 'neobigben.appspot.com',
-        messagingSenderId: '681397227646',
-        appId: '1:681397227646:web:fdc164818213b9f80cc82f',
-    };
+const vueFireConfig =
+    process.env.NODE_ENV === 'development'
+        ? {
+              apiKey: 'AIzaSyDYaC0AbDjuzAsQ4t2-QzbYgYMIWHNWHmc',
+              authDomain: 'neobigben-dev.firebaseapp.com',
+              projectId: 'neobigben-dev',
+              storageBucket: 'neobigben-dev.appspot.com',
+              messagingSenderId: '325271235170',
+              appId: '1:325271235170:web:398500c92cc2664e44bf3b',
+          }
+        : {
+              apiKey: 'AIzaSyArKefxLB6DdSkXhewC3_EzcOplCGGhuRs',
+              authDomain: 'neobigben.firebaseapp.com',
+              projectId: 'neobigben',
+              storageBucket: 'neobigben.appspot.com',
+              messagingSenderId: '681397227646',
+              appId: '1:681397227646:web:fdc164818213b9f80cc82f',
+          };
 
 export default defineNuxtConfig({
     srcDir: 'src/',
@@ -114,4 +115,6 @@ export default defineNuxtConfig({
             }),
         ],
     },
+
+    compatibilityDate: '2024-07-31',
 });

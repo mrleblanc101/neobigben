@@ -50,13 +50,23 @@
                         class="relative flex w-full items-center justify-between gap-4 rounded border bg-stone-100 p-4 pr-16 dark:border-slate-700 dark:bg-slate-800"
                     >
                         <span class="font-bold">{{ project.name }}</span>
-                        <button
-                            type="button"
-                            class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus-visible:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
-                            @click="deleteProject(project)"
-                        >
-                            <IDelete class="h-5" />
-                        </button>
+                        <!-- TODO: Only display on hover -->
+                        <div class="absolute right-2 top-1/2 flex -translate-y-1/2 gap-2">
+                            <!-- TODO: Edit -->
+                            <button
+                                type="button"
+                                class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600"
+                            >
+                                <IEdit class="h-5" />
+                            </button>
+                            <button
+                                type="button"
+                                class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
+                                @click="deleteProject(project)"
+                            >
+                                <IDelete class="h-5" />
+                            </button>
+                        </div>
                     </div>
                 </template>
                 <div
@@ -77,34 +87,42 @@
                         <IClear class="h-6 w-6" />
                     </button>
                 </div>
-                <draggable v-model="priorities" item-key="name" handle=".handle" class="flex flex-col gap-2">
-                    <div v-for="(priority, index) in priorities" :key="priority.id" class="flex items-center gap-2">
-                        <label class="relative flex w-full items-center gap-2">
-                            <input
-                                type="checkbox"
-                                :checked="priority.completed"
-                                class="form-control form-input-bordered form-input h-6 w-6 rounded-full p-0 text-primary-500 disabled:opacity-30 dark:text-primary-500 dark:checked:bg-primary-500"
-                                @change="updatePriority(priority)"
-                            />
+                <draggable
+                    v-model="priorities"
+                    :animation="300"
+                    item-key="id"
+                    handle=".handle"
+                    class="flex flex-col gap-2"
+                >
+                    <template #item="{ element: priority }">
+                        <div class="flex items-center gap-2">
+                            <label class="relative flex w-full items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    :checked="priority.completed"
+                                    class="form-control form-input-bordered form-input h-6 w-6 rounded-full p-0 text-primary-500 disabled:opacity-30 dark:text-primary-500 dark:checked:bg-primary-500"
+                                    @change="updatePriority(priority)"
+                                />
+                                <div
+                                    class="relative flex w-full items-center justify-between gap-4 rounded border bg-stone-100 p-4 pr-16 dark:border-slate-700 dark:bg-slate-800"
+                                >
+                                    <span class="font-bold">{{ priority.name }}</span>
+                                </div>
+                                <button
+                                    type="button"
+                                    class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus-visible:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
+                                    @click="deletePriority(priority)"
+                                >
+                                    <IDelete class="h-5" />
+                                </button>
+                            </label>
                             <div
-                                class="relative flex w-full items-center justify-between gap-4 rounded border bg-stone-100 p-4 pr-16 dark:border-slate-700 dark:bg-slate-800"
+                                class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded font-bold text-slate-400 ring-primary-200 transition hover:text-primary-400 focus:outline-none focus-visible:ring active:text-primary-400 dark:ring-slate-600"
                             >
-                                <span class="font-bold">{{ index + 1 }}. {{ priority.name }}</span>
+                                <IHandle class="handle h-5 w-5 shrink-0 cursor-move" />
                             </div>
-                            <button
-                                type="button"
-                                class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus-visible:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
-                                @click="deletePriority(priority)"
-                            >
-                                <IDelete class="h-5" />
-                            </button>
-                        </label>
-                        <div
-                            class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded font-bold text-slate-400 ring-primary-200 transition hover:text-primary-400 focus:outline-none focus-visible:ring active:text-primary-400 dark:ring-slate-600"
-                        >
-                            <IHandle class="handle h-5 w-5 shrink-0 cursor-move" />
                         </div>
-                    </div>
+                    </template>
                 </draggable>
                 <form class="flex gap-2" @submit.prevent="onAddPriority">
                     <div class="flex w-full items-center gap-2">
@@ -143,37 +161,50 @@
                 <draggable
                     v-if="bookmarks && bookmarks.length && !isCreating"
                     v-model="bookmarks"
-                    item-key="name"
+                    :animation="300"
+                    item-key="id"
                     handle=".handle"
                     class="flex flex-col gap-2"
                 >
-                    <div v-for="bookmark in bookmarks" :key="bookmark.id" class="flex items-center gap-2">
-                        <div class="relative w-full">
-                            <div
-                                class="relative flex w-full items-center justify-between gap-4 rounded border bg-stone-100 pr-14 dark:border-slate-700 dark:bg-slate-800"
-                            >
-                                <a
-                                    :href="bookmark.url || '#'"
-                                    target="_blank"
-                                    class="w-full p-4 pr-0 font-bold text-primary-500 hover:text-primary-400"
+                    <template #item="{ element: bookmark }">
+                        <div class="flex items-center gap-2">
+                            <div class="relative w-full">
+                                <div
+                                    class="relative flex w-full items-center justify-between gap-4 rounded border bg-stone-100 pr-14 dark:border-slate-700 dark:bg-slate-800"
                                 >
-                                    {{ bookmark.name }}
-                                </a>
+                                    <a
+                                        :href="bookmark.url || '#'"
+                                        target="_blank"
+                                        class="w-full p-4 pr-0 font-bold text-primary-500 hover:text-primary-400"
+                                    >
+                                        {{ bookmark.name }}
+                                    </a>
+                                </div>
+                                <!-- TODO: Only display on hover -->
+                                <div class="absolute right-2 top-1/2 flex -translate-y-1/2 gap-2">
+                                    <!-- TODO: Edit -->
+                                    <button
+                                        type="button"
+                                        class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600"
+                                    >
+                                        <IEdit class="h-5" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
+                                        @click="deleteBookmark(bookmark)"
+                                    >
+                                        <IDelete class="h-5" />
+                                    </button>
+                                </div>
                             </div>
-                            <button
-                                type="button"
-                                class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus-visible:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
-                                @click="deleteBookmark(bookmark)"
+                            <div
+                                class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded font-bold text-slate-400 ring-primary-200 transition hover:text-primary-400 focus:outline-none focus-visible:ring active:text-primary-400 dark:ring-slate-600"
                             >
-                                <IDelete class="h-5" />
-                            </button>
+                                <IHandle class="handle h-5 w-5 shrink-0 cursor-move" />
+                            </div>
                         </div>
-                        <div
-                            class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded font-bold text-slate-400 ring-primary-200 transition hover:text-primary-400 focus:outline-none focus-visible:ring active:text-primary-400 dark:ring-slate-600"
-                        >
-                            <IHandle class="handle h-5 w-5 shrink-0 cursor-move" />
-                        </div>
-                    </div>
+                    </template>
                 </draggable>
                 <div
                     v-else-if="!isCreating"
@@ -226,10 +257,11 @@
 </template>
 
 <script lang="ts" setup>
+import IEdit from '@/assets/svg/edit.svg?component';
 import IDelete from '@/assets/svg/delete.svg?component';
 import IHandle from '@/assets/svg/hamburger.svg?component';
 import IClear from '@/assets/svg/clear.svg?component';
-import { VueDraggableNext as draggable } from 'vue-draggable-next';
+import draggable from 'vuedraggable';
 
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 import { useIndexStore } from '@/stores/index';
@@ -238,16 +270,8 @@ import { storeToRefs } from 'pinia';
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const store = useIndexStore();
 
-const {
-    weeklySummaryByProjects,
-    dailySummaryByProjects,
-    menuOpened,
-    filter,
-    sort,
-    sortedProjects,
-    priorities,
-    bookmarks,
-} = storeToRefs(store);
+const { weeklySummaryByProjects, dailySummaryByProjects, menuOpened, filter, sort, sortedProjects } =
+    storeToRefs(store);
 const {
     deleteProject,
     deletePriority,
@@ -266,6 +290,23 @@ const bookmarkModel = ref({
     url: '',
 });
 const isCreating = ref(false);
+
+const priorities = computed({
+    get() {
+        return store.user?.priorities as Priority[];
+    },
+    async set(value: Priority[]) {
+        await store.reorderPriorities(value);
+    },
+});
+const bookmarks = computed({
+    get() {
+        return store.user?.bookmarks as Bookmark[];
+    },
+    async set(value: Bookmark[]) {
+        await store.reorderBookmarks(value);
+    },
+});
 
 const summary = computed((): [string, string][] => {
     return filter.value === 'daily' ? dailySummaryByProjects.value : weeklySummaryByProjects.value;
@@ -293,3 +334,9 @@ function onClickOutside() {
     menuOpened.value = false;
 }
 </script>
+
+<style lang="postcss" scoped>
+.sortable-ghost {
+    opacity: 0;
+}
+</style>

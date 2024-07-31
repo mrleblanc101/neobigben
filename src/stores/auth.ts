@@ -6,7 +6,7 @@ import { useIndexStore } from '@/stores/index';
 
 export const googleAuthProvider = new GoogleAuthProvider();
 googleAuthProvider.setCustomParameters({
-    prompt: 'select_account'
+    prompt: 'select_account',
 });
 
 export const useAuthStore = defineStore('auth', () => {

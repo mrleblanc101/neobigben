@@ -46,4 +46,6 @@ type User = {
     email: string;
     photo_url: string;
     weekly_target: string;
-}
+    bookmarks: Bookmark[];
+    priorities: Priority[];
+};

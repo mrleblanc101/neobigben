@@ -7,6 +7,8 @@ import {
     doc,
     query,
     orderBy,
+    arrayUnion,
+    arrayRemove,
     where,
     writeBatch,
     getDoc,
@@ -22,7 +24,7 @@ const addDefaultFields = {
         return {
             created_at: serverTimestamp(),
             ...docData,
-        }
+        };
     },
     fromFirestore: firestoreDefaultConverter.fromFirestore,
 };
@@ -51,21 +53,45 @@ export const useIndexStore = defineStore('store', () => {
         return $moment(selectedDay.value).endOf('week').format('YYYY-MM-DD');
     });
     const projects = useCollection<Project>(
-        computed(() => (authUser.value ? query(collection(db, 'projects'), where('user', '==', doc(db, 'users', authUser.value!.uid)), orderBy('created_at')) : null)),
+        computed(() =>
+            authUser.value
+                ? query(
+                      collection(db, 'projects'),
+                      where('user', '==', doc(db, 'users', authUser.value!.uid)),
+                      orderBy('created_at'),
+                  )
+                : null,
+        ),
         {
             wait: true,
             ssrKey: 'projects',
         },
     );
     const bookmarks = useCollection<Bookmark>(
-        computed(() => (authUser.value ? query(collection(db, 'bookmarks'), where('user', '==', doc(db, 'users', authUser.value!.uid)), orderBy('created_at')) : null)),
+        computed(() =>
+            authUser.value
+                ? query(
+                      collection(db, 'bookmarks'),
+                      where('user', '==', doc(db, 'users', authUser.value!.uid)),
+                      orderBy('created_at'),
+                  )
+                : null,
+        ),
         {
             wait: true,
             ssrKey: 'bookmarks',
         },
     );
     const priorities = useCollection<Priority>(
-        computed(() => (user.value ? query(collection(db, 'priorities'), where('user', '==', doc(db, 'users', authUser.value!.uid)), orderBy('created_at')) : null)),
+        computed(() =>
+            user.value
+                ? query(
+                      collection(db, 'priorities'),
+                      where('user', '==', doc(db, 'users', authUser.value!.uid)),
+                      orderBy('created_at'),
+                  )
+                : null,
+        ),
         {
             wait: true,
             ssrKey: 'priorities',
@@ -185,10 +211,19 @@ export const useIndexStore = defineStore('store', () => {
         return p;
     });
     async function addPriority(name: string) {
-        await addDoc(collection(db, 'priorities').withConverter(addDefaultFields), {
+        const newDoc = await addDoc(collection(db, 'priorities').withConverter(addDefaultFields), {
             name,
             completed: false,
             user: doc(db, 'users', authUser.value!.uid),
+        });
+        await updateDoc(doc(db, 'users', authUser.value!.uid), {
+            priorities: arrayUnion(newDoc),
+        });
+    }
+    async function reorderPriorities(priorities: Priority[]) {
+        const prioritiesRef = priorities.map((priority: Priority) => doc(db, 'priorities', priority.id));
+        await updateDoc(doc(db, 'users', authUser.value!.uid), {
+            priorities: prioritiesRef,
         });
     }
     async function updatePriority(priority: Priority) {
@@ -199,7 +234,12 @@ export const useIndexStore = defineStore('store', () => {
     }
     async function deletePriority(priority: Priority, force = false) {
         if (force || confirm(t('Êtes vous certain de vouloir supprimer cette priorité ?'))) {
-            await deleteDoc(doc(db, 'priorities', priority.id));
+            const docRef = doc(db, 'priorities', priority.id);
+
+            await updateDoc(doc(db, 'users', authUser.value!.uid), {
+                priorities: arrayRemove(docRef),
+            });
+            await deleteDoc(docRef);
         }
     }
     function deleteCompletedPriorities() {
@@ -311,21 +351,34 @@ export const useIndexStore = defineStore('store', () => {
     }
     async function addBookmark(bookmark: Bookmark) {
         const addhttp = (url: string) => {
-            if (!/^(?:f|ht)tps?\:\/\//.test(url)) {
-                url = "https://" + url;
+            if (!/^(?:f|ht)tps?:\/\//.test(url)) {
+                url = 'https://' + url;
             }
             return url;
-        }
-
-        await addDoc(collection(db, 'bookmarks').withConverter(addDefaultFields), {
+        };
+        const newDoc = await addDoc(collection(db, 'bookmarks').withConverter(addDefaultFields), {
             ...bookmark,
             url: addhttp(bookmark.url),
-            user: authUser.value!.uid,
+            user: doc(db, 'users', authUser.value!.uid),
+        });
+        await updateDoc(doc(db, 'users', authUser.value!.uid), {
+            bookmarks: arrayUnion(newDoc),
+        });
+    }
+    async function reorderBookmarks(bookmarks: Bookmark[]) {
+        const bookmarksRef = bookmarks.map((bookmark: Bookmark) => doc(db, 'bookmarks', bookmark.id));
+        await updateDoc(doc(db, 'users', authUser.value!.uid), {
+            bookmarks: bookmarksRef,
         });
     }
     async function deleteBookmark(bookmark: Bookmark, force = false) {
         if (force || confirm(t('Êtes vous certain de vouloir supprimer ce raccourci ?'))) {
-            await deleteDoc(doc(db, 'bookmarks', bookmark.id));
+            const docRef = doc(db, 'bookmarks', bookmark.id);
+
+            await updateDoc(doc(db, 'users', authUser.value!.uid), {
+                bookmarks: arrayRemove(docRef),
+            });
+            await deleteDoc(docRef);
         }
     }
     async function createUserInfo(result: UserCredential) {
@@ -340,7 +393,7 @@ export const useIndexStore = defineStore('store', () => {
             display_name: result.user.displayName,
             email: result.user.email,
             photo_url: result.user.photoURL,
-        })
+        });
     }
     async function updateWeekTarget(weekly_target: string) {
         await updateDoc(doc(db, 'users', authUser.value!.uid), {
@@ -390,10 +443,12 @@ export const useIndexStore = defineStore('store', () => {
         addProject,
         deleteProject,
         addPriority,
+        reorderPriorities,
         updatePriority,
         deletePriority,
         deleteCompletedPriorities,
         addBookmark,
+        reorderBookmarks,
         deleteBookmark,
         createUserInfo,
         updateWeekTarget,
