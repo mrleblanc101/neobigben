@@ -9,8 +9,8 @@
     >
         <div
             v-if="is_open"
-            class="absolute right-0 top-full flex w-64 min-w-full translate-y-2 flex-col gap-6 rounded border bg-stone-50 p-4 dark:border-slate-800 dark:bg-slate-900"
             v-on-click-outside.bubble="onClickOutside"
+            class="absolute right-0 top-full flex w-64 min-w-full translate-y-2 flex-col gap-6 rounded border bg-stone-50 p-4 dark:border-slate-800 dark:bg-slate-900"
         >
             <div class="flex flex-col gap-2">
                 <div class="border-b pb-2 dark:border-slate-800">
@@ -39,14 +39,8 @@
 import ILogout from '@/assets/svg/logout.svg?component';
 
 import { useAuthStore } from '@/stores/auth';
-const auth = useAuthStore();
-const store = useIndexStore();
-const { logout } = auth;
-const { user } = storeToRefs(store);
 
-const route = useRoute();
-
-const props = withDefaults(
+withDefaults(
     defineProps<{
         is_open: boolean;
     }>(),
@@ -55,6 +49,13 @@ const props = withDefaults(
     },
 );
 const emit = defineEmits(['update:is_open']);
+
+const auth = useAuthStore();
+const store = useIndexStore();
+const { logout } = auth;
+const { user } = storeToRefs(store);
+
+const route = useRoute();
 
 watch(
     () => route.name,

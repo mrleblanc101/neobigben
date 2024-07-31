@@ -7,8 +7,8 @@
     >
         <Tabs
             v-if="isXlOrGreater || menuOpened"
-            class="fixed bottom-0 right-0 top-16 z-30 flex w-full shrink-0 flex-col border-l bg-stone-50 shadow-lg dark:border-slate-800 dark:bg-slate-900 sm:w-[32rem] xl:shadow-none"
             v-on-click-outside.bubble="onClickOutside"
+            class="fixed bottom-0 right-0 top-16 z-30 flex w-full shrink-0 flex-col border-l bg-stone-50 shadow-lg dark:border-slate-800 dark:bg-slate-900 sm:w-[32rem] xl:shadow-none"
         >
             <Tab :title="$t('Résumé')">
                 <div class="mb-2 flex items-center gap-2">
@@ -21,6 +21,7 @@
                 <template v-if="summary && summary.length">
                     <div
                         v-for="[project, duration] in summary"
+                        :key="project"
                         class="flex w-full items-center justify-between gap-4 rounded border bg-stone-100 p-4 font-bold dark:border-slate-700 dark:bg-slate-800"
                     >
                         <span>{{ project }}</span>
@@ -28,8 +29,8 @@
                     </div>
                 </template>
                 <div
-                    class="absolute left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 text-center leading-tight opacity-60"
                     v-else
+                    class="absolute left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 text-center leading-tight opacity-60"
                 >
                     {{ $t("Aucune donnée pour l'instant") }}
                 </div>
@@ -76,8 +77,8 @@
                         <IClear class="h-6 w-6" />
                     </button>
                 </div>
-                <draggable item-key="name" v-model="priorities" handle=".handle" class="flex flex-col gap-2">
-                    <div v-for="(priority, index) in priorities" class="flex items-center gap-2">
+                <draggable v-model="priorities" item-key="name" handle=".handle" class="flex flex-col gap-2">
+                    <div v-for="(priority, index) in priorities" :key="priority.id" class="flex items-center gap-2">
                         <label class="relative flex w-full items-center gap-2">
                             <input
                                 type="checkbox"
@@ -86,7 +87,7 @@
                                 @change="updatePriority(priority)"
                             />
                             <div
-                                class="relative flex w-full items-center justify-between gap-4 rounded bg-stone-100 p-4 pr-16 dark:bg-slate-800 border dark:border-slate-700"
+                                class="relative flex w-full items-center justify-between gap-4 rounded border bg-stone-100 p-4 pr-16 dark:border-slate-700 dark:bg-slate-800"
                             >
                                 <span class="font-bold">{{ index + 1 }}. {{ priority.name }}</span>
                             </div>
@@ -105,7 +106,7 @@
                         </div>
                     </div>
                 </draggable>
-                <form @submit.prevent="onAddPriority" class="flex gap-2">
+                <form class="flex gap-2" @submit.prevent="onAddPriority">
                     <div class="flex w-full items-center gap-2">
                         <input
                             type="checkbox"
@@ -115,7 +116,7 @@
                         <label class="flex w-full items-center gap-2">
                             <span class="sr-only">{{ $t('Priorité') }}</span>
                             <input
-                                v-model="priority"
+                                v-model="priorityModel"
                                 type="text"
                                 placeholder="Ajouter une priorité"
                                 class="form-control form-input-bordered form-input h-10 w-full"
@@ -141,12 +142,12 @@
                 </div>
                 <draggable
                     v-if="bookmarks && bookmarks.length && !isCreating"
-                    item-key="name"
                     v-model="bookmarks"
+                    item-key="name"
                     handle=".handle"
                     class="flex flex-col gap-2"
                 >
-                    <div v-for="bookmark in bookmarks" class="flex items-center gap-2">
+                    <div v-for="bookmark in bookmarks" :key="bookmark.id" class="flex items-center gap-2">
                         <div class="relative w-full">
                             <div
                                 class="relative flex w-full items-center justify-between gap-4 rounded border bg-stone-100 pr-14 dark:border-slate-700 dark:bg-slate-800"
@@ -175,20 +176,20 @@
                     </div>
                 </draggable>
                 <div
-                    class="absolute left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 text-center leading-tight opacity-60"
                     v-else-if="!isCreating"
+                    class="absolute left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 text-center leading-tight opacity-60"
                 >
                     {{ $t("Aucune donnée pour l'instant") }}
                 </div>
                 <form
                     v-if="isCreating"
-                    @submit.prevent="onAddBookmark"
                     class="flex flex-col gap-2 rounded border bg-stone-100 p-4 dark:border-slate-700 dark:bg-slate-800"
+                    @submit.prevent="onAddBookmark"
                 >
                     <div>
                         <label class="text-xs font-medium uppercase opacity-60">{{ $t('Nom') }}</label>
                         <input
-                            v-model="bookmark.name"
+                            v-model="bookmarkModel.name"
                             type="text"
                             :placeholder="$t('EOS (TownHall, pause-café, etc.)')"
                             class="form-control form-input-bordered form-input h-10 w-full"
@@ -197,7 +198,7 @@
                     <div>
                         <label class="text-xs font-medium uppercase opacity-60">{{ $t('Url') }}</label>
                         <input
-                            v-model="bookmark.url"
+                            v-model="bookmarkModel.url"
                             type="text"
                             :placeholder="$t('https://...')"
                             class="form-control form-input-bordered form-input h-10 w-full"
@@ -225,7 +226,6 @@
 </template>
 
 <script lang="ts" setup>
-import IEdit from '@/assets/svg/edit.svg?component';
 import IDelete from '@/assets/svg/delete.svg?component';
 import IHandle from '@/assets/svg/hamburger.svg?component';
 import IClear from '@/assets/svg/clear.svg?component';
@@ -238,14 +238,30 @@ import { storeToRefs } from 'pinia';
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const store = useIndexStore();
 
-const { weeklySummaryByProjects, dailySummaryByProjects, menuOpened, filter, sort, sortedProjects, priorities, bookmarks,  } =
-    storeToRefs(store);
-const { deleteProject, deletePriority, deleteCompletedPriorities, addPriority, updatePriority, deleteBookmark, addBookmark } = store;
+const {
+    weeklySummaryByProjects,
+    dailySummaryByProjects,
+    menuOpened,
+    filter,
+    sort,
+    sortedProjects,
+    priorities,
+    bookmarks,
+} = storeToRefs(store);
+const {
+    deleteProject,
+    deletePriority,
+    deleteCompletedPriorities,
+    addPriority,
+    updatePriority,
+    deleteBookmark,
+    addBookmark,
+} = store;
 const isXlOrGreater = breakpoints.greaterOrEqual('xl');
 
-const priority = ref('');
+const priorityModel = ref('');
 
-const bookmark = ref({
+const bookmarkModel = ref({
     name: '',
     url: '',
 });
@@ -256,20 +272,20 @@ const summary = computed((): [string, string][] => {
 });
 
 function onAddPriority() {
-    addPriority(priority.value);
-    priority.value = '';
+    addPriority(priorityModel.value);
+    priorityModel.value = '';
 }
 
 function onAddBookmark() {
-    addBookmark(bookmark.value);
-    bookmark.value.name = '';
-    bookmark.value.url = '';
+    addBookmark(bookmarkModel.value);
+    bookmarkModel.value.name = '';
+    bookmarkModel.value.url = '';
     isCreating.value = false;
 }
 
 function cancel() {
-    bookmark.value.name = '';
-    bookmark.value.url = '';
+    bookmarkModel.value.name = '';
+    bookmarkModel.value.url = '';
     isCreating.value = false;
 }
 

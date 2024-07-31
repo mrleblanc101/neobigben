@@ -14,9 +14,9 @@
             <span class="capitalize">{{ $moment(selectedDay).format('dddd') }}, </span>
             <span :key="$i18n.locale">{{ $moment(selectedDay).format('LL') }}</span>
             <input
+                v-model="selectedDay"
                 class="sr-only bottom-0 left-0"
                 type="date"
-                v-model="selectedDay"
                 tabindex="-1"
                 onfocus="this.showPicker()"
             />

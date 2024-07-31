@@ -52,9 +52,9 @@
                 :object="true"
                 :placeholder="$t('Choisir ou créer...')"
                 :classes="classes"
-                :appendNewOption="false"
+                :append-new-option="false"
                 searchable
-                createOption
+                create-option
                 @create="addProject"
             />
         </div>
@@ -200,12 +200,6 @@ import Multiselect from '@vueform/multiselect';
 import { storeToRefs } from 'pinia';
 import { useIndexStore } from '@/stores/index';
 
-const { $moment } = useNuxtApp();
-
-const store = useIndexStore();
-const { addProject, addEntry, updateEntry, deleteEntry, toggleEntrySynced } = store;
-const { projects, selectedDay, todaysEntries } = storeToRefs(store);
-
 const props = withDefaults(defineProps<{ entry?: Entry }>(), {
     entry: () => ({
         is_creating: true,
@@ -224,6 +218,12 @@ const props = withDefaults(defineProps<{ entry?: Entry }>(), {
 const emit = defineEmits<{
     (e: 'add'): void;
 }>();
+
+const { $moment } = useNuxtApp();
+
+const store = useIndexStore();
+const { addProject, addEntry, updateEntry, deleteEntry, toggleEntrySynced } = store;
+const { projects, selectedDay, todaysEntries } = storeToRefs(store);
 
 const model = ref();
 
@@ -386,7 +386,7 @@ async function stop() {
     model.value.is_live_clocking = false;
     model.value.duration = computedDuration;
 
-    if(model.value.project) {
+    if (model.value.project) {
         edit();
     } else {
         await updateEntry(model.value);
