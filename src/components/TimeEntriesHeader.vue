@@ -2,13 +2,13 @@
     <div class="sticky top-16 z-20 -mt-3 flex w-full min-w-0 justify-between gap-2 bg-stone-50 py-3 dark:bg-slate-900">
         <button
             type="button"
-            class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600"
+            class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus-visible:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600"
             @click="changeDay('prev')"
         >
             <IArrowLeft class="h-3" />
         </button>
         <label
-            class="relative min-w-0 shrink cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap rounded border px-5 text-center font-medium leading-10 ring-primary-200 transition hover:bg-white focus:outline-none focus:ring dark:border-slate-800 dark:ring-slate-600 dark:hover:bg-slate-800"
+            class="relative min-w-0 shrink cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap rounded border px-5 text-center font-medium leading-10 ring-primary-200 transition hover:bg-white focus:outline-none focus-visible:ring dark:border-slate-800 dark:ring-slate-600 dark:hover:bg-slate-800"
             tabindex="0"
         >
             <span class="capitalize">{{ $moment(selectedDay).format('dddd') }}, </span>
@@ -23,7 +23,7 @@
         </label>
         <button
             type="button"
-            class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600"
+            class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus-visible:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600"
             @click="changeDay('next')"
         >
             <IArrowRight class="h-3" />

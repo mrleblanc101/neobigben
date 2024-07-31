@@ -10,7 +10,7 @@ export default {
     singleLabelText: 'overflow-ellipsis overflow-hidden block whitespace-nowrap max-w-full',
     multipleLabel:
         'flex items-center h-full absolute left-0 top-0 pointer-events-none bg-transparent leading-snug pl-3.5',
-    search: 'w-full absolute inset-0 outline-none appearance-none box-border border-0 text-sm font-sans rounded pl-3.5 bg-transparent focus:ring-transparent',
+    search: 'w-full absolute inset-0 outline-none appearance-none box-border border-0 text-sm font-sans rounded pl-3.5 bg-transparent focus-visible:ring-transparent',
     tags: 'flex-grow flex-shrink flex flex-wrap items-center mt-1 pl-2 ',
     tag: 'bg-primary-500 text-white text-sm font-semibold py-0.5 pl-2 rounded mr-1 mb-1 flex items-center whitespace-nowrap',
     tagDisabled: 'pr-2 opacity-50',

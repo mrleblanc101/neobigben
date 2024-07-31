@@ -3,7 +3,7 @@
         <div class="flex h-16 items-center justify-between px-4 lg:px-8">
             <button
                 type="button"
-                class="-m-2 flex rounded p-2 text-2xl font-black ring-primary-200 focus:outline-none focus:ring dark:ring-slate-600"
+                class="-m-2 flex rounded p-2 text-2xl font-black ring-primary-200 focus:outline-none focus-visible:ring dark:ring-slate-600"
                 @click="selectedDay = $moment().format('YYYY-MM-DD')"
             >
                 <Logo />
@@ -11,7 +11,7 @@
             <div class="relative flex items-center gap-1 sm:gap-2">
                 <button
                     type="button"
-                    class="inline-flex h-10 flex-shrink-0 items-center justify-center gap-1 rounded bg-primary-500 px-2 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600 md:px-3"
+                    class="inline-flex h-10 flex-shrink-0 items-center justify-center gap-1 rounded bg-primary-500 px-2 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus-visible:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600 md:px-3"
                     @click.stop="is_summary_open = !is_summary_open"
                 >
                     <IClock class="h-5" />
@@ -21,7 +21,7 @@
 
                 <button
                     type="button"
-                    class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 bg-cover font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600"
+                    class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 bg-cover font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus-visible:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600"
                     :style="{ backgroundImage: `url('${user?.photo_url}')` }"
                     @click.stop="is_user_menu_open = !is_user_menu_open"
                 >
@@ -31,7 +31,7 @@
 
                 <button
                     type="button"
-                    class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600 xl:hidden"
+                    class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus-visible:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600 xl:hidden"
                     @click.stop="menuOpened = !menuOpened"
                 >
                     <IHamburger v-if="!menuOpened" class="h-4 w-4" />

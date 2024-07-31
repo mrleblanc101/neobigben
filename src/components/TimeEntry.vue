@@ -71,7 +71,7 @@
             <button
                 v-if="isToday && !model.is_live_clocking && !model.end_time"
                 type="button"
-                class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-green-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-green-400 focus:outline-none focus:ring active:bg-green-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-900 dark:ring-slate-600"
+                class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-green-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-green-400 focus:outline-none focus-visible:ring active:bg-green-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-900 dark:ring-slate-600"
                 @click="start"
             >
                 {{ $t('Démarrer') }}
@@ -80,7 +80,7 @@
             <button
                 v-else-if="isToday && model.is_live_clocking"
                 type="button"
-                class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-rose-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-rose-400 focus:outline-none focus:ring active:bg-rose-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-900 dark:ring-slate-600"
+                class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-rose-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-rose-400 focus:outline-none focus-visible:ring active:bg-rose-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-900 dark:ring-slate-600"
                 @click="stop"
             >
                 {{ $t('Arrêter') }}
@@ -104,7 +104,7 @@
             </button>
             <button
                 type="submit"
-                class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-primary-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-900 dark:ring-slate-600"
+                class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-primary-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus-visible:ring active:bg-primary-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-900 dark:ring-slate-600"
                 :disabled="!(model.start_time && model.end_time && model.duration && model.project)"
             >
                 {{ model.is_creating ? $t('Ajouter') : $t('Sauvegarder') }}
@@ -131,21 +131,21 @@
             <div class="flex gap-2">
                 <button
                     type="button"
-                    class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600"
+                    class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus-visible:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600"
                     @click="toggleEntrySynced(entry)"
                 >
                     <INetsuite class="h-4" />
                 </button>
                 <button
                     type="button"
-                    class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600"
+                    class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus-visible:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600"
                     @click="toggleEditing"
                 >
                     <IEdit class="h-5" />
                 </button>
                 <button
                     type="button"
-                    class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
+                    class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus-visible:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
                     @click="deleteEntry(entry)"
                 >
                     <IDelete class="h-5" />

@@ -51,7 +51,7 @@
                         <span class="font-bold">{{ project.name }}</span>
                         <button
                             type="button"
-                            class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
+                            class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus-visible:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
                             @click="deleteProject(project)"
                         >
                             <IDelete class="h-5" />
@@ -69,7 +69,7 @@
                 <div class="mb-2 flex items-center justify-end gap-2">
                     <button
                         type="button"
-                        class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-primary-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-900 dark:ring-slate-600"
+                        class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-primary-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus-visible:ring active:bg-primary-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-900 dark:ring-slate-600"
                         @click="deleteCompletedPriorities"
                     >
                         {{ $t('Cleanup') }}
@@ -92,14 +92,14 @@
                             </div>
                             <button
                                 type="button"
-                                class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
+                                class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus-visible:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
                                 @click="deletePriority(priority)"
                             >
                                 <IDelete class="h-5" />
                             </button>
                         </label>
                         <div
-                            class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded font-bold text-slate-400 ring-primary-200 transition hover:text-primary-400 focus:outline-none focus:ring active:text-primary-400 dark:ring-slate-600"
+                            class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded font-bold text-slate-400 ring-primary-200 transition hover:text-primary-400 focus:outline-none focus-visible:ring active:text-primary-400 dark:ring-slate-600"
                         >
                             <IHandle class="handle h-5 w-5 shrink-0 cursor-move" />
                         </div>
@@ -109,7 +109,7 @@
                     <div class="flex w-full items-center gap-2">
                         <input
                             type="checkbox"
-                            class="form-control form-input-bordered form-input h-6 w-6 rounded-full border-slate-400 p-0 text-primary-500 ring-primary-200 focus:outline-none focus:ring disabled:opacity-30 dark:bg-slate-800 dark:text-primary-500 dark:ring-slate-600 dark:checked:bg-primary-500"
+                            class="form-control form-input-bordered form-input h-6 w-6 rounded-full border-slate-400 p-0 text-primary-500 ring-primary-200 focus:outline-none focus-visible:ring disabled:opacity-30 dark:bg-slate-800 dark:text-primary-500 dark:ring-slate-600 dark:checked:bg-primary-500"
                             disabled
                         />
                         <label class="flex w-full items-center gap-2">
@@ -121,7 +121,7 @@
                                 class="form-control form-input-bordered form-input h-10 w-full"
                             />
                             <div
-                                class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded font-bold text-slate-400 opacity-50 ring-primary-200 transition focus:outline-none focus:ring dark:ring-slate-600"
+                                class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded font-bold text-slate-400 opacity-50 ring-primary-200 transition focus:outline-none focus-visible:ring dark:ring-slate-600"
                             >
                                 <IHandle class="handle h-5 w-5 shrink-0" />
                             </div>
@@ -133,7 +133,7 @@
                 <div v-if="!isCreating" class="mb-2 flex items-center justify-end gap-2">
                     <button
                         type="button"
-                        class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-primary-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-900 dark:ring-slate-600"
+                        class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-primary-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus-visible:ring active:bg-primary-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-900 dark:ring-slate-600"
                         @click="isCreating = !isCreating"
                     >
                         {{ $t('Ajouter') }}
@@ -161,14 +161,14 @@
                             </div>
                             <button
                                 type="button"
-                                class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
+                                class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus-visible:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
                                 @click="deleteBookmark(bookmark)"
                             >
                                 <IDelete class="h-5" />
                             </button>
                         </div>
                         <div
-                            class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded font-bold text-slate-400 ring-primary-200 transition hover:text-primary-400 focus:outline-none focus:ring active:text-primary-400 dark:ring-slate-600"
+                            class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded font-bold text-slate-400 ring-primary-200 transition hover:text-primary-400 focus:outline-none focus-visible:ring active:text-primary-400 dark:ring-slate-600"
                         >
                             <IHandle class="handle h-5 w-5 shrink-0 cursor-move" />
                         </div>
@@ -213,7 +213,7 @@
                         </button>
                         <button
                             type="submit"
-                            class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-primary-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-900 dark:ring-slate-600"
+                            class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-primary-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus-visible:ring active:bg-primary-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-900 dark:ring-slate-600"
                         >
                             {{ $t('Ajouter') }}
                         </button>
