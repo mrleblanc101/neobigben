@@ -28,6 +28,12 @@ type Summary = {
     saturday: string;
 };
 
+type Priority = {
+    id?: Nullable<string>;
+    name: string;
+    completed: boolean;
+};
+
 type Bookmark = {
     id?: Nullable<string>;
     name: string;

@@ -65,6 +65,70 @@
                     {{ $t("Aucune donnée pour l'instant") }}
                 </div>
             </Tab>
+            <Tab :title="$t('Priorités')">
+                <div class="mb-2 flex items-center justify-end gap-2">
+                    <button
+                        type="button"
+                        class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-primary-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-900 dark:ring-slate-600"
+                        @click="deleteCompletedPriorities"
+                    >
+                        {{ $t('Cleanup') }}
+                        <IClear class="h-6 w-6" />
+                    </button>
+                </div>
+                <draggable item-key="name" v-model="priorities" handle=".handle" class="flex flex-col gap-2">
+                    <div v-for="(priority, index) in priorities" class="flex items-center gap-2">
+                        <label class="relative flex w-full items-center gap-2">
+                            <input
+                                type="checkbox"
+                                :checked="priority.completed"
+                                class="form-control form-input-bordered form-input h-6 w-6 rounded-full p-0 text-primary-500 disabled:opacity-30 dark:text-primary-500 dark:checked:bg-primary-500"
+                                @change="updatePriority(priority)"
+                            />
+                            <div
+                                class="relative flex w-full items-center justify-between gap-4 rounded bg-stone-100 p-4 pr-16 dark:bg-slate-800 border dark:border-slate-700"
+                            >
+                                <span class="font-bold">{{ index + 1 }}. {{ priority.name }}</span>
+                            </div>
+                            <button
+                                type="button"
+                                class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
+                                @click="deletePriority(priority)"
+                            >
+                                <IDelete class="h-5" />
+                            </button>
+                        </label>
+                        <div
+                            class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded font-bold text-slate-400 ring-primary-200 transition hover:text-primary-400 focus:outline-none focus:ring active:text-primary-400 dark:ring-slate-600"
+                        >
+                            <IHandle class="handle h-5 w-5 shrink-0 cursor-move" />
+                        </div>
+                    </div>
+                </draggable>
+                <form @submit.prevent="onAddPriority" class="flex gap-2">
+                    <div class="flex w-full items-center gap-2">
+                        <input
+                            type="checkbox"
+                            class="form-control form-input-bordered form-input h-6 w-6 rounded-full border-slate-400 p-0 text-primary-500 ring-primary-200 focus:outline-none focus:ring disabled:opacity-30 dark:bg-slate-800 dark:text-primary-500 dark:ring-slate-600 dark:checked:bg-primary-500"
+                            disabled
+                        />
+                        <label class="flex w-full items-center gap-2">
+                            <span class="sr-only">{{ $t('Priorité') }}</span>
+                            <input
+                                v-model="priority"
+                                type="text"
+                                placeholder="Ajouter une priorité"
+                                class="form-control form-input-bordered form-input h-10 w-full"
+                            />
+                            <div
+                                class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded font-bold text-slate-400 opacity-50 ring-primary-200 transition focus:outline-none focus:ring dark:ring-slate-600"
+                            >
+                                <IHandle class="handle h-5 w-5 shrink-0" />
+                            </div>
+                        </label>
+                    </div>
+                </form>
+            </Tab>
             <Tab :title="$t('Raccourcis')">
                 <div v-if="!isCreating" class="mb-2 flex items-center justify-end gap-2">
                     <button
@@ -161,8 +225,10 @@
 </template>
 
 <script lang="ts" setup>
+import IEdit from '@/assets/svg/edit.svg?component';
 import IDelete from '@/assets/svg/delete.svg?component';
 import IHandle from '@/assets/svg/hamburger.svg?component';
+import IClear from '@/assets/svg/clear.svg?component';
 import { VueDraggableNext as draggable } from 'vue-draggable-next';
 
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
@@ -172,10 +238,12 @@ import { storeToRefs } from 'pinia';
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const store = useIndexStore();
 
-const { weeklySummaryByProjects, dailySummaryByProjects, menuOpened, filter, sort, sortedProjects, bookmarks } =
+const { weeklySummaryByProjects, dailySummaryByProjects, menuOpened, filter, sort, sortedProjects, priorities, bookmarks,  } =
     storeToRefs(store);
-const { deleteProject, deleteBookmark, addBookmark } = store;
+const { deleteProject, deletePriority, deleteCompletedPriorities, addPriority, updatePriority, deleteBookmark, addBookmark } = store;
 const isXlOrGreater = breakpoints.greaterOrEqual('xl');
+
+const priority = ref('');
 
 const bookmark = ref({
     name: '',
@@ -186,6 +254,11 @@ const isCreating = ref(false);
 const summary = computed((): [string, string][] => {
     return filter.value === 'daily' ? dailySummaryByProjects.value : weeklySummaryByProjects.value;
 });
+
+function onAddPriority() {
+    addPriority(priority.value);
+    priority.value = '';
+}
 
 function onAddBookmark() {
     addBookmark(bookmark.value);

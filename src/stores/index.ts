@@ -64,6 +64,13 @@ export const useIndexStore = defineStore('store', () => {
             ssrKey: 'bookmarks',
         },
     );
+    const priorities = useCollection<Priority>(
+        computed(() => (user.value ? query(collection(db, 'priorities'), where('user', '==', doc(db, 'users', authUser.value!.uid)), orderBy('created_at')) : null)),
+        {
+            wait: true,
+            ssrKey: 'priorities',
+        },
+    );
     const entries = useCollection<Entry>(
         computed(() =>
             authUser.value
@@ -177,6 +184,35 @@ export const useIndexStore = defineStore('store', () => {
         }
         return p;
     });
+    async function addPriority(name: string) {
+        await addDoc(collection(db, 'priorities').withConverter(addDefaultFields), {
+            name,
+            completed: false,
+            user: doc(db, 'users', authUser.value!.uid),
+        });
+    }
+    async function updatePriority(priority: Priority) {
+        await updateDoc(doc(db, 'priorities', priority.id), {
+            completed: !priority.completed,
+            user: doc(db, 'users', authUser.value!.uid),
+        });
+    }
+    async function deletePriority(priority: Priority, force = false) {
+        if (force || confirm(t('Êtes vous certain de vouloir supprimer cette priorité ?'))) {
+            await deleteDoc(doc(db, 'priorities', priority.id));
+        }
+    }
+    function deleteCompletedPriorities() {
+        const completed = priorities.value.filter((p: Priority) => p.completed);
+
+        if (completed.length !== 0) {
+            if (confirm(t('Êtes vous certain de vouloir supprimer les priorités complétées ?'))) {
+                completed.forEach((p) => deletePriority(p, true));
+            }
+        } else {
+            alert(t('Aucune priorité complétée à supprimer'));
+        }
+    }
     const isLiveClockingEntry = computed((): boolean => {
         return !!entries.value.find((e) => e.is_live_clocking);
     });
@@ -313,6 +349,7 @@ export const useIndexStore = defineStore('store', () => {
     }
     function $reset() {
         projects.value = [];
+        priorities.value = [];
         bookmarks.value = [];
         entries.value = [];
         user.value = null;
@@ -328,6 +365,7 @@ export const useIndexStore = defineStore('store', () => {
         sort,
         projects,
         entries,
+        priorities,
         bookmarks,
         // getters
         weekStart,
@@ -351,6 +389,10 @@ export const useIndexStore = defineStore('store', () => {
         toggleEntrySynced,
         addProject,
         deleteProject,
+        addPriority,
+        updatePriority,
+        deletePriority,
+        deleteCompletedPriorities,
         addBookmark,
         deleteBookmark,
         createUserInfo,
