@@ -39,5 +39,5 @@ type User = {
     display_name: string;
     email: string;
     photo_url: string;
-    week_target: string;
+    weekly_target: string;
 }

@@ -38,8 +38,8 @@
                 <div class="mb-2 flex items-center gap-2">
                     <span class="text-xs font-medium uppercase tracking-wider opacity-60">{{ $t('Tri') }}</span>
                     <select v-model="sort" class="form-control form-select-bordered form-select pr-12">
-                        <option value="name">{{ $t('Alphabétique') }}</option>
                         <option value="creation">{{ $t('Date de création') }}</option>
+                        <option value="name">{{ $t('Alphabétique') }}</option>
                     </select>
                 </div>
                 <template v-if="sortedProjects && sortedProjects.length">
@@ -126,7 +126,7 @@
                         <input
                             v-model="bookmark.name"
                             type="text"
-                            :placeholder="$t('Nom du raccourci')"
+                            :placeholder="$t('EOS (TownHall, pause-café, etc.)')"
                             class="form-control form-input-bordered form-input h-10 w-full"
                         />
                     </div>

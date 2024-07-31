@@ -21,7 +21,7 @@
                     <div>
                         <div class="text-xs font-bold uppercase opacity-80">{{ $t('Mon objectif') }}</div>
                         <div v-if="!is_editing" class="mt-1 block text-3xl font-bold tabular-nums">
-                            {{ user?.week_target }}
+                            {{ user?.weekly_target }}
                         </div>
                         <TimeInput v-else class="mt-1" v-model="target" mask="99:99" />
                     </div>
@@ -103,7 +103,7 @@ watch(
 function onEdit() {
     (document.activeElement as HTMLElement)?.blur();
     is_editing.value = true;
-    target.value = user.value?.week_target || '';
+    target.value = user.value?.weekly_target || '';
 }
 async function onSave() {
     await updateWeekTarget(target.value);

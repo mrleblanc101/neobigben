@@ -37,12 +37,12 @@ export const useIndexStore = defineStore('store', () => {
     const selectedDay = ref($moment().format('YYYY-MM-DD'));
     const filter = useLocalStorage('filter', ref('daily'));
     const selectedTabIndex = useLocalStorage('selectedTabIndex', ref(0));
-    const sort = useLocalStorage('sort', ref('name'));
+    const sort = useLocalStorage('sort', ref('creation'));
     const user = useDocument<User>(
         computed(() => (authUser.value?.uid ? doc(collection(db, 'users'), authUser.value.uid) : null)),
     );
     const menuOpened = ref(false);
-    const weekTarget = computed(() => user.value?.week_target || '40:00');
+    const weekTarget = computed(() => user.value?.weekly_target || '40:00');
 
     const weekStart = computed(() => {
         return $moment(selectedDay.value).startOf('week').format('YYYY-MM-DD');
@@ -51,14 +51,14 @@ export const useIndexStore = defineStore('store', () => {
         return $moment(selectedDay.value).endOf('week').format('YYYY-MM-DD');
     });
     const projects = useCollection<Project>(
-        computed(() => (authUser.value ? query(collection(db, 'projects'), where('user', '==', authUser.value.uid), orderBy('created_at')) : null)),
+        computed(() => (authUser.value ? query(collection(db, 'projects'), where('user', '==', doc(db, 'users', authUser.value!.uid)), orderBy('created_at')) : null)),
         {
             wait: true,
             ssrKey: 'projects',
         },
     );
     const bookmarks = useCollection<Bookmark>(
-        computed(() => (authUser.value ? query(collection(db, 'bookmarks'), where('user', '==', authUser.value.uid), orderBy('created_at')) : null)),
+        computed(() => (authUser.value ? query(collection(db, 'bookmarks'), where('user', '==', doc(db, 'users', authUser.value!.uid)), orderBy('created_at')) : null)),
         {
             wait: true,
             ssrKey: 'bookmarks',
@@ -69,7 +69,7 @@ export const useIndexStore = defineStore('store', () => {
             authUser.value
                 ? query(
                       collection(db, 'entries'),
-                      where('user', '==', authUser.value.uid),
+                      where('user', '==', doc(db, 'users', authUser.value!.uid)),
                       where('date', '>=', weekStart.value),
                       where('date', '<=', weekEnd.value),
                   )
@@ -212,7 +212,7 @@ export const useIndexStore = defineStore('store', () => {
     async function addEntry(entry: Entry) {
         await addDoc(collection(db, 'entries').withConverter(addDefaultFields), {
             ...entry,
-            user: authUser.value!.uid,
+            user: doc(db, 'users', authUser.value!.uid),
             project: entry.project?.id ? doc(db, 'projects', entry.project.id) : null,
         });
     }
@@ -235,7 +235,7 @@ export const useIndexStore = defineStore('store', () => {
     async function addProject(option: Project) {
         const project = await addDoc(collection(db, 'projects').withConverter(addDefaultFields), {
             name: option.name,
-            user: authUser.value!.uid,
+            user: doc(db, 'users', authUser.value!.uid),
         });
         return { id: project.id, name: option.name };
     }
@@ -296,7 +296,7 @@ export const useIndexStore = defineStore('store', () => {
         const docSnap = await getDoc(docRef);
         if (!docSnap.exists()) {
             await setDoc(docRef, {
-                week_target: '40:00',
+                weekly_target: '40:00',
             });
         }
         await updateDoc(docRef, {
@@ -305,9 +305,9 @@ export const useIndexStore = defineStore('store', () => {
             photo_url: result.user.photoURL,
         })
     }
-    async function updateWeekTarget(week_target: string) {
+    async function updateWeekTarget(weekly_target: string) {
         await updateDoc(doc(db, 'users', authUser.value!.uid), {
-            week_target,
+            weekly_target,
         });
     }
     function $reset() {
