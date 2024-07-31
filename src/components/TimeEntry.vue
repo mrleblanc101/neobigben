@@ -384,7 +384,13 @@ async function start() {
 async function stop() {
     model.value.end_time = model.value.end_time || $moment().format('HH:mm');
     model.value.is_live_clocking = false;
-    await updateEntry(model.value);
+    model.value.duration = computedDuration;
+
+    if(model.value.project) {
+        edit();
+    } else {
+        await updateEntry(model.value);
+    }
 }
 
 async function add() {
