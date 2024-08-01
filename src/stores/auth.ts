@@ -1,18 +1,23 @@
 import { defineStore } from 'pinia';
 import { GoogleAuthProvider } from 'firebase/auth';
-export const googleAuthProvider = new GoogleAuthProvider();
 import { signInWithPopup } from 'firebase/auth';
 import { useFirebaseAuth } from 'vuefire';
 import { useIndexStore } from '@/stores/index';
 
-export const useAuthStore = defineStore('auth', () => {
-    async function login() {
-        const auth = useFirebaseAuth()!;
-        const localePath = useLocalePath();
+export const googleAuthProvider = new GoogleAuthProvider();
+googleAuthProvider.setCustomParameters({
+    prompt: 'select_account',
+});
 
+export const useAuthStore = defineStore('auth', () => {
+    const auth = useFirebaseAuth()!;
+    const localePath = useLocalePath();
+    const store = useIndexStore();
+    const { createUserInfo } = store;
+
+    async function login() {
         return signInWithPopup(auth, googleAuthProvider).then(async (result) => {
-            const store = useIndexStore();
-            await store.createUserInfo(result);
+            await createUserInfo(result);
             navigateTo(
                 localePath({
                     name: 'index',
@@ -21,8 +26,6 @@ export const useAuthStore = defineStore('auth', () => {
         });
     }
     async function logout() {
-        const localePath = useLocalePath();
-
         return navigateTo(
             localePath({
                 name: 'logout',

@@ -6,62 +6,92 @@ import {
     deleteDoc,
     doc,
     query,
+    orderBy,
+    arrayUnion,
+    arrayRemove,
     where,
     writeBatch,
     getDoc,
     setDoc,
+    serverTimestamp,
 } from 'firebase/firestore';
-import type { QueryDocumentSnapshot, SnapshotOptions, DocumentData } from 'firebase/firestore';
-import { firestoreDefaultConverter } from 'vuefire';
+import type { DocumentData } from 'firebase/firestore';
+import { globalFirestoreOptions, firestoreDefaultConverter } from 'vuefire';
 import type { UserCredential } from 'firebase/auth';
+
+const addDefaultFields = {
+    toFirestore(docData: DocumentData): DocumentData {
+        return {
+            created_at: serverTimestamp(),
+            ...docData,
+        };
+    },
+    fromFirestore: firestoreDefaultConverter.fromFirestore,
+};
 
 export const useIndexStore = defineStore('store', () => {
     const db = useFirestore();
-    const user = useCurrentUser();
+    const authUser = useCurrentUser();
     const nuxtApp = useNuxtApp();
     const { $moment } = nuxtApp;
     const { t } = nuxtApp.$i18n;
 
-    const dateConverter = {
-        toFirestore(entry: Entry): DocumentData {
-            delete entry.id;
-            return {
-                ...entry,
-                date: $moment(entry.date).startOf('day').toDate(),
-            };
-        },
-        fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): DocumentData {
-            const data = firestoreDefaultConverter.fromFirestore(snapshot)!;
-            data.date = $moment(data.date.toDate()).format('YYYY-MM-DD');
-            return data;
-        },
-    };
-
     const selectedDay = ref($moment().format('YYYY-MM-DD'));
     const filter = useLocalStorage('filter', ref('daily'));
     const selectedTabIndex = useLocalStorage('selectedTabIndex', ref(0));
-    const sort = useLocalStorage('sort', ref('name'));
-    const userInfo = useDocument(
-        computed(() => (user.value?.uid ? doc(collection(db, 'users'), user.value.uid) : null)),
+    const sort = useLocalStorage('sort', ref('creation'));
+    const user = useDocument<User>(
+        computed(() => (authUser.value?.uid ? doc(collection(db, 'users'), authUser.value.uid) : null)),
     );
     const menuOpened = ref(false);
-    const weekTarget = computed(() => userInfo.value?.weekTarget || '40:00');
+    const weekTarget = computed(() => user.value?.weekly_target || '40:00');
 
     const weekStart = computed(() => {
-        return $moment(selectedDay.value).startOf('week').toDate();
+        return $moment(selectedDay.value).startOf('week').format('YYYY-MM-DD');
     });
     const weekEnd = computed(() => {
-        return $moment(selectedDay.value).endOf('week').toDate();
+        return $moment(selectedDay.value).endOf('week').format('YYYY-MM-DD');
     });
     const projects = useCollection<Project>(
-        computed(() => (user.value ? query(collection(db, 'projects'), where('user', '==', user.value.uid)) : null)),
+        computed(() =>
+            authUser.value
+                ? query(
+                      collection(db, 'projects'),
+                      where('user', '==', doc(db, 'users', authUser.value!.uid)),
+                      orderBy('created_at'),
+                  )
+                : null,
+        ),
         {
             wait: true,
             ssrKey: 'projects',
         },
     );
+    const bookmarks = useCollection<Bookmark>(
+        computed(() =>
+            authUser.value
+                ? query(
+                      collection(db, 'bookmarks'),
+                      where('user', '==', doc(db, 'users', authUser.value!.uid)),
+                      orderBy('created_at'),
+                  )
+                : null,
+        ),
+        {
+            wait: true,
+            ssrKey: 'bookmarks',
+        },
+    );
     const priorities = useCollection<Priority>(
-        computed(() => (user.value ? query(collection(db, 'priorities'), where('user', '==', user.value.uid)) : null)),
+        computed(() =>
+            user.value
+                ? query(
+                      collection(db, 'priorities'),
+                      where('user', '==', doc(db, 'users', authUser.value!.uid)),
+                      orderBy('created_at'),
+                  )
+                : null,
+        ),
         {
             wait: true,
             ssrKey: 'priorities',
@@ -69,10 +99,10 @@ export const useIndexStore = defineStore('store', () => {
     );
     const entries = useCollection<Entry>(
         computed(() =>
-            user.value
+            authUser.value
                 ? query(
-                      collection(db, 'entries').withConverter(dateConverter),
-                      where('user', '==', user.value.uid),
+                      collection(db, 'entries'),
+                      where('user', '==', doc(db, 'users', authUser.value!.uid)),
                       where('date', '>=', weekStart.value),
                       where('date', '<=', weekEnd.value),
                   )
@@ -172,7 +202,6 @@ export const useIndexStore = defineStore('store', () => {
         });
     });
     const sortedProjects = computed((): [Project, number][] => {
-        // TODO: Sort by creation date
         const p = projects.value.map((p): [Project, number] => [p, projectEntriesTotal(p)]);
         if (sort.value === 'name') {
             return p.sort((a, b) => {
@@ -181,6 +210,49 @@ export const useIndexStore = defineStore('store', () => {
         }
         return p;
     });
+    async function addPriority(name: string) {
+        const newDoc = await addDoc(collection(db, 'priorities').withConverter(addDefaultFields), {
+            name,
+            completed: false,
+            user: doc(db, 'users', authUser.value!.uid),
+        });
+        await updateDoc(doc(db, 'users', authUser.value!.uid), {
+            priorities: arrayUnion(newDoc),
+        });
+    }
+    async function reorderPriorities(priorities: Priority[]) {
+        const prioritiesRef = priorities.map((priority: Priority) => doc(db, 'priorities', priority.id));
+        await updateDoc(doc(db, 'users', authUser.value!.uid), {
+            priorities: prioritiesRef,
+        });
+    }
+    async function updatePriority(priority: Priority) {
+        await updateDoc(doc(db, 'priorities', priority.id), {
+            completed: !priority.completed,
+            user: doc(db, 'users', authUser.value!.uid),
+        });
+    }
+    async function deletePriority(priority: Priority, force = false) {
+        if (force || confirm(t('Êtes vous certain de vouloir supprimer cette priorité ?'))) {
+            const docRef = doc(db, 'priorities', priority.id);
+
+            await updateDoc(doc(db, 'users', authUser.value!.uid), {
+                priorities: arrayRemove(docRef),
+            });
+            await deleteDoc(docRef);
+        }
+    }
+    function deleteCompletedPriorities() {
+        const completed = priorities.value.filter((p: Priority) => p.completed);
+
+        if (completed.length !== 0) {
+            if (confirm(t('Êtes vous certain de vouloir supprimer les priorités complétées ?'))) {
+                completed.forEach((p) => deletePriority(p, true));
+            }
+        } else {
+            alert(t('Aucune priorité complétée à supprimer'));
+        }
+    }
     const isLiveClockingEntry = computed((): boolean => {
         return !!entries.value.find((e) => e.is_live_clocking);
     });
@@ -198,7 +270,7 @@ export const useIndexStore = defineStore('store', () => {
         const isBelow = $moment.duration(time).asHours() >= $moment.duration(weekTarget.value).asHours() / 5 - 0.5;
 
         if (isZero) {
-            return 'text-gray-400 dark:text-gray-600';
+            return 'text-slate-400 dark:text-slate-600';
         } else if (isOvertime) {
             return 'text-lime-500';
         } else if (isGoal) {
@@ -214,17 +286,17 @@ export const useIndexStore = defineStore('store', () => {
     };
 
     async function addEntry(entry: Entry) {
-        await addDoc(collection(db, 'entries').withConverter(dateConverter), {
+        await addDoc(collection(db, 'entries').withConverter(addDefaultFields), {
             ...entry,
-            user: user.value!.uid,
+            user: doc(db, 'users', authUser.value!.uid),
             project: entry.project?.id ? doc(db, 'projects', entry.project.id) : null,
         });
     }
     async function updateEntry(entry: Entry) {
         await updateDoc(doc(db, 'entries', entry.id), {
             ...entry,
+            user: doc(db, 'users', authUser.value!.uid),
             project: entry.project?.id ? doc(db, 'projects', entry.project.id) : null,
-            date: $moment(entry.date).startOf('day').toDate(),
         });
     }
     async function deleteEntry(entry: Entry, force = false) {
@@ -234,13 +306,13 @@ export const useIndexStore = defineStore('store', () => {
     }
     async function toggleEntrySynced(entry: Entry) {
         await updateDoc(doc(db, 'entries', entry.id), {
-            is_synced: !entry.is_synced ?? true,
+            is_synced: !entry.is_synced || true,
         });
     }
     async function addProject(option: Project) {
-        const project = await addDoc(collection(db, 'projects'), {
+        const project = await addDoc(collection(db, 'projects').withConverter(addDefaultFields), {
             name: option.name,
-            user: user.value!.uid,
+            user: doc(db, 'users', authUser.value!.uid),
         });
         return { id: project.id, name: option.name };
     }
@@ -277,27 +349,36 @@ export const useIndexStore = defineStore('store', () => {
             }
         }
     }
-    async function addPriority(name: string) {
-        await addDoc(collection(db, 'priorities'), {
-            name,
-            completed: false,
-            user: user.value!.uid,
+    async function addBookmark(bookmark: Bookmark) {
+        const addhttp = (url: string) => {
+            if (!/^(?:f|ht)tps?:\/\//.test(url)) {
+                url = 'https://' + url;
+            }
+            return url;
+        };
+        const newDoc = await addDoc(collection(db, 'bookmarks').withConverter(addDefaultFields), {
+            ...bookmark,
+            url: addhttp(bookmark.url),
+            user: doc(db, 'users', authUser.value!.uid),
+        });
+        await updateDoc(doc(db, 'users', authUser.value!.uid), {
+            bookmarks: arrayUnion(newDoc),
         });
     }
-    async function deletePriority(priority: Priority, force = false) {
-        if (force || confirm(t('Êtes vous certain de vouloir supprimer cette priorité ?'))) {
-            await deleteDoc(doc(db, 'priorities', priority.id));
-        }
+    async function reorderBookmarks(bookmarks: Bookmark[]) {
+        const bookmarksRef = bookmarks.map((bookmark: Bookmark) => doc(db, 'bookmarks', bookmark.id));
+        await updateDoc(doc(db, 'users', authUser.value!.uid), {
+            bookmarks: bookmarksRef,
+        });
     }
-    function deleteCompletedPriorities() {
-        const completed = priorities.value.filter((p: Priority) => p.completed);
+    async function deleteBookmark(bookmark: Bookmark, force = false) {
+        if (force || confirm(t('Êtes vous certain de vouloir supprimer ce raccourci ?'))) {
+            const docRef = doc(db, 'bookmarks', bookmark.id);
 
-        if (completed.length !== 0) {
-            if (confirm(t('Êtes vous certain de vouloir supprimer les priorités complétées ?'))) {
-                completed.forEach((p) => deletePriority(p, true));
-            }
-        } else {
-            alert(t('Aucune priorité complétée à supprimer'));
+            await updateDoc(doc(db, 'users', authUser.value!.uid), {
+                bookmarks: arrayRemove(docRef),
+            });
+            await deleteDoc(docRef);
         }
     }
     async function createUserInfo(result: UserCredential) {
@@ -305,29 +386,26 @@ export const useIndexStore = defineStore('store', () => {
         const docSnap = await getDoc(docRef);
         if (!docSnap.exists()) {
             await setDoc(docRef, {
-                displayName: result.user.displayName,
-                email: result.user.email,
-                photoURL: result.user.photoURL,
-                weekTarget: '40:00',
+                weekly_target: '40:00',
             });
-        } else {
-            await updateDoc(docRef, {
-                displayName: result.user.displayName,
-                email: result.user.email,
-                photoURL: result.user.photoURL,
-            })
         }
+        await updateDoc(docRef, {
+            display_name: result.user.displayName,
+            email: result.user.email,
+            photo_url: result.user.photoURL,
+        });
     }
-    async function updateWeekTarget(weekTarget: string) {
-        await updateDoc(doc(db, 'users', user.value!.uid), {
-            weekTarget,
+    async function updateWeekTarget(weekly_target: string) {
+        await updateDoc(doc(db, 'users', authUser.value!.uid), {
+            weekly_target,
         });
     }
     function $reset() {
         projects.value = [];
         priorities.value = [];
+        bookmarks.value = [];
         entries.value = [];
-        userInfo.value = {};
+        user.value = null;
     }
 
     return {
@@ -338,12 +416,11 @@ export const useIndexStore = defineStore('store', () => {
         filter,
         selectedTabIndex,
         sort,
-        userInfo,
         projects,
         entries,
         priorities,
+        bookmarks,
         // getters
-        weekTarget,
         weekStart,
         weekEnd,
         todaysEntries,
@@ -366,8 +443,13 @@ export const useIndexStore = defineStore('store', () => {
         addProject,
         deleteProject,
         addPriority,
+        reorderPriorities,
+        updatePriority,
         deletePriority,
         deleteCompletedPriorities,
+        addBookmark,
+        reorderBookmarks,
+        deleteBookmark,
         createUserInfo,
         updateWeekTarget,
         $reset,

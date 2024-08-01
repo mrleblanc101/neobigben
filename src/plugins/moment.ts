@@ -11,7 +11,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     momentDurationFormatSetup(moment as any);
     moment.locale(iso);
 
-    nuxtApp.hook('i18n:localeSwitched', ({oldLocale, newLocale}) => {
+    nuxtApp.hook('i18n:localeSwitched', ({ oldLocale, newLocale }) => {
         const iso = (locales.value as LocaleObject[]).find((l) => l.code === newLocale)?.iso;
         moment.locale(iso);
     });

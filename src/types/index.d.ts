@@ -1,3 +1,4 @@
+// TODO: Use `Omit<id>` instead of `id?: Nullable<string>`
 type Entry = {
     id?: Nullable<string>;
     project: Nullable<Project>;
@@ -13,7 +14,7 @@ type Entry = {
 };
 
 type Project = {
-    readonly id: string;
+    id?: Nullable<string>;
     name: string;
 };
 
@@ -28,7 +29,23 @@ type Summary = {
 };
 
 type Priority = {
-    readonly id: string;
+    id?: Nullable<string>;
     name: string;
     completed: boolean;
+};
+
+type Bookmark = {
+    id?: Nullable<string>;
+    name: string;
+    url: string;
+};
+
+type User = {
+    id?: Nullable<string>;
+    display_name: string;
+    email: string;
+    photo_url: string;
+    weekly_target: string;
+    bookmarks: Bookmark[];
+    priorities: Priority[];
 };

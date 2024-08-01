@@ -10,11 +10,6 @@
 </template>
 
 <script lang="ts" setup>
-// TODO: Increment value using Arrow Up/Down
-// TODO: Increment by 10 using Shift + Arrow Up/Down
-const timeInput = ref<HTMLElement | null>(null);
-const { $inputmask } = useNuxtApp();
-
 const props = withDefaults(
     defineProps<{
         type?: string;
@@ -23,12 +18,17 @@ const props = withDefaults(
         placeholder?: string;
     }>(),
     {
+        mask: '',
+        modelValue: '',
         type: 'datetime',
         placeholder: 'HH:MM',
     },
 );
-
 const emit = defineEmits(['update:modelValue']);
+// TODO: Increment value using Arrow Up/Down
+// TODO: Increment by 10 using Shift + Arrow Up/Down
+const timeInput = ref<HTMLElement | null>(null);
+const { $inputmask } = useNuxtApp();
 
 const value = computed({
     get() {

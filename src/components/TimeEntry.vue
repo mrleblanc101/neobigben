@@ -1,9 +1,9 @@
 <template>
     <form
         v-if="model.is_creating || model.is_editing"
-        class="relative flex w-full flex-col gap-2 rounded border bg-stone-100 p-4 dark:bg-gray-800"
+        class="relative flex w-full flex-col gap-2 rounded border bg-stone-100 p-4 dark:border-slate-700 dark:bg-slate-800"
         :class="[
-            has_overlap_previous || has_overlap_next ? 'border-red-500' : 'border-transparent',
+            has_overlap_previous || has_overlap_next ? 'border-red-500' : '',
             {
                 'has-gap mt-10': has_gap,
             },
@@ -52,9 +52,9 @@
                 :object="true"
                 :placeholder="$t('Choisir ou créer...')"
                 :classes="classes"
-                :appendNewOption="false"
+                :append-new-option="false"
                 searchable
-                createOption
+                create-option
                 @create="addProject"
             />
         </div>
@@ -64,22 +64,24 @@
                 v-model="model.description"
                 class="form-control form-input-bordered form-input block h-auto w-full py-3 [field-sizing:content]"
                 rows="2"
-                :placeholder="`${$t('Description')}...`"
+                :placeholder="`${$t('Courte description du travail')}...`"
             ></textarea>
         </div>
         <div class="flex justify-end gap-2">
             <button
                 v-if="isToday && !model.is_live_clocking && !model.end_time"
-                type="submit"
-                class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-green-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-green-400 focus:outline-none focus:ring active:bg-green-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-900 dark:ring-gray-600"
+                type="button"
+                class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-green-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-green-400 focus:outline-none focus-visible:ring active:bg-green-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-900 dark:ring-slate-600"
+                @click="start"
             >
                 {{ $t('Démarrer') }}
                 <IPlay class="h-3 w-4" />
             </button>
             <button
                 v-else-if="isToday && model.is_live_clocking"
-                type="submit"
-                class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-rose-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-rose-400 focus:outline-none focus:ring active:bg-rose-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-900 dark:ring-gray-600"
+                type="button"
+                class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-rose-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-rose-400 focus:outline-none focus-visible:ring active:bg-rose-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-900 dark:ring-slate-600"
+                @click="stop"
             >
                 {{ $t('Arrêter') }}
                 <IStop class="h-3 w-4" />
@@ -87,7 +89,7 @@
             <button
                 v-else-if="model.id && model.is_creating"
                 type="button"
-                class="appearance-none bg-transparent px-2 text-sm font-bold text-gray-400 transition hover:text-gray-300 active:text-gray-500 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-400 dark:active:text-gray-600"
+                class="appearance-none bg-transparent px-2 text-sm font-bold text-slate-400 transition hover:text-slate-300 active:text-slate-500 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-400 dark:active:text-slate-600"
                 @click="deleteEntry(entry)"
             >
                 {{ $t('Annuler') }}
@@ -95,14 +97,14 @@
             <button
                 v-if="model.is_editing"
                 type="button"
-                class="appearance-none bg-transparent px-2 text-sm font-bold text-gray-400 transition hover:text-gray-300 active:text-gray-500 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-400 dark:active:text-gray-600"
+                class="appearance-none bg-transparent px-2 text-sm font-bold text-slate-400 transition hover:text-slate-300 active:text-slate-500 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-400 dark:active:text-slate-600"
                 @click="cancel"
             >
                 {{ $t('Annuler') }}
             </button>
             <button
                 type="submit"
-                class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-primary-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-900 dark:ring-gray-600"
+                class="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded bg-primary-500 px-3 text-sm font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus-visible:ring active:bg-primary-600 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-900 dark:ring-slate-600"
                 :disabled="!(model.start_time && model.end_time && model.duration && model.project)"
             >
                 {{ model.is_creating ? $t('Ajouter') : $t('Sauvegarder') }}
@@ -111,9 +113,9 @@
     </form>
     <div
         v-else
-        class="relative flex w-full flex-col gap-2 rounded border bg-stone-100 p-4 dark:bg-gray-800"
+        class="relative flex w-full flex-col gap-2 rounded border bg-stone-100 p-4 dark:border-slate-700 dark:bg-slate-800"
         :class="[
-            has_overlap_previous || has_overlap_next ? 'border-red-500' : 'border-transparent',
+            has_overlap_previous || has_overlap_next ? 'border-red-500' : '',
             {
                 'has-gap mt-10': has_gap,
                 'opacity-50': entry.is_synced,
@@ -129,21 +131,21 @@
             <div class="flex gap-2">
                 <button
                     type="button"
-                    class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-gray-800 dark:ring-gray-600"
+                    class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus-visible:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600"
                     @click="toggleEntrySynced(entry)"
                 >
                     <INetsuite class="h-4" />
                 </button>
                 <button
                     type="button"
-                    class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-gray-800 dark:ring-gray-600"
+                    class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus-visible:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600"
                     @click="toggleEditing"
                 >
                     <IEdit class="h-5" />
                 </button>
                 <button
                     type="button"
-                    class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 dark:text-gray-800 dark:ring-gray-600"
+                    class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus-visible:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
                     @click="deleteEntry(entry)"
                 >
                     <IDelete class="h-5" />
@@ -198,12 +200,6 @@ import Multiselect from '@vueform/multiselect';
 import { storeToRefs } from 'pinia';
 import { useIndexStore } from '@/stores/index';
 
-const { $moment } = useNuxtApp();
-
-const store = useIndexStore();
-const { addProject, addEntry, updateEntry, deleteEntry, toggleEntrySynced } = store;
-const { projects, selectedDay, todaysEntries } = storeToRefs(store);
-
 const props = withDefaults(defineProps<{ entry?: Entry }>(), {
     entry: () => ({
         is_creating: true,
@@ -223,7 +219,21 @@ const emit = defineEmits<{
     (e: 'add'): void;
 }>();
 
-const model = ref(Object.create(null, Object.getOwnPropertyDescriptors(props.entry)));
+const { $moment } = useNuxtApp();
+
+const store = useIndexStore();
+const { addProject, addEntry, updateEntry, deleteEntry, toggleEntrySynced } = store;
+const { projects, selectedDay, todaysEntries } = storeToRefs(store);
+
+const model = ref();
+
+watch(
+    () => props.entry,
+    () => {
+        model.value = Object.create(null, Object.getOwnPropertyDescriptors(props.entry));
+    },
+    { immediate: true },
+);
 
 const placeholder = ref('00:00:00');
 
@@ -354,11 +364,8 @@ watch(computedDuration, (value) => {
 });
 
 function onSave() {
-    if ((!model.value.start_time || !model.value.end_time) && !model.value.is_live_clocking) {
-        start();
-    } else if (model.value.is_live_clocking) {
-        stop();
-    } else if (!model.value.id) {
+    (document.activeElement as HTMLElement)?.blur();
+    if (!model.value.id) {
         add();
     } else {
         edit();
@@ -377,7 +384,13 @@ async function start() {
 async function stop() {
     model.value.end_time = model.value.end_time || $moment().format('HH:mm');
     model.value.is_live_clocking = false;
-    await updateEntry(model.value);
+    model.value.duration = computedDuration;
+
+    if (model.value.project) {
+        edit();
+    } else {
+        await updateEntry(model.value);
+    }
 }
 
 async function add() {
@@ -426,19 +439,19 @@ function toggleEditing() {
 
 <style lang="postcss" scoped>
 label {
-    @apply text-xs font-medium uppercase opacity-60;
+    @apply text-xs font-medium uppercase tracking-wider opacity-60;
 }
 .has-gap::before {
     content: attr(data-gap-duration);
-    @apply absolute -top-6 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded bg-stone-100 px-2 font-bold dark:bg-gray-800;
+    @apply absolute -top-6 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded bg-white px-2 font-bold dark:bg-slate-800;
 }
 .has-gap::after {
     content: '';
-    @apply absolute -top-6 left-0 right-0 z-0 block border-b dark:border-gray-800;
+    @apply absolute -top-6 left-0 right-0 z-0 block border-b dark:border-slate-800;
 }
 .v-html {
     :deep(a) {
-        @apply text-primary-500;
+        @apply text-primary-500 hover:text-primary-400;
         overflow-wrap: break-word;
     }
 }
