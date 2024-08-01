@@ -47,26 +47,16 @@
                     <div
                         v-for="[project] in sortedProjects"
                         :key="project.id"
-                        class="relative flex w-full items-center justify-between gap-4 rounded border bg-stone-100 p-4 pr-16 dark:border-slate-700 dark:bg-slate-800"
+                        class="group relative flex w-full items-center justify-between gap-4 rounded border bg-stone-100 p-4 pr-16 dark:border-slate-700 dark:bg-slate-800"
                     >
                         <span class="font-bold">{{ project.name }}</span>
-                        <!-- TODO: Only display on hover -->
-                        <div class="absolute right-2 top-1/2 flex -translate-y-1/2 gap-2">
-                            <!-- TODO: Edit -->
-                            <button
-                                type="button"
-                                class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600"
-                            >
-                                <IEdit class="h-5" />
-                            </button>
-                            <button
-                                type="button"
-                                class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
-                                @click="deleteProject(project)"
-                            >
-                                <IDelete class="h-5" />
-                            </button>
-                        </div>
+                        <button
+                            type="button"
+                            class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white opacity-0 shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 group-hover:opacity-100 dark:text-slate-800 dark:ring-slate-600"
+                            @click="deleteProject(project)"
+                        >
+                            <IDelete class="h-5" />
+                        </button>
                     </div>
                 </template>
                 <div
@@ -96,7 +86,7 @@
                 >
                     <template #item="{ element: priority }">
                         <div class="flex items-center gap-2">
-                            <label class="relative flex w-full items-center gap-2">
+                            <label class="group relative flex w-full items-center gap-2">
                                 <input
                                     type="checkbox"
                                     :checked="priority.completed"
@@ -110,7 +100,7 @@
                                 </div>
                                 <button
                                     type="button"
-                                    class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus-visible:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
+                                    class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white opacity-0 shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus-visible:ring active:bg-red-600 group-hover:opacity-100 dark:text-slate-800 dark:ring-slate-600"
                                     @click="deletePriority(priority)"
                                 >
                                     <IDelete class="h-5" />
@@ -168,7 +158,7 @@
                 >
                     <template #item="{ element: bookmark }">
                         <div class="flex items-center gap-2">
-                            <div class="relative w-full">
+                            <div class="group relative w-full">
                                 <div
                                     class="relative flex w-full items-center justify-between gap-4 rounded border bg-stone-100 pr-14 dark:border-slate-700 dark:bg-slate-800"
                                 >
@@ -180,23 +170,13 @@
                                         {{ bookmark.name }}
                                     </a>
                                 </div>
-                                <!-- TODO: Only display on hover -->
-                                <div class="absolute right-2 top-1/2 flex -translate-y-1/2 gap-2">
-                                    <!-- TODO: Edit -->
-                                    <button
-                                        type="button"
-                                        class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-primary-500 font-bold text-white shadow ring-primary-200 transition hover:bg-primary-400 focus:outline-none focus:ring active:bg-primary-600 dark:text-slate-800 dark:ring-slate-600"
-                                    >
-                                        <IEdit class="h-5" />
-                                    </button>
-                                    <button
-                                        type="button"
-                                        class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-red-500 font-bold text-white shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 dark:text-slate-800 dark:ring-slate-600"
-                                        @click="deleteBookmark(bookmark)"
-                                    >
-                                        <IDelete class="h-5" />
-                                    </button>
-                                </div>
+                                <button
+                                    type="button"
+                                    class="absolute right-2 top-1/2 inline-flex h-10 w-10 flex-shrink-0 -translate-y-1/2 items-center justify-center rounded bg-red-500 font-bold text-white opacity-0 shadow ring-primary-200 transition hover:bg-red-400 focus:outline-none focus:ring active:bg-red-600 group-hover:opacity-100 dark:text-slate-800 dark:ring-slate-600"
+                                    @click="deleteBookmark(bookmark)"
+                                >
+                                    <IDelete class="h-5" />
+                                </button>
                             </div>
                             <div
                                 class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded font-bold text-slate-400 ring-primary-200 transition hover:text-primary-400 focus:outline-none focus-visible:ring active:text-primary-400 dark:ring-slate-600"
