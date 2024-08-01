@@ -26,6 +26,13 @@ export default defineNuxtConfig({
 
     ssr: false,
 
+    runtimeConfig: {
+        public: {
+            commitTag: process.env.COMMIT_TAG,
+            commitShortSha: process.env.COMMIT_SHORT_SHA,
+        },
+    },
+
     modules: [
         '@nuxtjs/i18n',
         '@nuxtjs/tailwindcss',

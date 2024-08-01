@@ -30,6 +30,11 @@
                     {{ $t('Déconnexion') }}
                     <ILogout class="h-5 w-5" />
                 </button>
+                <div class="text-center text-xs">
+                    Version:
+                    {{ config.public.commitTag }}
+                    {{ config.public.commitTag ? `(${config.public.commitShortSha})` : config.public.commitShortSha }}
+                </div>
             </div>
         </div>
     </Transition>
@@ -50,6 +55,7 @@ withDefaults(
 );
 const emit = defineEmits(['update:is_open']);
 
+const config = useRuntimeConfig();
 const auth = useAuthStore();
 const store = useIndexStore();
 const { logout } = auth;
