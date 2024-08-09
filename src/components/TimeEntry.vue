@@ -395,6 +395,7 @@ async function stop() {
 
 async function add() {
     model.value.is_creating = false;
+    model.value.is_live_clocking = false;
     await commitEntry(model.value);
     emit('add');
 }
