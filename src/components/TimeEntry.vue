@@ -403,6 +403,7 @@ async function add() {
 async function edit() {
     model.value.is_creating = false;
     model.value.is_editing = false;
+    model.value.is_live_clocking = false;
     await updateEntry(model.value);
 }
 
