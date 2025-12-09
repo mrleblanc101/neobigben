@@ -26,6 +26,18 @@ export default defineNuxtConfig({
 
     ssr: false,
 
+    app: {
+        baseURL: '/neobigben/',
+        head: {
+            link: [
+                {
+                    rel: 'manifest',
+                    href: 'manifest.json',
+                },
+            ],
+        },
+    },
+
     runtimeConfig: {
         public: {
             commitTag: process.env.COMMIT_TAG,
