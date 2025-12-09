@@ -28,14 +28,6 @@ export default defineNuxtConfig({
 
     app: {
         baseURL: '/neobigben/',
-        head: {
-            link: [
-                {
-                    rel: 'manifest',
-                    href: 'manifest.json',
-                },
-            ],
-        },
     },
 
     runtimeConfig: {
