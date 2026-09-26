@@ -23,6 +23,13 @@ export default defineNuxtConfig({
          */
         componentDir: "@/components/ui",
     },
+    supabase: {
+        redirectOptions: {
+            login: "/login",
+            callback: "/confirm",
+            exclude: ["/register"],
+        },
+    },
     eslint: {
         config: {
             stylistic: true,
