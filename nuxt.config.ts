@@ -8,7 +8,7 @@ export default defineNuxtConfig({
     vite: {
         plugins: [tailwindcss()],
     },
-    modules: ["shadcn-nuxt"],
+    modules: ["shadcn-nuxt", "@nuxtjs/supabase"],
     shadcn: {
         /**
          * Prefix for all the imported component.
@@ -23,4 +23,9 @@ export default defineNuxtConfig({
          */
         componentDir: "@/components/ui",
     },
+      eslint: {
+    config: {
+      stylistic: true,
+    },
+  },
 });
