@@ -72,12 +72,13 @@ function valueClass(d: (typeof days.value)[number]) {
                 <Clock class="size-3.5 text-muted-foreground" />
                 <span class="font-mono font-medium">{{ formatMinutes(weekTotal) }}</span>
                 <span class="font-mono text-muted-foreground/70">/ {{ formatMinutes(weekGoal) }}</span>
-                <span class="flex h-1 w-12 overflow-hidden rounded-full bg-muted">
+                <!-- Progress tracks use a tint of the text color, which stays visible on any hover or selected background -->
+                <span class="flex h-1 w-12 overflow-hidden rounded-full bg-foreground/10">
                     <span class="rounded-full bg-primary" :style="{ width: weekPct }" />
                 </span>
             </button>
         </PopoverTrigger>
-        <PopoverContent align="end" :side-offset="8" class="flex w-[300px] flex-col p-0">
+        <PopoverContent align="end" :side-offset="8" class="flex w-[300px] flex-col bg-background p-0">
             <div class="flex items-end justify-between gap-3 border-b p-4">
                 <div class="flex min-w-0 flex-col gap-1">
                     <span class="text-xs text-muted-foreground">{{ weekRange }}</span>
@@ -110,7 +111,7 @@ function valueClass(d: (typeof days.value)[number]) {
                     v-for="d in days"
                     :key="d.label"
                     type="button"
-                    class="grid h-8 grid-cols-[72px_minmax(0,1fr)_48px] items-center gap-2.5 rounded-md px-2 text-left hover:bg-muted"
+                    class="grid h-8 grid-cols-[72px_minmax(0,1fr)_48px] items-center gap-2.5 rounded-md px-2 text-left hover:bg-muted/60"
                     :class="{ 'bg-muted': d.selected }"
                     @click="selectDay(d.day)"
                 >
@@ -120,7 +121,7 @@ function valueClass(d: (typeof days.value)[number]) {
                     >
                         {{ d.label }}
                     </span>
-                    <span class="flex h-1.5 overflow-hidden rounded-full bg-accent">
+                    <span class="flex h-1.5 overflow-hidden rounded-full bg-foreground/10">
                         <span class="rounded-full" :class="barClass(d)" :style="{ width: d.pct }" />
                     </span>
                     <span class="text-right font-mono text-[13px]" :class="valueClass(d)">{{ formatMinutes(d.minutes) }}</span>

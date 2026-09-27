@@ -31,14 +31,17 @@ const subtitle = computed(() => `Semaine ${weekNumber(date.value)}`);
             </p>
         </div>
         <div class="flex items-center gap-2">
+            <!-- Dividers are their own elements: a translucent border on a button would tint with its hover background -->
             <div class="flex overflow-hidden rounded-md border">
-                <button type="button" aria-label="Jour précédent" class="flex size-9 items-center justify-center border-r hover:bg-accent" @click="shiftDay(-1)">
+                <button type="button" aria-label="Jour précédent" class="flex size-9 items-center justify-center hover:bg-accent" @click="shiftDay(-1)">
                     <ChevronLeft class="size-4" />
                 </button>
+                <span class="w-px bg-border" aria-hidden="true" />
                 <button type="button" class="h-9 px-3.5 text-sm font-medium hover:bg-accent" @click="goToday">
                     Aujourd’hui
                 </button>
-                <button type="button" aria-label="Jour suivant" class="flex size-9 items-center justify-center border-l hover:bg-accent" @click="shiftDay(1)">
+                <span class="w-px bg-border" aria-hidden="true" />
+                <button type="button" aria-label="Jour suivant" class="flex size-9 items-center justify-center hover:bg-accent" @click="shiftDay(1)">
                     <ChevronRight class="size-4" />
                 </button>
             </div>
