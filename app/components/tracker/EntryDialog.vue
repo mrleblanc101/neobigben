@@ -50,15 +50,10 @@ function save() {
         <DialogContent class="gap-[18px] sm:max-w-[460px]">
             <DialogHeader>
                 <DialogTitle>{{ editor?.id === "new" ? "Nouvelle entrée" : "Modifier l’entrée" }}</DialogTitle>
-                <DialogDescription>Renseignez le projet, la plage horaire et une note optionnelle.</DialogDescription>
+                <DialogDescription>Renseignez la plage horaire, le projet et une note optionnelle.</DialogDescription>
             </DialogHeader>
 
             <form class="flex flex-col gap-[18px]" @submit.prevent="save" @keydown.capture="focusPreviousOnBackspace">
-                <div class="flex flex-col gap-2">
-                    <Label for="entry-project">Projet</Label>
-                    <TrackerProjectCombobox id="entry-project" v-model="form.project" />
-                </div>
-
                 <div class="flex flex-col gap-2.5">
                     <div class="grid grid-cols-3 gap-3">
                         <div class="flex min-w-0 flex-col gap-2">
@@ -114,6 +109,11 @@ function save() {
                     <p v-if="range.endsNextDay.value" class="text-xs text-muted-foreground">
                         Se termine le lendemain : l’entrée sera séparée en deux à minuit.
                     </p>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <Label for="entry-project">Projet</Label>
+                    <TrackerProjectCombobox id="entry-project" v-model="form.project" />
                 </div>
 
                 <div class="flex flex-col gap-2">

@@ -36,10 +36,10 @@ const rows = computed(() => {
     <div class="overflow-x-auto rounded-lg border">
         <div class="min-w-160">
             <div :class="ENTRY_GRID" class="h-10 border-b text-[13px] font-medium text-muted-foreground">
-                <span>Projet</span>
-                <span>Description</span>
                 <span>Plage</span>
                 <span class="text-center">Durée</span>
+                <span>Projet</span>
+                <span>Description</span>
                 <span />
             </div>
 
@@ -78,6 +78,12 @@ const rows = computed(() => {
                     :data-copied="row.entry.copiedToNetsuite || undefined"
                     class="min-h-14 border-b text-sm not-data-copied:hover:bg-muted/50 data-copied:*:not-last:opacity-45"
                 >
+                    <div class="-ml-1 flex items-center gap-0.5 font-mono text-[13px]">
+                        <span class="flex-1 text-center">{{ row.entry.start }}</span>
+                        <span class="text-muted-foreground">–</span>
+                        <span class="flex-1 text-center">{{ displayClock(row.entry.end) }}</span>
+                    </div>
+                    <span class="text-center font-mono text-[13px] font-medium">{{ formatMinutes(entryMinutes(row.entry)) }}</span>
                     <div class="flex min-w-0 items-center gap-2">
                         <span class="size-2 shrink-0 rounded-[2px]" :style="{ background: colorOf(row.entry.project) }" />
                         <span class="truncate font-medium">{{ row.entry.project }}</span>
@@ -96,12 +102,6 @@ const rows = computed(() => {
                         </a>
                         <span v-if="!row.entry.note && !row.entry.url" class="text-muted-foreground/50">—</span>
                     </div>
-                    <div class="-ml-1 flex items-center gap-0.5 font-mono text-[13px]">
-                        <span class="flex-1 text-center">{{ row.entry.start }}</span>
-                        <span class="text-muted-foreground">–</span>
-                        <span class="flex-1 text-center">{{ displayClock(row.entry.end) }}</span>
-                    </div>
-                    <span class="text-center font-mono text-[13px] font-medium">{{ formatMinutes(entryMinutes(row.entry)) }}</span>
                     <div class="flex justify-end gap-0.5">
                         <label
                             class="flex size-8 cursor-pointer items-center justify-center rounded-md hover:bg-accent dark:hover:bg-accent/50"

@@ -25,7 +25,7 @@ export const DAY_NAMES = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Ve
 export const MONTH_NAMES = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 
 // Column layout shared by the entries table header, rows and quick-add row
-export const ENTRY_GRID = "grid grid-cols-[minmax(130px,1fr)_minmax(160px,2fr)_116px_56px_104px] items-center gap-4 px-4";
+export const ENTRY_GRID = "grid grid-cols-[116px_56px_minmax(130px,1fr)_minmax(160px,2fr)_104px] items-center gap-4 px-4";
 
 export const MINUTES_PER_DAY = 24 * 60;
 const CLOCK = /^([01]?\d|2[0-3]):[0-5]\d$/;

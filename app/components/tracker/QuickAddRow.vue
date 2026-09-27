@@ -43,19 +43,6 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
 
 <template>
     <form :class="ENTRY_GRID" class="min-h-13 bg-muted/25 py-2.5" @submit.prevent="add" @keydown.capture="focusPreviousOnBackspace">
-        <TrackerProjectCombobox v-model="project" variant="inline" />
-        <!-- One line that grows with its content (CSS field-sizing); Enter adds the entry, Shift+Enter starts a new line -->
-        <textarea
-            ref="noteInput"
-            v-model="note"
-            autocomplete="off"
-            rows="1"
-            aria-label="Description"
-            placeholder="Courte description..."
-            class="-ml-2.5 field-sizing-content max-h-40 min-h-8 min-w-0 resize-none px-2.5 py-1.5 text-sm placeholder:text-muted-foreground"
-            :class="fieldClass"
-            @keydown.enter.exact.prevent="add"
-        />
         <div class="-ml-1 flex items-center gap-0.5">
             <input
                 v-time-mask.advance
@@ -114,6 +101,19 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
             :class="fieldClass"
             @input="range.setDuration(($event.target as HTMLInputElement).value)"
         >
+        <TrackerProjectCombobox v-model="project" variant="inline" />
+        <!-- One line that grows with its content (CSS field-sizing); Enter adds the entry, Shift+Enter starts a new line -->
+        <textarea
+            ref="noteInput"
+            v-model="note"
+            autocomplete="off"
+            rows="1"
+            aria-label="Description"
+            placeholder="Courte description..."
+            class="-ml-2.5 field-sizing-content max-h-40 min-h-8 min-w-0 resize-none px-2.5 py-1.5 text-sm placeholder:text-muted-foreground"
+            :class="fieldClass"
+            @keydown.enter.exact.prevent="add"
+        />
         <div class="flex justify-end">
             <Button type="submit" size="sm" class="px-2.5 text-[13px]" :disabled="saving || !canAdd">
                 Ajouter
