@@ -129,7 +129,9 @@ export function useTimeTracker() {
 
     async function addProject(name: string) {
         if (!name || findProject(name)) return false;
-        const color = PROJECT_PALETTE[projects.value.length % PROJECT_PALETTE.length]!;
+        // The first palette color no project uses yet, else the least used one
+        const uses = (color: string) => projects.value.filter(p => p.color === color).length;
+        const color = PROJECT_PALETTE.reduce((best, color) => (uses(color) < uses(best) ? color : best));
         // New projects go to the top of the list
         const position = Math.min(0, ...projects.value.map(p => p.position)) - 1;
         const { data, error: cause } = await supabase.from("projects").insert({ name, color, position }).select().single();

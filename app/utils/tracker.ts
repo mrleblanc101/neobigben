@@ -22,7 +22,23 @@ export interface Project {
     position: number;
 }
 
-export const PROJECT_PALETTE = ["#a78bfa", "#60a5fa", "#34d399", "#fbbf24", "#f472b6", "#22d3ee", "#fb923c", "#a3e635", "#e879f9", "#94a3b8"];
+/**
+ * Project colors, as the color picker shows them and in the order new projects get them: ten well-spaced hues
+ * (a grey among them) in a bright shade (Tailwind 500), then the same hues in a deep shade (900)
+ */
+export const PROJECT_PALETTE = [
+    "#ef4444", "#f97316", "#eab308", "#84cc16", "#22c55e",
+    "#06b6d4", "#3b82f6", "#8b5cf6", "#ec4899", "#64748b",
+    "#7f1d1d", "#7c2d12", "#713f12", "#365314", "#14532d",
+    "#164e63", "#1e3a8a", "#4c1d95", "#831843", "#0f172a",
+];
+
+/** Whether a "#rrggbb" color is light enough to need a dark mark on top rather than a white one */
+export function isLightColor(color: string) {
+    const [r = 0, g = 0, b = 0] = [1, 3, 5].map(i => Number.parseInt(color.slice(i, i + 2), 16) / 255);
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.55;
+}
+
 export const DAY_NAMES = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
 export const MONTH_NAMES = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 

@@ -80,7 +80,7 @@ async function select(value: unknown) {
         >
             <span
                 v-if="project"
-                class="pointer-events-none absolute size-2 rounded-[2px]"
+                class="pointer-events-none absolute size-2.5 rounded-[2px]"
                 :class="variant === 'field' ? 'left-3' : 'left-2.5'"
                 :style="{ background: colorOf(project) }"
             />
@@ -95,7 +95,7 @@ async function select(value: unknown) {
                 :class="[
                     variant === 'inline' && 'rounded-md font-medium hover:bg-muted focus:bg-muted',
                     // Room for the color chip on the left and the clear button on the right only once a project is picked
-                    project ? (variant === 'field' ? 'pr-13 pl-7' : 'pr-12 pl-6.5') : (variant === 'field' ? 'pr-8 pl-3' : 'pr-7 pl-2.5'),
+                    project ? (variant === 'field' ? 'pr-13 pl-7.5' : 'pr-12 pl-7') : (variant === 'field' ? 'pr-8 pl-3' : 'pr-7 pl-2.5'),
                 ]"
                 @blur="onBlur"
                 @keydown="onKeydown"
@@ -123,7 +123,7 @@ async function select(value: unknown) {
         <ComboboxList align="start" class="w-(--reka-combobox-trigger-width) min-w-56 p-1">
             <ComboboxViewport>
                 <ComboboxItem v-for="p in matches" :key="p.name" :value="p.name">
-                    <span class="size-2 shrink-0 rounded-[2px]" :style="{ background: p.color }" />
+                    <span class="size-2.5 shrink-0 rounded-[2px]" :style="{ background: colorOf(p.name) }" />
                     <span class="truncate">{{ p.name }}</span>
                     <ComboboxItemIndicator>
                         <Check />

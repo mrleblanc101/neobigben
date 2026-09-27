@@ -112,13 +112,18 @@ async function remove() {
                             @mousedown.prevent
                             @click="draftColor = color; picking = false"
                         >
-                            <Check v-if="color === draftColor" class="size-3.5 text-white" :stroke-width="3" />
+                            <Check
+                                v-if="color === draftColor"
+                                class="size-3.5"
+                                :class="isLightColor(color) ? 'text-black/70' : 'text-white'"
+                                :stroke-width="3"
+                            />
                         </button>
                     </div>
                     <!-- Any other color, from the browser's color picker -->
                     <label class="relative flex h-7 cursor-pointer items-center justify-center gap-2 rounded-md border px-2 text-xs font-medium shadow-xs hover:bg-accent has-focus-visible:ring-3 has-focus-visible:ring-ring/50">
                         <span v-if="customColor" class="grid size-4 place-items-center rounded-sm" :style="{ background: draftColor }">
-                            <Check class="size-3 text-white" :stroke-width="3" />
+                            <Check class="size-3" :class="isLightColor(draftColor) ? 'text-black/70' : 'text-white'" :stroke-width="3" />
                         </span>
                         Personnalisée
                         <input

@@ -85,7 +85,7 @@ const rows = computed(() => {
                     </div>
                     <span class="text-center font-mono text-[13px] font-medium">{{ formatMinutes(entryMinutes(row.entry)) }}</span>
                     <div class="flex min-w-0 items-center gap-2">
-                        <span class="size-2 shrink-0 rounded-[2px]" :style="{ background: colorOf(row.entry.project) }" />
+                        <span class="size-2.5 shrink-0 rounded-[2px]" :style="{ background: colorOf(row.entry.project) }" />
                         <span class="truncate font-medium">{{ row.entry.project }}</span>
                     </div>
                     <div class="flex min-w-0 items-center gap-2 overflow-hidden text-muted-foreground">

@@ -34,7 +34,7 @@ const rows = computed(() =>
         </div>
         <div class="flex flex-col border-t">
             <div v-for="row in rows" :key="row.name" class="flex items-center gap-2.5 border-b px-5 py-2.5 text-sm">
-                <span class="size-2 rounded-[2px]" :style="{ background: row.color }" />
+                <span class="size-2.5 rounded-[2px]" :style="{ background: row.color }" />
                 <span class="min-w-0 flex-1 truncate font-medium">{{ row.name }}</span>
                 <span class="text-xs text-muted-foreground/70">{{ Math.round(row.share) }} %</span>
                 <span class="min-w-11 text-right font-mono text-[13px]">{{ formatMinutes(row.minutes) }}</span>
