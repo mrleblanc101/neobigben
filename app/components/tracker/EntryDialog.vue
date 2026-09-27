@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { editor, projects, closeEditor, saveEditor } = useTimeTracker();
+const { editor, closeEditor, saveEditor } = useTimeTracker();
 
 const form = ref<EntryDraft>({ project: "", start: "", end: "", note: "", url: "" });
 // What the user typed in the duration field, kept while it isn't a valid duration yet
@@ -7,7 +7,9 @@ const durationDraft = ref<string | null>(null);
 
 watch(editor, (value) => {
     if (!value) return;
-    form.value = { ...value.form };
+    // The link is edited inside the note, the same way it was typed in quick-add
+    const { note, url } = value.form;
+    form.value = { ...value.form, note: [note, url].filter(Boolean).join(" "), url: "" };
     durationDraft.value = null;
 }, { immediate: true });
 
@@ -49,7 +51,9 @@ function onDuration(value: string | number) {
 }
 
 function save() {
-    if (canSave.value) saveEditor({ ...form.value, note: form.value.note.trim(), url: form.value.url.trim() });
+    if (!canSave.value) return;
+    // The link left in the note becomes the entry's link: deleting it from the note removes it
+    saveEditor({ ...form.value, ...splitNoteLink(form.value.note) });
 }
 </script>
 
@@ -58,21 +62,13 @@ function save() {
         <DialogContent class="gap-[18px] sm:max-w-[460px]">
             <DialogHeader>
                 <DialogTitle>{{ editor?.id === "new" ? "Nouvelle entrée" : "Modifier l’entrée" }}</DialogTitle>
-                <DialogDescription>Renseignez le projet, la plage horaire et un lien optionnel.</DialogDescription>
+                <DialogDescription>Renseignez le projet, la plage horaire et une note optionnelle.</DialogDescription>
             </DialogHeader>
 
             <form class="flex flex-col gap-[18px]" @submit.prevent="save">
                 <div class="flex flex-col gap-2">
                     <Label for="entry-project">Projet</Label>
-                    <select
-                        id="entry-project"
-                        v-model="form.project"
-                        class="h-9 rounded-md border bg-transparent px-2.5 text-sm shadow-xs dark:bg-input/30"
-                    >
-                        <option v-for="project in projects" :key="project.name" :value="project.name">
-                            {{ project.name }}
-                        </option>
-                    </select>
+                    <TrackerProjectCombobox id="entry-project" v-model="form.project" />
                 </div>
 
                 <div class="flex flex-col gap-2.5">
@@ -114,12 +110,7 @@ function save() {
 
                 <div class="flex flex-col gap-2">
                     <Label for="entry-note">Note</Label>
-                    <Input id="entry-note" v-model="form.note" placeholder="Rencontre, corrections…" />
-                </div>
-
-                <div class="flex flex-col gap-2">
-                    <Label for="entry-url">Lien</Label>
-                    <Input id="entry-url" v-model="form.url" type="url" placeholder="https://libeocom.atlassian.net/browse/…" />
+                    <Input id="entry-note" v-model="form.note" placeholder="Rencontre, corrections ou lien Jira…" />
                 </div>
 
                 <DialogFooter>

@@ -22,8 +22,8 @@ const visible = computed(() => {
 const favorites = computed(() => visible.value.filter(p => p.fav));
 const others = computed(() => visible.value.filter(p => !p.fav));
 
-function create() {
-    if (canCreate.value && addProject(trimmed.value)) query.value = "";
+async function create() {
+    if (canCreate.value && (await addProject(trimmed.value))) query.value = "";
 }
 </script>
 
@@ -74,14 +74,14 @@ function create() {
     <div v-if="favorites.length" class="flex flex-col gap-1.5">
         <span class="text-xs font-medium text-muted-foreground">Favoris</span>
         <div class="flex flex-col overflow-hidden rounded-lg border">
-            <TrackerProjectRow v-for="project in favorites" :key="project.name" :project="project" :minutes="dayTotals[project.name] ?? 0" />
+            <TrackerProjectRow v-for="project in favorites" :key="project.id" :project="project" :minutes="dayTotals[project.name] ?? 0" />
         </div>
     </div>
 
     <div v-if="others.length || !favorites.length" class="flex flex-col gap-1.5">
         <span v-if="favorites.length" class="text-xs font-medium text-muted-foreground">Tous les projets</span>
         <div class="flex flex-col overflow-hidden rounded-lg border">
-            <TrackerProjectRow v-for="project in others" :key="project.name" :project="project" :minutes="dayTotals[project.name] ?? 0" />
+            <TrackerProjectRow v-for="project in others" :key="project.id" :project="project" :minutes="dayTotals[project.name] ?? 0" />
             <div v-if="!visible.length" class="px-3.5 py-6 text-center text-[13px] text-muted-foreground">
                 Aucun projet trouvé
             </div>

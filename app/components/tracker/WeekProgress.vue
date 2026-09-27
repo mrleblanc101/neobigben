@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Clock, Pencil } from "@lucide/vue";
 
-const { date, weekDates, weekGoal, dayGoal, weeklyGoalHours, minutesOn, goTo } = useTimeTracker();
+const { date, weekDates, weekGoal, dayGoal, weeklyGoalHours, minutesOn, goTo, setWeeklyGoal } = useTimeTracker();
 
 const open = ref(false);
 const editingGoal = ref(false);
@@ -41,7 +41,7 @@ function editGoal() {
 }
 
 function saveGoal() {
-    weeklyGoalHours.value = Math.max(1, Math.round(Number(goalDraft.value)) || weeklyGoalHours.value);
+    setWeeklyGoal(Math.min(80, Math.max(1, Math.round(Number(goalDraft.value)) || weeklyGoalHours.value)));
     editingGoal.value = false;
 }
 

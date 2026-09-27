@@ -29,6 +29,13 @@ export default defineNuxtConfig({
             callback: "/confirm",
         },
     },
+    runtimeConfig: {
+        public: {
+            // Placeholders until the build sets NUXT_PUBLIC_GIT_TAG and NUXT_PUBLIC_GIT_SHA
+            git_tag: "0.0.0",
+            git_sha: "0000000",
+        },
+    },
     colorMode: {
         classSuffix: "",
     },

@@ -1,5 +1,38 @@
-// Everything lives in memory until entries and projects are stored in Supabase
-let nextId = 1;
+import type { Database } from "~/types/database.types";
+
+type ProjectRow = Database["public"]["Tables"]["projects"]["Row"];
+type EntryRow = Database["public"]["Tables"]["entries"]["Row"];
+
+/** An entry as loaded, pointing at its project by id so renames don't touch entries */
+interface StoredEntry extends Omit<Entry, "project"> {
+    projectId: string;
+}
+
+export interface EntryEditor {
+    id: string | "new";
+    form: EntryDraft;
+}
+
+// Weeks being fetched, so concurrent callers share one request
+const pendingWeeks = new Map<string, Promise<void>>();
+
+const toProject = (row: ProjectRow): Project => ({
+    id: row.id,
+    name: row.name,
+    color: row.color,
+    fav: row.favorite,
+    created: Date.parse(row.created_at),
+});
+
+// Postgres returns times as "HH:MM:SS"
+const toStoredEntry = (row: EntryRow): StoredEntry => ({
+    id: row.id,
+    projectId: row.project_id,
+    start: row.start_time.slice(0, 5),
+    end: row.end_time.slice(0, 5),
+    note: row.note,
+    url: row.url,
+});
 
 function totalsByProject(entries: Entry[]) {
     const totals: Record<string, number> = {};
@@ -9,20 +42,32 @@ function totalsByProject(entries: Entry[]) {
     return totals;
 }
 
-export interface EntryEditor {
-    id: number | "new";
-    form: EntryDraft;
-}
-
 export function useTimeTracker() {
+    const supabase = useSupabaseClient<Database>();
+    const user = useSupabaseUser();
+
     const date = useState("tracker:date", () => startOfDay(new Date()));
-    const byDate = useState<Record<string, Entry[]>>("tracker:entries", () => ({}));
+    const byDate = useState<Record<string, StoredEntry[]>>("tracker:entries", () => ({}));
+    const loadedWeeks = useState<string[]>("tracker:loaded-weeks", () => []);
     const projects = useState<Project[]>("tracker:projects", () => []);
     const weeklyGoalHours = useState("tracker:goal", () => 40);
+    const ready = useState("tracker:ready", () => false);
     const editor = useState<EntryEditor | null>("tracker:editor", () => null);
+    const error = useState<string | null>("tracker:error", () => null);
 
-    const entriesOn = (day: Date) =>
-        [...(byDate.value[dateKey(day)] ?? [])].sort((a, b) => toMinutes(a.start) - toMinutes(b.start));
+    function fail(message: string, cause: { message: string }) {
+        console.error(message, cause);
+        error.value = `${message} : ${cause.message}`;
+        return false;
+    }
+
+    const findProject = (name: string) => projects.value.find(p => p.name.toLowerCase() === name.toLowerCase());
+    const colorOf = (name: string) => projects.value.find(p => p.name === name)?.color ?? "#71717a";
+
+    const entriesOn = (day: Date): Entry[] =>
+        (byDate.value[dateKey(day)] ?? [])
+            .map(({ projectId, ...entry }) => ({ ...entry, project: projects.value.find(p => p.id === projectId)?.name ?? "" }))
+            .sort((a, b) => toMinutes(a.start) - toMinutes(b.start));
     const minutesOn = (day: Date) => entriesOn(day).reduce((sum, entry) => sum + entryMinutes(entry), 0);
 
     const entries = computed(() => entriesOn(date.value));
@@ -31,41 +76,120 @@ export function useTimeTracker() {
         const sunday = startOfWeek(date.value);
         return Array.from({ length: 7 }, (_, i) => addDays(sunday, i));
     });
+    const weekLoaded = computed(() => loadedWeeks.value.includes(dateKey(startOfWeek(date.value))));
     const weekGoal = computed(() => weeklyGoalHours.value * 60);
     // A workday is a fifth of the weekly goal
     const dayGoal = computed(() => weekGoal.value / 5);
     const dayTotals = computed(() => totalsByProject(entries.value));
     const weekTotals = computed(() => totalsByProject(weekDates.value.flatMap(entriesOn)));
 
-    function updateDay(update: (list: Entry[]) => Entry[]) {
-        const key = dateKey(date.value);
-        byDate.value[key] = update(byDate.value[key] ?? []);
+    /** Loads projects, settings and the selected week, once per session */
+    async function init() {
+        if (ready.value) return;
+        const [projectsResult, settingsResult] = await Promise.all([
+            supabase.from("projects").select("*").order("created_at"),
+            supabase.from("user_settings").select("weekly_goal_hours").maybeSingle(),
+        ]);
+        if (projectsResult.error) return fail("Impossible de charger les projets", projectsResult.error);
+        if (settingsResult.error) return fail("Impossible de charger les préférences", settingsResult.error);
+        projects.value = projectsResult.data.map(toProject);
+        if (settingsResult.data) weeklyGoalHours.value = settingsResult.data.weekly_goal_hours;
+        ready.value = true;
+        await loadWeek(date.value);
     }
 
-    const colorOf = (name: string) => projects.value.find(p => p.name === name)?.color ?? "#71717a";
-    const findProject = (name: string) => projects.value.find(p => p.name.toLowerCase() === name.toLowerCase());
+    async function fetchWeek(sunday: Date) {
+        const days = Array.from({ length: 7 }, (_, i) => dateKey(addDays(sunday, i)));
+        const { data, error: cause } = await supabase.from("entries").select("*").gte("day", days[0]!).lte("day", days[6]!);
+        if (cause) return void fail("Impossible de charger les entrées", cause);
+        const week: Record<string, StoredEntry[]> = Object.fromEntries(days.map(day => [day, []]));
+        for (const row of data) week[row.day]?.push(toStoredEntry(row));
+        Object.assign(byDate.value, week);
+        loadedWeeks.value.push(days[0]!);
+    }
 
-    function addProject(name: string) {
+    /** Fetches the entries of the day's week, unless they're already loaded */
+    function loadWeek(day: Date) {
+        const sunday = startOfWeek(day);
+        const key = dateKey(sunday);
+        if (loadedWeeks.value.includes(key)) return Promise.resolve();
+        if (!pendingWeeks.has(key)) pendingWeeks.set(key, fetchWeek(sunday).finally(() => pendingWeeks.delete(key)));
+        return pendingWeeks.get(key)!;
+    }
+
+    async function addProject(name: string) {
         if (!name || findProject(name)) return false;
-        projects.value.push({ name, created: Date.now(), color: PROJECT_PALETTE[projects.value.length % PROJECT_PALETTE.length]!, fav: false });
+        const color = PROJECT_PALETTE[projects.value.length % PROJECT_PALETTE.length]!;
+        const { data, error: cause } = await supabase.from("projects").insert({ name, color }).select().single();
+        if (cause) return fail("Impossible de créer le projet", cause);
+        projects.value.push(toProject(data));
         return true;
     }
 
-    function renameProject(from: string, to: string) {
+    async function renameProject(from: string, to: string) {
+        const project = projects.value.find(p => p.name === from);
         const clash = findProject(to);
-        if (!to || to === from || (clash && clash.name !== from)) return false;
-        projects.value = projects.value.map(p => (p.name === from ? { ...p, name: to } : p));
-        for (const list of Object.values(byDate.value)) {
-            for (const entry of list) {
-                if (entry.project === from) entry.project = to;
-            }
-        }
+        if (!project || !to || to === from || (clash && clash !== project)) return false;
+        const { error: cause } = await supabase.from("projects").update({ name: to }).eq("id", project.id);
+        if (cause) return fail("Impossible de renommer le projet", cause);
+        project.name = to;
         return true;
     }
 
-    function toggleFavorite(name: string) {
+    async function toggleFavorite(name: string) {
         const project = projects.value.find(p => p.name === name);
-        if (project) project.fav = !project.fav;
+        if (!project) return;
+        const { error: cause } = await supabase.from("projects").update({ favorite: !project.fav }).eq("id", project.id);
+        if (cause) return void fail("Impossible de modifier les favoris", cause);
+        project.fav = !project.fav;
+    }
+
+    async function setWeeklyGoal(hours: number) {
+        if (!user.value) return;
+        const { error: cause } = await supabase.from("user_settings").upsert({ user_id: user.value.sub, weekly_goal_hours: hours });
+        if (cause) return void fail("Impossible d’enregistrer l’objectif", cause);
+        weeklyGoalHours.value = hours;
+    }
+
+    function entryColumns(draft: EntryDraft) {
+        return { start_time: draft.start, end_time: draft.end, note: draft.note, url: draft.url };
+    }
+
+    /** Adds an entry to the selected day */
+    async function addEntry(draft: EntryDraft) {
+        const project = findProject(draft.project);
+        if (!project) return false;
+        const day = dateKey(date.value);
+        const { data, error: cause } = await supabase
+            .from("entries")
+            .insert({ ...entryColumns(draft), project_id: project.id, day })
+            .select()
+            .single();
+        if (cause) return fail("Impossible d’ajouter l’entrée", cause);
+        byDate.value[day] = [...(byDate.value[day] ?? []), toStoredEntry(data)];
+        return true;
+    }
+
+    async function updateEntry(id: string, draft: EntryDraft) {
+        const project = findProject(draft.project);
+        if (!project) return false;
+        const { data, error: cause } = await supabase
+            .from("entries")
+            .update({ ...entryColumns(draft), project_id: project.id })
+            .eq("id", id)
+            .select()
+            .single();
+        if (cause) return fail("Impossible de modifier l’entrée", cause);
+        byDate.value[data.day] = (byDate.value[data.day] ?? []).map(e => (e.id === id ? toStoredEntry(data) : e));
+        return true;
+    }
+
+    async function removeEntry(id: string) {
+        const { error: cause } = await supabase.from("entries").delete().eq("id", id);
+        if (cause) return void fail("Impossible de supprimer l’entrée", cause);
+        for (const [day, list] of Object.entries(byDate.value)) {
+            if (list.some(e => e.id === id)) byDate.value[day] = list.filter(e => e.id !== id);
+        }
     }
 
     function openEditor(entry?: Entry | Partial<EntryDraft>) {
@@ -75,12 +199,24 @@ export function useTimeTracker() {
             : { id: "new", form: { ...defaults, ...entry } };
     }
 
-    function saveEditor(form: EntryDraft) {
+    async function saveEditor(form: EntryDraft) {
         const current = editor.value;
         if (!current) return;
-        if (current.id === "new") updateDay(list => [...list, { ...form, id: nextId++ }]);
-        else updateDay(list => list.map(e => (e.id === current.id ? { ...form, id: e.id } : e)));
+        const saved = current.id === "new" ? await addEntry(form) : await updateEntry(current.id, form);
+        if (saved) editor.value = null;
+    }
+
+    /** Forgets everything loaded for the signed-in user */
+    function reset() {
+        pendingWeeks.clear();
+        date.value = startOfDay(new Date());
+        byDate.value = {};
+        loadedWeeks.value = [];
+        projects.value = [];
+        weeklyGoalHours.value = 40;
+        ready.value = false;
         editor.value = null;
+        error.value = null;
     }
 
     return {
@@ -92,16 +228,22 @@ export function useTimeTracker() {
         weekGoal,
         dayGoal,
         weekDates,
+        weekLoaded,
         dayTotals,
         weekTotals,
         editor,
+        error,
         minutesOn,
         colorOf,
-        addEntry: (draft: EntryDraft) => updateDay(list => [...list, { ...draft, id: nextId++ }]),
-        removeEntry: (id: number) => updateDay(list => list.filter(e => e.id !== id)),
+        init,
+        loadWeek,
+        reset,
+        addEntry,
+        removeEntry,
         addProject,
         renameProject,
         toggleFavorite,
+        setWeeklyGoal,
         goTo: (day: Date) => (date.value = startOfDay(day)),
         goToday: () => (date.value = startOfDay(new Date())),
         shiftDay: (days: number) => (date.value = addDays(date.value, days)),

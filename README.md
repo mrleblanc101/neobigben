@@ -20,6 +20,12 @@ yarn install
 bun install
 ```
 
+## Database
+
+The schema lives in `supabase/migrations/`. Apply each migration to the Supabase project, either by pasting it in the dashboard's SQL editor or with `supabase db push` from a linked [Supabase CLI](https://supabase.com/docs/guides/cli).
+
+`app/types/database.types.ts` mirrors the schema: update it along with the migrations, or regenerate it with `supabase gen types typescript`.
+
 ## Development Server
 
 Start the development server on `http://localhost:3000`:

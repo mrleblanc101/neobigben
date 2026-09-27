@@ -1,5 +1,5 @@
 export interface Entry {
-    id: number;
+    id: string;
     project: string;
     start: string;
     end: string;
@@ -10,6 +10,7 @@ export interface Entry {
 export type EntryDraft = Omit<Entry, "id">;
 
 export interface Project {
+    id: string;
     name: string;
     created: number;
     color: string;
@@ -61,6 +62,13 @@ export function parseDuration(value: string) {
 
 export function entryMinutes(entry: Pick<Entry, "start" | "end">) {
     return toMinutes(entry.end) - toMinutes(entry.start);
+}
+
+/** Splits a typed description into its text and the first link pasted in it */
+export function splitNoteLink(text: string) {
+    const url = text.match(/https?:\/\/\S+/)?.[0] ?? "";
+    const note = url ? text.replace(url, "").replace(/[:\s]+$/, "") : text;
+    return { note: note.trim(), url };
 }
 
 /** Jira issue key of a link ("…/browse/CDL-88" → "CDL-88"), or "Jira" */

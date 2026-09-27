@@ -4,14 +4,9 @@ import { LogOut } from "@lucide/vue";
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
 const colorMode = useColorMode();
+const { reset } = useTimeTracker();
+const { git_tag: gitTag, git_sha: gitSha } = useRuntimeConfig().public;
 
-// Only remembers the choice for now: the UI isn't translated yet
-const language = useState("tracker:language", () => "fr");
-
-const languages = [
-    { value: "fr", label: "Français" },
-    { value: "en", label: "English" },
-];
 const themes = [
     { value: "light", label: "Clair" },
     { value: "dark", label: "Sombre" },
@@ -21,6 +16,11 @@ const themes = [
 const name = computed(() => {
     const meta = user.value?.user_metadata;
     return (meta?.full_name ?? meta?.name ?? user.value?.email ?? "") as string;
+});
+// Google sign-in stores the profile photo in the user metadata
+const picture = computed(() => {
+    const meta = user.value?.user_metadata;
+    return (meta?.avatar_url ?? meta?.picture ?? "") as string;
 });
 const initials = computed(() =>
     name.value
@@ -33,6 +33,7 @@ const initials = computed(() =>
 
 async function signOut() {
     await supabase.auth.signOut();
+    reset();
     await navigateTo("/login");
 }
 </script>
@@ -43,9 +44,15 @@ async function signOut() {
             <button
                 type="button"
                 aria-label="Menu utilisateur"
-                class="flex size-8 items-center justify-center rounded-full border bg-muted text-xs font-semibold transition-colors hover:bg-accent data-[state=open]:border-muted-foreground"
+                class="rounded-full ring-1 ring-border transition-shadow hover:ring-muted-foreground/60 data-[state=open]:ring-muted-foreground"
             >
-                {{ initials }}
+                <Avatar>
+                    <!-- Google refuses to serve profile photos to requests carrying a referrer -->
+                    <AvatarImage v-if="picture" :src="picture" referrer-policy="no-referrer" :alt="name" />
+                    <AvatarFallback class="text-xs font-semibold">
+                        {{ initials }}
+                    </AvatarFallback>
+                </Avatar>
             </button>
         </PopoverTrigger>
         <PopoverContent align="end" :side-offset="8" class="flex w-60 flex-col p-1">
@@ -54,20 +61,7 @@ async function signOut() {
                 <span class="text-xs text-muted-foreground">{{ user?.email }}</span>
             </div>
             <div class="-mx-1 my-1 h-px bg-border" />
-            <span class="px-2.5 pt-1.5 pb-1 text-xs font-medium text-muted-foreground/70">Langue</span>
-            <div class="mx-1.5 mb-1.5 grid grid-cols-2 gap-0.5 rounded-md bg-muted p-[3px]">
-                <button
-                    v-for="option in languages"
-                    :key="option.value"
-                    type="button"
-                    class="h-[26px] rounded-sm text-xs font-medium"
-                    :class="language === option.value ? 'bg-background text-foreground shadow-xs' : 'text-muted-foreground'"
-                    @click="language = option.value"
-                >
-                    {{ option.label }}
-                </button>
-            </div>
-            <span class="px-2.5 py-1 text-xs font-medium text-muted-foreground/70">Thème</span>
+            <span class="px-2.5 pt-1.5 pb-1 text-xs font-medium text-muted-foreground/70">Thème</span>
             <div class="mx-1.5 mb-1.5 grid grid-cols-3 gap-0.5 rounded-md bg-muted p-[3px]">
                 <button
                     v-for="option in themes"
@@ -89,6 +83,10 @@ async function signOut() {
                 <LogOut class="size-3.5" />
                 Déconnexion
             </button>
+            <div class="-mx-1 mt-1 -mb-1 flex justify-between rounded-b-md border-t bg-muted px-3.5 py-2 font-mono text-[11px] text-muted-foreground">
+                <span>{{ gitTag }}</span>
+                <span>{{ gitSha }}</span>
+            </div>
         </PopoverContent>
     </Popover>
 </template>

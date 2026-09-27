@@ -5,7 +5,7 @@ type Row =
     | { type: "gap"; key: string; start: string; end: string; project: string }
     | { type: "entry"; key: string; entry: Entry };
 
-const { entries, colorOf, openEditor, removeEntry } = useTimeTracker();
+const { entries, weekLoaded, colorOf, openEditor, removeEntry } = useTimeTracker();
 
 // Entries in chronological order, with a pause row wherever there is a hole between two entries
 const rows = computed(() => {
@@ -32,7 +32,10 @@ const rows = computed(() => {
                 <span />
             </div>
 
-            <div v-if="!entries.length" class="flex flex-col items-center gap-2 px-4 py-12 text-center">
+            <div v-if="!weekLoaded" class="px-4 py-12 text-center text-[13px] text-muted-foreground">
+                Chargement…
+            </div>
+            <div v-else-if="!entries.length" class="flex flex-col items-center gap-2 px-4 py-12 text-center">
                 <span class="text-sm font-medium">Aucune entrée pour cette journée</span>
                 <span class="text-[13px] text-muted-foreground">Ajoutez une entrée pour commencer à suivre votre temps.</span>
             </div>

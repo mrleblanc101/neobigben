@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ChevronDown } from "@lucide/vue";
 import { useEventListener } from "@vueuse/core";
 
-const { projects, colorOf, addEntry } = useTimeTracker();
+const { addEntry } = useTimeTracker();
 
 const empty = () => ({ project: "", note: "", start: "", end: "", duration: "" });
 const draft = ref(empty());
@@ -33,18 +32,19 @@ function onDuration(value: string) {
     if (start !== null && duration !== null) draft.value.end = addToClock(start, duration);
 }
 
-function add() {
+const saving = ref(false);
+
+async function add() {
     const start = parseClock(draft.value.start);
     const end = parseClock(draft.value.end);
-    if (!draft.value.project || start === null || end === null || end <= start) return;
+    if (saving.value || !draft.value.project || start === null || end === null || end <= start) return;
 
     // A link pasted in the description becomes the entry's link
-    let note = draft.value.note.trim();
-    const url = note.match(/https?:\/\/\S+/)?.[0] ?? "";
-    if (url) note = note.replace(url, "").replace(/[:\s]+$/, "").trim();
-
-    addEntry({ project: draft.value.project, start: formatMinutes(start), end: formatMinutes(end), note, url });
-    draft.value = empty();
+    const { note, url } = splitNoteLink(draft.value.note);
+    saving.value = true;
+    const added = await addEntry({ project: draft.value.project, start: formatMinutes(start), end: formatMinutes(end), note, url });
+    saving.value = false;
+    if (added) draft.value = empty();
 }
 
 // "/" jumps to the quick-add description from anywhere on the page
@@ -61,26 +61,7 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
 
 <template>
     <form :class="ENTRY_GRID" class="h-[52px] bg-muted/25" @submit.prevent="add">
-        <div class="relative flex min-w-0 items-center">
-            <span
-                class="pointer-events-none absolute left-0 size-2 rounded-[2px]"
-                :style="{ background: draft.project ? colorOf(draft.project) : 'transparent' }"
-            />
-            <select
-                v-model="draft.project"
-                aria-label="Projet"
-                class="h-8 w-full cursor-pointer appearance-none truncate rounded-md bg-transparent pr-5.5 pl-4 text-sm font-medium"
-                :class="draft.project ? 'text-foreground' : 'text-muted-foreground/70'"
-            >
-                <option value="" disabled>
-                    Projet…
-                </option>
-                <option v-for="project in projects" :key="project.name" :value="project.name">
-                    {{ project.name }}
-                </option>
-            </select>
-            <ChevronDown class="pointer-events-none absolute right-0 size-3 text-muted-foreground" />
-        </div>
+        <TrackerProjectCombobox v-model="draft.project" variant="inline" />
         <input
             ref="noteInput"
             v-model="draft.note"
@@ -124,7 +105,7 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
             @input="onDuration(($event.target as HTMLInputElement).value)"
         >
         <div class="flex justify-end">
-            <Button type="submit" size="sm" class="px-2.5 text-[13px]">
+            <Button type="submit" size="sm" class="px-2.5 text-[13px]" :disabled="saving">
                 Ajouter
                 <kbd class="rounded-[3px] bg-primary-foreground/15 px-1 py-px font-mono text-[11px] text-primary-foreground/70">↵</kbd>
             </Button>
