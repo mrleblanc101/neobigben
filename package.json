@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@internationalized/date": "^3.12.4",
     "@lucide/vue": "^1.48.0",
     "@nuxtjs/color-mode": "4.0.1",
     "@nuxtjs/supabase": "2.0.10",

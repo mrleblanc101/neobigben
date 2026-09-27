@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import type { DateValue } from "@internationalized/date";
+import { parseDate } from "@internationalized/date";
+import { CalendarDays } from "@lucide/vue";
+
 const { editor, closeEditor, saveEditor } = useTimeTracker();
 const { confirm } = useConfirm();
 
@@ -8,6 +12,20 @@ const range = useTimeRange();
 // Day of an entry being edited (YYYY-MM-DD): changing it moves the entry
 const day = ref("");
 const editing = computed(() => !!editor.value && editor.value.id !== "new");
+const pickingDay = ref(false);
+const dayValue = computed({
+    get: () => (day.value ? parseDate(day.value) : undefined),
+    set: (value: DateValue | undefined) => {
+        if (!value) return;
+        day.value = value.toString();
+        pickingDay.value = false;
+    },
+});
+const dayLabel = computed(() => {
+    if (!day.value) return "";
+    const date = parseDateKey(day.value);
+    return `${DAY_NAMES[date.getDay()]} ${date.getDate()} ${MONTH_NAMES[date.getMonth()]} ${date.getFullYear()}`;
+});
 
 // The form as opened, to tell whether closing would drop changes
 const snapshot = () => JSON.stringify([form.value, day.value, range.start.value, range.end.value, range.duration.value]);
@@ -63,7 +81,24 @@ function save() {
             <form class="flex flex-col gap-[18px]" @submit.prevent="save" @keydown.capture="focusPreviousOnBackspace">
                 <div v-if="editing" class="flex flex-col gap-2">
                     <Label for="entry-day">Jour</Label>
-                    <Input id="entry-day" v-model="day" type="date" required class="w-44 font-mono" />
+                    <Popover v-model:open="pickingDay">
+                        <PopoverTrigger as-child>
+                            <Button id="entry-day" type="button" variant="outline" class="self-start font-normal">
+                                <CalendarDays class="text-muted-foreground" />
+                                {{ dayLabel }}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent align="start" class="w-auto p-0">
+                            <!-- Weeks start on Sunday, so the weekend is the first and last column -->
+                            <Calendar
+                                v-model="dayValue"
+                                locale="fr"
+                                :week-starts-on="0"
+                                initial-focus
+                                class="[&_td:is(:first-child,:last-child)_[data-slot=calendar-cell-trigger]:not([data-selected])]:text-red-500 dark:[&_td:is(:first-child,:last-child)_[data-slot=calendar-cell-trigger]:not([data-selected])]:text-red-400 [&_td:is(:first-child,:last-child)_[data-slot=calendar-cell-trigger][data-outside-view]:not([data-selected])]:text-red-500/50 dark:[&_td:is(:first-child,:last-child)_[data-slot=calendar-cell-trigger][data-outside-view]:not([data-selected])]:text-red-400/50"
+                            />
+                        </PopoverContent>
+                    </Popover>
                 </div>
 
                 <div class="flex flex-col gap-2.5">
