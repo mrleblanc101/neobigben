@@ -1,51 +1,5 @@
-// Demo data from the design. Everything lives in memory until entries are stored in Supabase.
-const SEED_PROJECTS = ["CDL", "Lobbyisme Québec", "Naval Québec", "Interne", "Standup", "Pause-Café", "Libeo.com", "documentation.lbo.qa", "EEQ", "Coop Zone", "RTC", "Boukili", "Matelas Dauphin", "SAAQ", "status.libeo.com", "VPMO", "Férié"];
-const SEED_FAVORITES = ["CDL", "Lobbyisme Québec"];
-const JIRA = "https://libeocom.atlassian.net/";
-
-type SeedRow = [project: string, start: string, end: string, note?: string, url?: string];
-
-const SEED_TODAY: SeedRow[] = [
-    ["Standup", "09:30", "09:45"],
-    ["Naval Québec", "09:45", "10:10", "Rencontre", `${JIRA}browse/NAVAL-2`],
-    ["Lobbyisme Québec", "10:10", "11:10", "", `${JIRA}jira/for-you?tab=assigned`],
-    ["Lobbyisme Québec", "11:10", "12:30", "", `${JIRA}browse/LOBBY1-354`],
-    ["Lobbyisme Québec", "13:00", "13:30", "Corrections", `${JIRA}browse/LOBBY1-354`],
-    ["CDL", "13:30", "17:30", "", `${JIRA}browse/CDL-88`],
-    ["CDL", "17:30", "18:30", "Revue PR"],
-];
-
-const SEED_PAST_DAYS: SeedRow[][] = [
-    [["Standup", "09:30", "09:45"], ["CDL", "09:45", "12:00"], ["Naval Québec", "13:00", "15:00"], ["Lobbyisme Québec", "15:00", "16:30"]],
-    [["Standup", "09:30", "09:45"], ["Lobbyisme Québec", "09:45", "12:00"], ["CDL", "13:00", "16:00"]],
-    [["Standup", "09:30", "09:45"], ["CDL", "09:45", "12:00"]],
-];
-
+// Everything lives in memory until entries and projects are stored in Supabase
 let nextId = 1;
-
-function seedEntries(rows: SeedRow[]): Entry[] {
-    return rows.map(([project, start, end, note = "", url = ""]) => ({ id: nextId++, project, start, end, note, url }));
-}
-
-function seedByDate() {
-    const today = startOfDay(new Date());
-    const byDate: Record<string, Entry[]> = { [dateKey(today)]: seedEntries(SEED_TODAY) };
-    let i = 0;
-    for (let day = startOfWeek(today); day < today; day = addDays(day, 1)) {
-        if (day.getDay() === 0 || day.getDay() === 6) continue;
-        byDate[dateKey(day)] = seedEntries(SEED_PAST_DAYS[i++ % SEED_PAST_DAYS.length]!);
-    }
-    return byDate;
-}
-
-function seedProjects(): Project[] {
-    return SEED_PROJECTS.map((name, i) => ({
-        name,
-        created: SEED_PROJECTS.length - i,
-        color: PROJECT_PALETTE[i % PROJECT_PALETTE.length]!,
-        fav: SEED_FAVORITES.includes(name),
-    }));
-}
 
 function totalsByProject(entries: Entry[]) {
     const totals: Record<string, number> = {};
@@ -62,8 +16,8 @@ export interface EntryEditor {
 
 export function useTimeTracker() {
     const date = useState("tracker:date", () => startOfDay(new Date()));
-    const byDate = useState("tracker:entries", seedByDate);
-    const projects = useState("tracker:projects", seedProjects);
+    const byDate = useState<Record<string, Entry[]>>("tracker:entries", () => ({}));
+    const projects = useState<Project[]>("tracker:projects", () => []);
     const weeklyGoalHours = useState("tracker:goal", () => 40);
     const editor = useState<EntryEditor | null>("tracker:editor", () => null);
 
