@@ -22,7 +22,8 @@ const open = computed({
 const start = computed(() => parseClock(form.value.start));
 const end = computed(() => parseClock(form.value.end));
 const minutes = computed(() => (start.value !== null && end.value !== null ? Math.max(0, end.value - start.value) : 0));
-const canSave = computed(() => !!form.value.project && minutes.value > 0);
+// A project, a complete start and end with the end after the start, and no half-typed duration
+const canSave = computed(() => !!form.value.project && minutes.value > 0 && (!durationDraft.value || parseDuration(durationDraft.value) !== null));
 // Last valid duration, so retyping the start from scratch still moves the end with it
 const keptDuration = ref(0);
 watch(minutes, value => value > 0 && (keptDuration.value = value), { immediate: true });

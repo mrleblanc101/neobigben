@@ -34,10 +34,18 @@ function onDuration(value: string) {
 
 const saving = ref(false);
 
+// A project, a complete start and end with the end after the start, and no half-typed duration
+const canAdd = computed(() => {
+    const { project, start, end, duration } = draft.value;
+    const startMinutes = parseClock(start);
+    const endMinutes = parseClock(end);
+    return !!project && startMinutes !== null && endMinutes !== null && endMinutes > startMinutes && (!duration || parseDuration(duration) !== null);
+});
+
 async function add() {
-    const start = parseClock(draft.value.start);
-    const end = parseClock(draft.value.end);
-    if (saving.value || !draft.value.project || start === null || end === null || end <= start) return;
+    if (saving.value || !canAdd.value) return;
+    const start = parseClock(draft.value.start)!;
+    const end = parseClock(draft.value.end)!;
 
     // A link pasted in the description becomes the entry's link
     const { note, url } = splitNoteLink(draft.value.note);
@@ -110,7 +118,7 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
             @input="onDuration(($event.target as HTMLInputElement).value)"
         >
         <div class="flex justify-end">
-            <Button type="submit" size="sm" class="px-2.5 text-[13px]" :disabled="saving">
+            <Button type="submit" size="sm" class="px-2.5 text-[13px]" :disabled="saving || !canAdd">
                 Ajouter
                 <kbd class="rounded-[3px] bg-primary-foreground/15 px-1 py-px font-mono text-[11px] text-primary-foreground/70">↵</kbd>
             </Button>
