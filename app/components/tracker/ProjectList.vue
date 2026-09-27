@@ -1,23 +1,17 @@
 <script setup lang="ts">
-import { ChevronDown, Plus, Search } from "@lucide/vue";
+import { Plus, Search } from "@lucide/vue";
 
 const { projects, dayTotals, addProject } = useTimeTracker();
 
 const query = ref("");
-const sort = ref<"created" | "name" | "time">("created");
 
 const trimmed = computed(() => query.value.trim());
 const canCreate = computed(() => !!trimmed.value && !projects.value.some(p => p.name.toLowerCase() === trimmed.value.toLowerCase()));
 
 const visible = computed(() => {
     const q = trimmed.value.toLowerCase();
-    const minutes = (name: string) => dayTotals.value[name] ?? 0;
-    const compare = {
-        created: (a: Project, b: Project) => b.created - a.created,
-        name: (a: Project, b: Project) => a.name.localeCompare(b.name, "fr"),
-        time: (a: Project, b: Project) => minutes(b.name) - minutes(a.name),
-    }[sort.value];
-    return projects.value.filter(p => p.name.toLowerCase().includes(q)).sort(compare);
+    // Newest first
+    return projects.value.filter(p => p.name.toLowerCase().includes(q)).sort((a, b) => b.created - a.created);
 });
 const favorites = computed(() => visible.value.filter(p => p.fav));
 const others = computed(() => visible.value.filter(p => !p.fav));
@@ -28,38 +22,15 @@ async function create() {
 </script>
 
 <template>
-    <div class="flex flex-col gap-2">
-        <div class="relative">
-            <Search class="pointer-events-none absolute top-2.5 left-2.5 size-3.5 text-muted-foreground/70" />
-            <Input
-                v-model="query"
-                autocomplete="off"
-                placeholder="Rechercher ou créer un projet…"
-                class="h-[34px] pl-8 text-[13px] md:text-[13px]"
-                @keydown.enter="create"
-            />
-        </div>
-        <div class="flex items-center justify-between gap-2">
-            <span class="text-xs text-muted-foreground">{{ visible.length }} projet{{ visible.length > 1 ? "s" : "" }}</span>
-            <div class="relative flex">
-                <select
-                    v-model="sort"
-                    aria-label="Trier les projets"
-                    class="h-7 cursor-pointer appearance-none rounded-md border bg-background pr-6.5 pl-2 text-xs dark:bg-input/30"
-                >
-                    <option value="created">
-                        Date de création
-                    </option>
-                    <option value="name">
-                        Nom (A–Z)
-                    </option>
-                    <option value="time">
-                        Temps aujourd’hui
-                    </option>
-                </select>
-                <ChevronDown class="pointer-events-none absolute top-2 right-2 size-3 text-muted-foreground" />
-            </div>
-        </div>
+    <div class="relative">
+        <Search class="pointer-events-none absolute top-2.5 left-2.5 size-3.5 text-muted-foreground/70" />
+        <Input
+            v-model="query"
+            autocomplete="off"
+            placeholder="Rechercher ou créer un projet…"
+            class="h-[34px] pl-8 text-[13px] md:text-[13px]"
+            @keydown.enter="create"
+        />
     </div>
 
     <button
@@ -79,8 +50,11 @@ async function create() {
         </div>
     </div>
 
-    <div v-if="others.length || !favorites.length" class="flex flex-col gap-1.5">
-        <span v-if="favorites.length" class="text-xs font-medium text-muted-foreground">Tous les projets</span>
+    <div v-if="others.length || !visible.length" class="flex flex-col gap-1.5">
+        <div v-if="others.length" class="flex items-center justify-between gap-2 text-xs">
+            <span class="font-medium text-muted-foreground">Projets</span>
+            <span class="font-mono text-muted-foreground/70">{{ others.length }}</span>
+        </div>
         <div class="flex flex-col overflow-hidden rounded-lg border">
             <TrackerProjectRow v-for="project in others" :key="project.id" :project="project" :minutes="dayTotals[project.name] ?? 0" />
             <div v-if="!visible.length" class="px-3.5 py-6 text-center text-[13px] text-muted-foreground">

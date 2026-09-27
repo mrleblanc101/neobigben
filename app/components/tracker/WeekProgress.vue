@@ -24,12 +24,7 @@ const days = computed(() =>
 const weekTotal = computed(() => days.value.reduce((sum, d) => sum + d.minutes, 0));
 const weekPct = computed(() => `${Math.min(100, (weekTotal.value / weekGoal.value) * 100)}%`);
 const weekLeft = computed(() => (weekTotal.value >= weekGoal.value ? "Objectif atteint" : formatMinutes(weekGoal.value - weekTotal.value)));
-const weekRange = computed(() => {
-    const first = weekDates.value[0]!;
-    const last = weekDates.value[6]!;
-    const startMonth = first.getMonth() !== last.getMonth() ? ` ${MONTH_NAMES[first.getMonth()]}` : "";
-    return `Semaine du ${first.getDate()}${startMonth} au ${last.getDate()} ${MONTH_NAMES[last.getMonth()]}`;
-});
+const weekPercent = computed(() => Math.round((weekTotal.value / weekGoal.value) * 100));
 
 function selectDay(day: Date) {
     goTo(day);
@@ -53,28 +48,32 @@ function valueClass(d: (typeof days.value)[number]) {
         <PopoverTrigger as-child>
             <button
                 type="button"
-                class="flex h-8 items-center gap-2.5 rounded-md border px-3 text-[13px] transition-colors hover:bg-accent data-[state=open]:bg-accent"
+                class="relative flex h-10 items-center gap-2.5 overflow-hidden rounded-md border px-3 text-[13px] transition-colors hover:bg-accent data-[state=open]:bg-accent"
             >
                 <Clock class="size-3.5 text-muted-foreground" />
                 <span class="font-mono font-medium">{{ formatMinutes(weekTotal) }}</span>
                 <span class="font-mono text-muted-foreground/70">/ {{ formatMinutes(weekGoal) }}</span>
-                <!-- Progress tracks use a tint of the text color, which stays visible on any hover or selected background -->
-                <span class="flex h-1 w-12 overflow-hidden rounded-full bg-foreground/10">
-                    <span class="rounded-full bg-primary" :style="{ width: weekPct }" />
+                <!-- Progress along the bottom edge, like a border; the track is a tint of the text color, which stays visible on any hover or selected background -->
+                <span class="absolute inset-x-0 bottom-0 flex h-1 bg-foreground/10">
+                    <span class="bg-primary" :style="{ width: weekPct }" />
                 </span>
             </button>
         </PopoverTrigger>
         <PopoverContent align="end" :side-offset="8" class="flex w-[300px] flex-col bg-background p-0">
-            <div class="flex items-end justify-between gap-3 border-b p-4">
-                <div class="flex min-w-0 flex-col gap-1">
-                    <span class="text-xs text-muted-foreground">{{ weekRange }}</span>
-                    <div class="flex items-baseline gap-1.5 font-mono">
-                        <span class="text-[26px] font-semibold tracking-tight">{{ formatMinutes(weekTotal) }}</span>
+            <div class="flex flex-col gap-3 border-b p-4">
+                <div class="flex items-baseline justify-between gap-3">
+                    <span class="text-sm font-semibold">{{ weekTitle(date) }}</span>
+                    <span class="text-xs text-muted-foreground">{{ weekRange(date) }}</span>
+                </div>
+                <div class="flex items-baseline justify-between gap-3 font-mono">
+                    <div class="flex items-baseline gap-1.5">
+                        <span class="text-[26px] leading-none font-semibold tracking-tight">{{ formatMinutes(weekTotal) }}</span>
                         <span class="text-[13px] text-muted-foreground/70">/ {{ formatMinutes(weekGoal) }}</span>
                     </div>
+                    <span class="text-[13px] text-muted-foreground">{{ weekPercent }} %</span>
                 </div>
             </div>
-            <div class="flex flex-col p-2">
+            <div class="flex flex-col gap-0.5 p-2">
                 <button
                     v-for="d in days"
                     :key="d.label"

@@ -135,3 +135,16 @@ export function weekNumber(date: Date) {
     const dayOfYear = Math.round((startOfDay(date).getTime() - jan1.getTime()) / 864e5);
     return Math.floor((dayOfYear + jan1.getDay()) / 7) + 1;
 }
+
+/** "Semaine 39" */
+export function weekTitle(date: Date) {
+    return `Semaine ${weekNumber(date)}`;
+}
+
+/** Sunday to Saturday of the week holding the date, like "21 – 27 septembre" or "28 septembre – 4 octobre" */
+export function weekRange(date: Date) {
+    const first = startOfWeek(date);
+    const last = addDays(first, 6);
+    const firstMonth = first.getMonth() !== last.getMonth() ? ` ${MONTH_NAMES[first.getMonth()]}` : "";
+    return `${first.getDate()}${firstMonth} – ${last.getDate()} ${MONTH_NAMES[last.getMonth()]}`;
+}

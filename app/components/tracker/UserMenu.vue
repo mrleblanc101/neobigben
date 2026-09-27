@@ -40,7 +40,7 @@ async function signOut() {
                 aria-label="Menu utilisateur"
                 class="rounded-full ring-1 ring-border transition-shadow hover:ring-muted-foreground/60 data-[state=open]:ring-muted-foreground"
             >
-                <Avatar>
+                <Avatar class="size-9">
                     <!-- Google refuses to serve profile photos to requests carrying a referrer -->
                     <AvatarImage v-if="picture" :src="picture" referrer-policy="no-referrer" :alt="name" />
                     <AvatarFallback class="text-xs font-semibold">
@@ -49,7 +49,7 @@ async function signOut() {
                 </Avatar>
             </button>
         </PopoverTrigger>
-        <PopoverContent align="end" :side-offset="8" class="flex w-60 flex-col p-1">
+        <PopoverContent align="end" :side-offset="8" class="flex w-60 flex-col bg-background p-1">
             <div class="flex flex-col gap-0.5 px-2.5 py-2">
                 <span class="text-sm font-semibold">{{ name }}</span>
                 <span class="text-xs text-muted-foreground">{{ user?.email }}</span>
@@ -69,7 +69,7 @@ async function signOut() {
                 <LogOut class="size-3.5" />
                 Déconnexion
             </button>
-            <div class="-mx-1 mt-1 -mb-1 flex justify-between rounded-b-md border-t bg-muted px-3.5 py-2 font-mono text-[11px] text-muted-foreground">
+            <div class="-mx-1 mt-1 -mb-1 flex justify-between rounded-b-md border-t bg-muted/50 px-3.5 py-2 font-mono text-[11px] text-muted-foreground">
                 <span>{{ gitTag }}</span>
                 <span>{{ gitSha }}</span>
             </div>

@@ -1,15 +1,5 @@
 <script setup lang="ts">
-const { date, isToday, weekDates, dayTotals, weekTotals, dayGoal, weekGoal } = useTimeTracker();
-
-// The week card follows the week of the selected day
-const weekTitle = computed(() =>
-    dateKey(weekDates.value[0]!) === dateKey(startOfWeek(new Date())) ? "Cette semaine" : `Semaine ${weekNumber(date.value)}`);
-const weekSubtitle = computed(() => {
-    const first = weekDates.value[0]!;
-    const last = weekDates.value[6]!;
-    const firstMonth = first.getMonth() !== last.getMonth() ? ` ${MONTH_NAMES[first.getMonth()]}` : "";
-    return `${first.getDate()}${firstMonth} – ${last.getDate()} ${MONTH_NAMES[last.getMonth()]}`;
-});
+const { date, isToday, dayTotals, weekTotals, dayGoal, weekGoal } = useTimeTracker();
 
 const tabs = ["Résumé", "Projets"] as const;
 const tab = ref<(typeof tabs)[number]>("Résumé");
@@ -32,12 +22,12 @@ const tab = ref<(typeof tabs)[number]>("Résumé");
 
         <template v-if="tab === 'Résumé'">
             <TrackerSummaryCard
-                :title="isToday ? 'Aujourd’hui' : 'Journée'"
-                :subtitle="`${DAY_NAMES[date.getDay()]} ${date.getDate()}`"
+                :title="isToday ? 'Aujourd’hui' : DAY_NAMES[date.getDay()]!"
+                :subtitle="isToday ? `${DAY_NAMES[date.getDay()]} ${date.getDate()}` : `${date.getDate()} ${MONTH_NAMES[date.getMonth()]}`"
                 :totals="dayTotals"
                 :goal="dayGoal"
             />
-            <TrackerSummaryCard :title="weekTitle" :subtitle="weekSubtitle" :totals="weekTotals" :goal="weekGoal" />
+            <TrackerSummaryCard :title="weekTitle(date)" :subtitle="weekRange(date)" :totals="weekTotals" :goal="weekGoal" />
         </template>
         <TrackerProjectList v-else />
     </aside>

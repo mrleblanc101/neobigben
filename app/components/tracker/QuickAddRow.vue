@@ -94,7 +94,7 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
             :value="range.duration.value"
             inputmode="numeric"
             maxlength="5"
-            placeholder="HH:MM"
+            placeholder="00:00"
             title="Durée"
             aria-label="Durée"
             :tabindex="range.endMinutes.value === null ? 0 : -1"

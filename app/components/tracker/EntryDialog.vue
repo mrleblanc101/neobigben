@@ -113,7 +113,7 @@ function save() {
                                 :model-value="range.duration.value"
                                 inputmode="numeric"
                                 maxlength="5"
-                                placeholder="HH:MM"
+                                placeholder="00:00"
                                 class="font-mono"
                                 @update:model-value="range.setDuration(String($event))"
                             />
