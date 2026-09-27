@@ -76,6 +76,7 @@ export function useTimeRange() {
         end,
         duration,
         startMinutes,
+        endMinutes,
         durationMinutes,
         valid,
         endsNextDay,

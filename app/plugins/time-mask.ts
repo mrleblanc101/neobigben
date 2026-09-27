@@ -15,9 +15,10 @@ const timeMaskDirective: Directive<HTMLInputElement, unknown, "advance"> = {
         if (!binding.modifiers.advance) return;
         // The mask dispatches an input event for each typed character, while values set from code dispatch none:
         // a complete, focused field on input has just been typed in full. The form's own input handler, registered
-        // before this one, has already taken the value; moving on right away keeps the next keystroke from being lost.
+        // before this one, has already taken the value. Waiting for Vue to render it (a microtask, done before the next
+        // keystroke) lets the next field's Tab order follow the new value, e.g. Durée leaving it once Fin is set.
         el.addEventListener("input", () => {
-            if (document.activeElement === el && el.inputmask?.isComplete()) focusNextField(el);
+            if (document.activeElement === el && el.inputmask?.isComplete()) nextTick(() => focusNextField(el));
         });
     },
     beforeUnmount(el) {

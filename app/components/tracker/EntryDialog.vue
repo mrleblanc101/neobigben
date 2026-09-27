@@ -5,9 +5,12 @@ const { confirm } = useConfirm();
 // Project and note; the times live in `range`
 const form = ref({ project: "", note: "" });
 const range = useTimeRange();
+// Day of an entry being edited (YYYY-MM-DD): changing it moves the entry
+const day = ref("");
+const editing = computed(() => !!editor.value && editor.value.id !== "new");
 
 // The form as opened, to tell whether closing would drop changes
-const snapshot = () => JSON.stringify([form.value, range.start.value, range.end.value, range.duration.value]);
+const snapshot = () => JSON.stringify([form.value, day.value, range.start.value, range.end.value, range.duration.value]);
 const initialForm = ref("");
 const dirty = computed(() => snapshot() !== initialForm.value);
 
@@ -17,6 +20,7 @@ watch(editor, (value) => {
     const { project, start, end, note, url } = value.form;
     form.value = { project, note: [note, url].filter(Boolean).join(" ") };
     range.reset(start, displayClock(end));
+    day.value = value.day ?? "";
     initialForm.value = snapshot();
 }, { immediate: true });
 
@@ -36,12 +40,15 @@ const open = computed({
     set: value => !value && requestClose(),
 });
 
-const canSave = computed(() => !!form.value.project && range.valid.value);
+const canSave = computed(() => !!form.value.project && range.valid.value && (!editing.value || /^\d{4}-\d{2}-\d{2}$/.test(day.value)));
 
 function save() {
     if (!canSave.value) return;
     // The link left in the note becomes the entry's link: deleting it from the note removes it
-    saveEditor({ project: form.value.project, start: range.start.value, end: range.end.value, ...splitNoteLink(form.value.note) });
+    saveEditor(
+        { project: form.value.project, start: range.start.value, end: range.end.value, ...splitNoteLink(form.value.note) },
+        editing.value ? day.value : undefined,
+    );
 }
 </script>
 
@@ -54,6 +61,11 @@ function save() {
             </DialogHeader>
 
             <form class="flex flex-col gap-[18px]" @submit.prevent="save" @keydown.capture="focusPreviousOnBackspace">
+                <div v-if="editing" class="flex flex-col gap-2">
+                    <Label for="entry-day">Jour</Label>
+                    <Input id="entry-day" v-model="day" type="date" required class="w-44 font-mono" />
+                </div>
+
                 <div class="flex flex-col gap-2.5">
                     <div class="grid grid-cols-3 gap-3">
                         <div class="flex min-w-0 flex-col gap-2">
@@ -96,6 +108,7 @@ function save() {
                             <Input
                                 id="entry-duration"
                                 v-time-mask
+                                :tabindex="range.endMinutes.value === null ? 0 : -1"
                                 autocomplete="off"
                                 :model-value="range.duration.value"
                                 inputmode="numeric"

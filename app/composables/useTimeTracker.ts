@@ -11,6 +11,8 @@ interface StoredEntry extends Omit<Entry, "project"> {
 export interface EntryEditor {
     id: string | "new";
     form: EntryDraft;
+    /** Day of the entry being edited, as YYYY-MM-DD; new entries go to the selected day */
+    day?: string;
 }
 
 // Weeks being fetched, so concurrent callers share one request
@@ -203,25 +205,29 @@ export function useTimeTracker() {
         return true;
     }
 
-    /** Updates an entry; moving its end past midnight adds the part after midnight as an entry on the next day */
-    async function updateEntry(id: string, draft: EntryDraft) {
+    /** Updates an entry, moving it to `day` when given; an end past midnight adds the part after it on the next day */
+    async function updateEntry(id: string, draft: EntryDraft, day?: string) {
         const project = findProject(draft.project);
         if (!project) return false;
         const { sameDay, nextDay } = splitAtMidnight(draft.start, draft.end);
         const { data, error: cause } = await supabase
             .from("entries")
-            .update({ ...entryColumns({ ...draft, ...sameDay }), project_id: project.id })
+            .update({ ...entryColumns({ ...draft, ...sameDay }), project_id: project.id, ...(day && { day }) })
             .eq("id", id)
             .select()
             .single();
         if (cause) return fail("Impossible de modifier l’entrée", cause);
-        byDate.value[data.day] = (byDate.value[data.day] ?? []).map(e => (e.id === id ? toStoredEntry(data) : e));
+        // The entry may have changed day: take it out of whichever day held it, then file it under its day
+        for (const [key, list] of Object.entries(byDate.value)) {
+            if (list.some(e => e.id === id)) byDate.value[key] = list.filter(e => e.id !== id);
+        }
+        storeEntries([data]);
         if (!nextDay) return true;
 
-        const day = dateKey(addDays(parseDateKey(data.day), 1));
+        const followingDay = dateKey(addDays(parseDateKey(data.day), 1));
         const { data: added, error: addCause } = await supabase
             .from("entries")
-            .insert({ ...entryColumns({ ...draft, ...nextDay }), project_id: project.id, day })
+            .insert({ ...entryColumns({ ...draft, ...nextDay }), project_id: project.id, day: followingDay })
             .select();
         if (addCause) return fail("L’entrée a été modifiée, mais pas sa partie après minuit", addCause);
         storeEntries(added);
@@ -252,14 +258,15 @@ export function useTimeTracker() {
         // After an entry ending at midnight (24:00) there's nothing left of the day to start from
         const defaults: EntryDraft = { project: "", start: lastEnd === "24:00" ? "" : lastEnd ?? dayStart.value, end: "", note: "", url: "" };
         editor.value = entry && "id" in entry
-            ? { id: entry.id, form: { project: entry.project, start: entry.start, end: entry.end, note: entry.note, url: entry.url } }
+            ? { id: entry.id, form: { project: entry.project, start: entry.start, end: entry.end, note: entry.note, url: entry.url }, day: dateKey(date.value) }
             : { id: "new", form: { ...defaults, ...entry } };
     }
 
-    async function saveEditor(form: EntryDraft) {
+    /** Saves the entry being edited; `day` (YYYY-MM-DD) moves an existing entry to another day */
+    async function saveEditor(form: EntryDraft, day?: string) {
         const current = editor.value;
         if (!current) return;
-        const saved = current.id === "new" ? await addEntry(form) : await updateEntry(current.id, form);
+        const saved = current.id === "new" ? await addEntry(form) : await updateEntry(current.id, form, day);
         if (saved) editor.value = null;
     }
 

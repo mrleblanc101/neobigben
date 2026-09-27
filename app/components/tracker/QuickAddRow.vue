@@ -97,6 +97,7 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
             placeholder="HH:MM"
             title="Durée"
             aria-label="Durée"
+            :tabindex="range.endMinutes.value === null ? 0 : -1"
             class="h-7 w-full min-w-0 px-1 text-center font-mono text-[13px] font-medium placeholder:text-muted-foreground"
             :class="fieldClass"
             @input="range.setDuration(($event.target as HTMLInputElement).value)"
