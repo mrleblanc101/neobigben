@@ -18,8 +18,14 @@ const open = computed({
     set: value => !value && closeEditor(),
 });
 
-const minutes = computed(() => (form.value.start && form.value.end ? Math.max(0, entryMinutes(form.value)) : 0));
+// Start and end stay partial ("0H:MM") while being typed
+const start = computed(() => parseClock(form.value.start));
+const end = computed(() => parseClock(form.value.end));
+const minutes = computed(() => (start.value !== null && end.value !== null ? Math.max(0, end.value - start.value) : 0));
 const canSave = computed(() => !!form.value.project && minutes.value > 0);
+// Last valid duration, so retyping the start from scratch still moves the end with it
+const keptDuration = ref(0);
+watch(minutes, value => value > 0 && (keptDuration.value = value), { immediate: true });
 
 const presets = [15, 30, 60, 90, 120].map(value => ({
     value,
@@ -28,14 +34,13 @@ const presets = [15, 30, 60, 90, 120].map(value => ({
 
 function setDuration(value: number, typed?: string) {
     durationDraft.value = typed ?? null;
-    form.value.end = addToClock(toMinutes(form.value.start), value);
+    if (start.value !== null) form.value.end = addToClock(start.value, value);
 }
 
 // Moving the start keeps the duration
 function onStart(value: string | number) {
-    const duration = minutes.value;
     form.value.start = String(value);
-    if (form.value.start) form.value.end = addToClock(toMinutes(form.value.start), duration);
+    if (start.value !== null && keptDuration.value) form.value.end = addToClock(start.value, keptDuration.value);
 }
 
 function onEnd(value: string | number) {
@@ -75,17 +80,38 @@ function save() {
                     <div class="grid grid-cols-3 gap-3">
                         <div class="flex min-w-0 flex-col gap-2">
                             <Label for="entry-start">Début</Label>
-                            <Input id="entry-start" type="time" :model-value="form.start" class="font-mono" @update:model-value="onStart" />
+                            <Input
+                                id="entry-start"
+                                v-time-mask
+                                :model-value="form.start"
+                                inputmode="numeric"
+                                maxlength="5"
+                                placeholder="HH:MM"
+                                class="font-mono"
+                                @update:model-value="onStart"
+                            />
                         </div>
                         <div class="flex min-w-0 flex-col gap-2">
                             <Label for="entry-end">Fin</Label>
-                            <Input id="entry-end" type="time" :model-value="form.end" class="font-mono" @update:model-value="onEnd" />
+                            <Input
+                                id="entry-end"
+                                v-time-mask
+                                :model-value="form.end"
+                                inputmode="numeric"
+                                maxlength="5"
+                                placeholder="HH:MM"
+                                class="font-mono"
+                                @update:model-value="onEnd"
+                            />
                         </div>
                         <div class="flex min-w-0 flex-col gap-2">
                             <Label for="entry-duration">Durée</Label>
                             <Input
                                 id="entry-duration"
+                                v-time-mask:duration
                                 :model-value="durationDraft ?? formatMinutes(minutes)"
+                                inputmode="numeric"
+                                maxlength="5"
                                 placeholder="HH:MM"
                                 class="font-mono"
                                 @update:model-value="onDuration"

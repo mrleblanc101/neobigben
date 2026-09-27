@@ -72,10 +72,11 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
         >
         <div class="-ml-1 flex items-center gap-0.5">
             <input
+                v-time-mask
                 :value="draft.start"
                 inputmode="numeric"
                 maxlength="5"
-                placeholder="00:00"
+                placeholder="HH:MM"
                 title="Début"
                 aria-label="Début"
                 class="h-7 w-0 min-w-0 flex-1 text-center font-mono text-[13px] placeholder:text-muted-foreground"
@@ -84,10 +85,11 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
             >
             <span class="text-[13px] text-muted-foreground">–</span>
             <input
+                v-time-mask
                 :value="draft.end"
                 inputmode="numeric"
                 maxlength="5"
-                placeholder="00:00"
+                placeholder="HH:MM"
                 title="Fin"
                 aria-label="Fin"
                 class="h-7 w-0 min-w-0 flex-1 text-center font-mono text-[13px] placeholder:text-muted-foreground"
@@ -96,8 +98,11 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
             >
         </div>
         <input
+            v-time-mask:duration
             :value="draft.duration"
-            placeholder="00:00"
+            inputmode="numeric"
+            maxlength="5"
+            placeholder="HH:MM"
             title="Durée"
             aria-label="Durée"
             class="h-7 w-full min-w-0 px-1 text-center font-mono text-[13px] font-medium placeholder:text-muted-foreground"
