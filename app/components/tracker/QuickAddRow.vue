@@ -111,7 +111,7 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
             rows="1"
             aria-label="Description"
             placeholder="Courte description..."
-            class="-ml-2.5 field-sizing-content max-h-40 min-h-8 min-w-0 resize-none px-2.5 py-1.5 text-sm placeholder:text-muted-foreground"
+            class="-ml-2.5 field-sizing-content max-h-40 min-h-8 min-w-0 resize-none px-2.5 py-1.5 text-sm wrap-anywhere placeholder:text-muted-foreground"
             :class="fieldClass"
             @keydown.enter.exact.prevent="add"
         />

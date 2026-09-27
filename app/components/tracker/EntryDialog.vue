@@ -172,7 +172,7 @@ function save() {
                         v-model="form.note"
                         autocomplete="off"
                         placeholder="Courte description..."
-                        class="max-h-60 min-h-[calc(3lh+1rem+2px)] resize-none"
+                        class="max-h-60 min-h-[calc(3lh+1rem+2px)] wrap-anywhere"
                     />
                 </div>
 

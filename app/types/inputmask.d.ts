@@ -3,6 +3,7 @@ declare module "inputmask" {
     interface InputmaskInstance {
         mask(el: HTMLElement): void;
         isComplete(): boolean;
+        setValue(value: string): void;
     }
 
     global {
