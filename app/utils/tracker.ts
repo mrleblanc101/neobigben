@@ -18,6 +18,8 @@ export interface Project {
     created: number;
     color: string;
     fav: boolean;
+    /** Place in the project list, set by dragging; lower comes first */
+    position: number;
 }
 
 export const PROJECT_PALETTE = ["#a78bfa", "#60a5fa", "#34d399", "#fbbf24", "#f472b6", "#22d3ee", "#fb923c", "#a3e635", "#e879f9", "#94a3b8"];

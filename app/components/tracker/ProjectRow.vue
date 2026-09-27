@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { Pencil, Plus, Star, Trash2, X } from "@lucide/vue";
+import { GripVertical, Pencil, Plus, Star, Trash2, X } from "@lucide/vue";
 
 const props = defineProps<{
     project: Project;
     /** Time logged on the selected day */
     minutes: number;
+    /** Whether the row can be dragged to reorder the list, from anywhere but its buttons */
+    draggable?: boolean;
 }>();
 
 const { renameProject, toggleFavorite, openEditor, countProjectEntries, deleteProject } = useTimeTracker();
@@ -48,8 +50,16 @@ async function remove() {
 </script>
 
 <template>
-    <div class="group flex h-11 items-center gap-2.5 border-b pr-2 pl-3.5 text-sm last:border-b-0 hover:bg-muted/50">
-        <span class="size-2 shrink-0 rounded-[2px]" :style="{ background: project.color }" />
+    <div
+        :data-draggable="draggable && !renaming ? '' : undefined"
+        class="group flex h-11 items-center gap-2.5 border-b pr-2 pl-3.5 text-sm last:border-b-0 hover:bg-muted/50 data-draggable:cursor-grab data-draggable:active:cursor-grabbing"
+    >
+        <!-- The color chip turns into a grip while a draggable row is hovered -->
+        <span v-if="draggable && !renaming" class="-mx-1 grid size-4 shrink-0 place-items-center text-muted-foreground">
+            <span class="size-2 rounded-[2px] group-hover:hidden" :style="{ background: project.color }" />
+            <GripVertical class="hidden size-4 group-hover:block" />
+        </span>
+        <span v-else class="size-2 shrink-0 rounded-[2px]" :style="{ background: project.color }" />
         <template v-if="renaming">
             <input
                 ref="input"
@@ -66,7 +76,7 @@ async function remove() {
             </Button>
         </template>
         <template v-else>
-            <span class="min-w-0 flex-1 cursor-text truncate font-medium" title="Double-cliquer pour renommer" @dblclick="startRename">
+            <span class="min-w-0 flex-1 truncate font-medium" :class="{ 'cursor-text': !draggable }" title="Double-cliquer pour renommer" @dblclick="startRename">
                 {{ project.name }}
             </span>
             <!-- The time badge and the row actions share a slot: actions show on hover or keyboard focus -->

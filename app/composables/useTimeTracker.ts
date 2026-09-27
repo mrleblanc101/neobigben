@@ -24,6 +24,7 @@ const toProject = (row: ProjectRow): Project => ({
     color: row.color,
     fav: row.favorite,
     created: Date.parse(row.created_at),
+    position: row.position,
 });
 
 // Postgres returns times as "HH:MM:SS"
@@ -92,7 +93,7 @@ export function useTimeTracker() {
     async function init() {
         if (ready.value) return;
         const [projectsResult, settingsResult] = await Promise.all([
-            supabase.from("projects").select("*").order("created_at"),
+            supabase.from("projects").select("*").order("position").order("created_at", { ascending: false }),
             supabase.from("user_settings").select("weekly_goal_hours, day_start").maybeSingle(),
         ]);
         if (projectsResult.error) return fail("Impossible de charger les projets", projectsResult.error);
@@ -129,7 +130,9 @@ export function useTimeTracker() {
     async function addProject(name: string) {
         if (!name || findProject(name)) return false;
         const color = PROJECT_PALETTE[projects.value.length % PROJECT_PALETTE.length]!;
-        const { data, error: cause } = await supabase.from("projects").insert({ name, color }).select().single();
+        // New projects go to the top of the list
+        const position = Math.min(0, ...projects.value.map(p => p.position)) - 1;
+        const { data, error: cause } = await supabase.from("projects").insert({ name, color, position }).select().single();
         if (cause) return fail("Impossible de créer le projet", cause);
         projects.value.push(toProject(data));
         return true;
@@ -151,6 +154,27 @@ export function useTimeTracker() {
         const { error: cause } = await supabase.from("projects").update({ favorite: !project.fav }).eq("id", project.id);
         if (cause) return void fail("Impossible de modifier les favoris", cause);
         project.fav = !project.fav;
+    }
+
+    /**
+     * Puts the given projects in the given order, e.g. the favorites after one was dragged.
+     * They keep the places they already hold in the list, the other projects don't move.
+     */
+    async function reorderProjects(ids: string[]) {
+        const sorted = [...projects.value].sort((a, b) => a.position - b.position);
+        const moved = ids.map(id => sorted.find(p => p.id === id)!);
+        const reordered = sorted.map(p => (ids.includes(p.id) ? moved.shift()! : p));
+        const changed = reordered.filter((p, index) => p.position !== index);
+        if (!changed.length) return;
+        const previous = new Map(projects.value.map(p => [p.id, p.position]));
+        reordered.forEach((p, index) => (p.position = index));
+        projects.value = reordered;
+        const results = await Promise.all(changed.map(p => supabase.from("projects").update({ position: p.position }).eq("id", p.id)));
+        const failed = results.find(result => result.error);
+        if (!failed?.error) return;
+        for (const p of projects.value) p.position = previous.get(p.id)!;
+        projects.value = [...projects.value].sort((a, b) => a.position - b.position);
+        fail("Impossible de réordonner les projets", failed.error);
     }
 
     /** Number of entries logged on a project across all weeks, or null if it can't be counted */
@@ -311,6 +335,7 @@ export function useTimeTracker() {
         addProject,
         renameProject,
         toggleFavorite,
+        reorderProjects,
         countProjectEntries,
         deleteProject,
         saveSettings,

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { Plus, Search } from "@lucide/vue";
+import { insertNodeAt, removeNode, useSortable } from "@vueuse/integrations/useSortable";
+import type { SortableEvent } from "sortablejs";
 
-const { projects, dayTotals, addProject } = useTimeTracker();
+const { projects, dayTotals, addProject, reorderProjects } = useTimeTracker();
 
 const query = ref("");
 
@@ -10,11 +12,36 @@ const canCreate = computed(() => !!trimmed.value && !projects.value.some(p => p.
 
 const visible = computed(() => {
     const q = trimmed.value.toLowerCase();
-    // Newest first
-    return projects.value.filter(p => p.name.toLowerCase().includes(q)).sort((a, b) => b.created - a.created);
+    return projects.value.filter(p => p.name.toLowerCase().includes(q)).sort((a, b) => a.position - b.position);
 });
 const favorites = computed(() => visible.value.filter(p => p.fav));
 const others = computed(() => visible.value.filter(p => !p.fav));
+
+// Projects are reordered by dragging their row, within their section; not while a search hides some of them
+const draggable = computed(() => !trimmed.value);
+const favoritesList = ref<HTMLElement>();
+const othersList = ref<HTMLElement>();
+
+function sortable(list: Ref<HTMLElement | undefined>, section: Ref<Project[]>) {
+    useSortable(list, [], {
+        watchElement: true,
+        // Rows only take part while they can be dragged; their buttons still click instead of starting a drag
+        draggable: "[data-draggable]",
+        filter: "button",
+        preventOnFilter: false,
+        animation: 150,
+        onUpdate(event: SortableEvent) {
+            // Put the row back where Vue rendered it, then let the new order re-render the list
+            removeNode(event.item);
+            insertNodeAt(event.from, event.item, event.oldIndex!);
+            const ids = section.value.map(p => p.id);
+            ids.splice(event.newIndex!, 0, ...ids.splice(event.oldIndex!, 1));
+            reorderProjects(ids);
+        },
+    });
+}
+sortable(favoritesList, favorites);
+sortable(othersList, others);
 
 async function create() {
     if (canCreate.value && (await addProject(trimmed.value))) query.value = "";
@@ -45,8 +72,14 @@ async function create() {
 
     <div v-if="favorites.length" class="flex flex-col gap-1.5">
         <span class="text-xs font-medium text-muted-foreground">Favoris</span>
-        <div class="flex flex-col overflow-hidden rounded-lg border">
-            <TrackerProjectRow v-for="project in favorites" :key="project.id" :project="project" :minutes="dayTotals[project.name] ?? 0" />
+        <div ref="favoritesList" class="flex flex-col overflow-hidden rounded-lg border">
+            <TrackerProjectRow
+                v-for="project in favorites"
+                :key="project.id"
+                :project="project"
+                :minutes="dayTotals[project.name] ?? 0"
+                :draggable="draggable"
+            />
         </div>
     </div>
 
@@ -55,8 +88,14 @@ async function create() {
             <span class="font-medium text-muted-foreground">Projets</span>
             <span class="font-mono text-muted-foreground/70">{{ others.length }}</span>
         </div>
-        <div class="flex flex-col overflow-hidden rounded-lg border">
-            <TrackerProjectRow v-for="project in others" :key="project.id" :project="project" :minutes="dayTotals[project.name] ?? 0" />
+        <div ref="othersList" class="flex flex-col overflow-hidden rounded-lg border">
+            <TrackerProjectRow
+                v-for="project in others"
+                :key="project.id"
+                :project="project"
+                :minutes="dayTotals[project.name] ?? 0"
+                :draggable="draggable"
+            />
             <div v-if="!visible.length" class="px-3.5 py-6 text-center text-[13px] text-muted-foreground">
                 Aucun projet trouvé
             </div>
