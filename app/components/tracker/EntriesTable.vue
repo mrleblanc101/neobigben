@@ -99,7 +99,7 @@ const rows = computed(() => {
                     <div class="-ml-1 flex items-center gap-0.5 font-mono text-[13px]">
                         <span class="flex-1 text-center">{{ row.entry.start }}</span>
                         <span class="text-muted-foreground">–</span>
-                        <span class="flex-1 text-center">{{ row.entry.end }}</span>
+                        <span class="flex-1 text-center">{{ displayClock(row.entry.end) }}</span>
                     </div>
                     <span class="text-center font-mono text-[13px] font-medium">{{ formatMinutes(entryMinutes(row.entry)) }}</span>
                     <div class="flex justify-end gap-0.5">

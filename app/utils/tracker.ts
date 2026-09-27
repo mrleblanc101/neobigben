@@ -27,7 +27,7 @@ export const MONTH_NAMES = ["janvier", "février", "mars", "avril", "mai", "juin
 // Column layout shared by the entries table header, rows and quick-add row
 export const ENTRY_GRID = "grid grid-cols-[minmax(130px,1fr)_minmax(160px,2fr)_116px_56px_104px] items-center gap-4 px-4";
 
-const LAST_MINUTE = 23 * 60 + 59;
+export const MINUTES_PER_DAY = 24 * 60;
 const CLOCK = /^([01]?\d|2[0-3]):[0-5]\d$/;
 const DURATION = /^(\d{1,2})(?::(\d{0,2}))?$/;
 
@@ -42,14 +42,38 @@ export function formatMinutes(total: number) {
     return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
 }
 
+/** A stored time for display: an entry stopping at midnight is stored as ending at 24:00, shown as 00:00 */
+export function displayClock(time: string) {
+    return time === "24:00" ? "00:00" : time;
+}
+
 /** "+HH:MM" or "−HH:MM" */
 export function formatSignedMinutes(diff: number) {
     return diff >= 0 ? `+${formatMinutes(diff)}` : `−${formatMinutes(-diff)}`;
 }
 
-/** Adds minutes to a time of day without going past 23:59 */
+/** Adds minutes to a time of day, wrapping past midnight */
 export function addToClock(start: number, minutes: number) {
-    return formatMinutes(Math.min(LAST_MINUTE, start + minutes));
+    return formatMinutes((start + minutes) % MINUTES_PER_DAY);
+}
+
+/** Minutes from a start to an end time of day, an end at or before the start being on the next day */
+export function spanMinutes(start: number, end: number) {
+    return (end - start + MINUTES_PER_DAY) % MINUTES_PER_DAY;
+}
+
+/**
+ * Splits a range crossing midnight into the part on its own day, ending at 24:00, and the part on the next day.
+ * An end at 00:00 just means the entry ends at midnight, with nothing on the next day.
+ */
+export function splitAtMidnight(start: string, end: string) {
+    if (toMinutes(end) > toMinutes(start)) return { sameDay: { start, end }, nextDay: null };
+    return { sameDay: { start, end: "24:00" }, nextDay: end === "00:00" ? null : { start: "00:00", end } };
+}
+
+/** A masked time field's value, or "" while it only shows its HH:MM placeholder */
+export function maskedValue(value: string) {
+    return /\d/.test(value) ? value : "";
 }
 
 /** A typed time of day ("9:30", "09:30") in minutes, or null */
@@ -82,6 +106,12 @@ export function linkLabel(url: string) {
 
 export function dateKey(date: Date) {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+/** The date of a "YYYY-MM-DD" key */
+export function parseDateKey(key: string) {
+    const [year = 0, month = 1, day = 1] = key.split("-").map(Number);
+    return new Date(year, month - 1, day);
 }
 
 export function startOfDay(date: Date) {

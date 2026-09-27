@@ -176,32 +176,45 @@ export function useTimeTracker() {
         return { start_time: draft.start, end_time: draft.end, note: draft.note, url: draft.url };
     }
 
-    /** Adds an entry to the selected day */
+    function storeEntries(rows: EntryRow[]) {
+        for (const row of rows) byDate.value[row.day] = [...(byDate.value[row.day] ?? []), toStoredEntry(row)];
+    }
+
+    /** Adds an entry to the selected day; one ending past midnight is saved as two entries, one per day */
     async function addEntry(draft: EntryDraft) {
         const project = findProject(draft.project);
         if (!project) return false;
-        const day = dateKey(date.value);
-        const { data, error: cause } = await supabase
-            .from("entries")
-            .insert({ ...entryColumns(draft), project_id: project.id, day })
-            .select()
-            .single();
+        const { sameDay, nextDay } = splitAtMidnight(draft.start, draft.end);
+        const rows = [{ ...entryColumns({ ...draft, ...sameDay }), project_id: project.id, day: dateKey(date.value) }];
+        if (nextDay) rows.push({ ...entryColumns({ ...draft, ...nextDay }), project_id: project.id, day: dateKey(addDays(date.value, 1)) });
+        const { data, error: cause } = await supabase.from("entries").insert(rows).select();
         if (cause) return fail("Impossible d’ajouter l’entrée", cause);
-        byDate.value[day] = [...(byDate.value[day] ?? []), toStoredEntry(data)];
+        storeEntries(data);
         return true;
     }
 
+    /** Updates an entry; moving its end past midnight adds the part after midnight as an entry on the next day */
     async function updateEntry(id: string, draft: EntryDraft) {
         const project = findProject(draft.project);
         if (!project) return false;
+        const { sameDay, nextDay } = splitAtMidnight(draft.start, draft.end);
         const { data, error: cause } = await supabase
             .from("entries")
-            .update({ ...entryColumns(draft), project_id: project.id })
+            .update({ ...entryColumns({ ...draft, ...sameDay }), project_id: project.id })
             .eq("id", id)
             .select()
             .single();
         if (cause) return fail("Impossible de modifier l’entrée", cause);
         byDate.value[data.day] = (byDate.value[data.day] ?? []).map(e => (e.id === id ? toStoredEntry(data) : e));
+        if (!nextDay) return true;
+
+        const day = dateKey(addDays(parseDateKey(data.day), 1));
+        const { data: added, error: addCause } = await supabase
+            .from("entries")
+            .insert({ ...entryColumns({ ...draft, ...nextDay }), project_id: project.id, day })
+            .select();
+        if (addCause) return fail("L’entrée a été modifiée, mais pas sa partie après minuit", addCause);
+        storeEntries(added);
         return true;
     }
 
@@ -226,7 +239,8 @@ export function useTimeTracker() {
         // A new entry picks up where the day's last entry ends, or at 09:30 on an empty day.
         // The rest starts blank, apart from what the caller knows (a gap's range, a project row's project).
         const lastEnd = entries.value.reduce<string | null>((latest, e) => (!latest || toMinutes(e.end) > toMinutes(latest) ? e.end : latest), null);
-        const defaults: EntryDraft = { project: "", start: lastEnd ?? "09:30", end: "", note: "", url: "" };
+        // After an entry ending at midnight (24:00) there's nothing left of the day to start from
+        const defaults: EntryDraft = { project: "", start: lastEnd === "24:00" ? "" : lastEnd ?? "09:30", end: "", note: "", url: "" };
         editor.value = entry && "id" in entry
             ? { id: entry.id, form: { project: entry.project, start: entry.start, end: entry.end, note: entry.note, url: entry.url } }
             : { id: "new", form: { ...defaults, ...entry } };

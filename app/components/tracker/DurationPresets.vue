@@ -2,7 +2,8 @@
 import { PopoverArrow } from "reka-ui";
 
 /**
- * Wraps the "Fin" input: while it has focus and the start is set, a popover offers common durations that set the end from the start.
+ * Wraps the "Fin" input: while it has focus and the start is set, a popover offers common durations,
+ * and "Maintenant" to end the entry at the current time.
  * The buttons never take focus, so typing in the input can go on.
  */
 defineOptions({ inheritAttrs: false });
@@ -14,7 +15,12 @@ const props = defineProps<{
     minutes?: number;
 }>();
 
-const emit = defineEmits<{ select: [minutes: number] }>();
+const emit = defineEmits<{
+    /** A preset duration was picked, in minutes */
+    duration: [minutes: number];
+    /** "Maintenant" was picked: the end, as HH:MM */
+    end: [time: string];
+}>();
 
 const PRESETS = [15, 30, 60, 90, 120].map(value => ({
     value,
@@ -58,7 +64,7 @@ const untilNow = computed(() => (props.start === null ? 0 : now.value - props.st
                     class="h-6.5 w-full px-2.5 font-mono font-normal"
                     :class="{ 'border-muted-foreground/60 bg-accent dark:bg-accent': minutes === preset.value }"
                     @mousedown.prevent
-                    @click="emit('select', preset.value)"
+                    @click="emit('duration', preset.value)"
                 >
                     {{ preset.label }}
                 </Button>
@@ -71,7 +77,7 @@ const untilNow = computed(() => (props.start === null ? 0 : now.value - props.st
                     :disabled="untilNow <= 0"
                     :title="untilNow <= 0 ? 'Il n’est pas encore passé l’heure de début' : undefined"
                     @mousedown.prevent
-                    @click="emit('select', untilNow)"
+                    @click="emit('end', formatMinutes(now))"
                 >
                     Maintenant
                 </Button>

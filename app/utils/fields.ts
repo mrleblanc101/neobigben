@@ -1,24 +1,19 @@
 /**
- * Keydown handler for a form: Backspace in an empty field moves to the end of the previous field.
- * A masked time field counts as empty while it only shows its HH:MM placeholder.
+ * Keydown handler for a form: Backspace in an empty time field (Durée, Fin) moves to the end of the previous time field.
+ * Only masked time fields take part; a time field counts as empty while it only shows its HH:MM placeholder.
  * Bind it in the capture phase (`@keydown.capture`) so it sees the field before the mask handles the key.
  */
 export function focusPreviousOnBackspace(event: KeyboardEvent) {
     const field = event.target;
     const form = event.currentTarget;
-    if (event.key !== "Backspace" || !(form instanceof HTMLElement)) return;
-    if (!(field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement)) return;
+    if (event.key !== "Backspace" || !(form instanceof HTMLElement) || !(field instanceof HTMLInputElement)) return;
+    if (!("inputmask" in field) || /\d/.test(field.value) || field.selectionStart !== field.selectionEnd) return;
 
-    const masked = "inputmask" in field;
-    const empty = masked ? !/\d/.test(field.value) : field.value === "";
-    if (!empty || field.selectionStart !== field.selectionEnd) return;
-
-    const fields = [...form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("input:not([type=hidden]):not(:disabled), textarea:not(:disabled)")];
-    const previous = fields[fields.indexOf(field) - 1];
+    const timeFields = [...form.querySelectorAll<HTMLInputElement>("input:not(:disabled)")].filter(input => "inputmask" in input);
+    const previous = timeFields[timeFields.indexOf(field) - 1];
     if (!previous) return;
 
     event.preventDefault();
-    previous.focus();
     // Masked fields place the caret themselves on focus
-    if (!("inputmask" in previous)) previous.setSelectionRange(previous.value.length, previous.value.length);
+    previous.focus();
 }

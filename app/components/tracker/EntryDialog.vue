@@ -2,20 +2,22 @@
 const { editor, closeEditor, saveEditor } = useTimeTracker();
 const { confirm } = useConfirm();
 
-const form = ref<EntryDraft>({ project: "", start: "", end: "", note: "", url: "" });
-// What the user typed in the duration field, kept while it isn't a valid duration yet
-const durationDraft = ref<string | null>(null);
+// Project and note; the times live in `range`
+const form = ref({ project: "", note: "" });
+const range = useTimeRange();
+
 // The form as opened, to tell whether closing would drop changes
+const snapshot = () => JSON.stringify([form.value, range.start.value, range.end.value, range.duration.value]);
 const initialForm = ref("");
-const dirty = computed(() => JSON.stringify(form.value) !== initialForm.value);
+const dirty = computed(() => snapshot() !== initialForm.value);
 
 watch(editor, (value) => {
     if (!value) return;
     // The link is edited inside the note, the same way it was typed in quick-add
-    const { note, url } = value.form;
-    form.value = { ...value.form, note: [note, url].filter(Boolean).join(" "), url: "" };
-    initialForm.value = JSON.stringify(form.value);
-    durationDraft.value = null;
+    const { project, start, end, note, url } = value.form;
+    form.value = { project, note: [note, url].filter(Boolean).join(" ") };
+    range.reset(start, displayClock(end));
+    initialForm.value = snapshot();
 }, { immediate: true });
 
 // Closing with Annuler, Escape, the close button or a click outside asks before dropping changes
@@ -34,43 +36,12 @@ const open = computed({
     set: value => !value && requestClose(),
 });
 
-// Start and end stay partial ("0H:MM") while being typed
-const start = computed(() => parseClock(form.value.start));
-const end = computed(() => parseClock(form.value.end));
-const minutes = computed(() => (start.value !== null && end.value !== null ? Math.max(0, end.value - start.value) : 0));
-// A project, a complete start and end with the end after the start, and no half-typed duration
-const canSave = computed(() => !!form.value.project && minutes.value > 0 && (!durationDraft.value || parseDuration(durationDraft.value) !== null));
-// Last valid duration, so retyping the start from scratch still moves the end with it
-const keptDuration = ref(0);
-watch(minutes, value => value > 0 && (keptDuration.value = value), { immediate: true });
-
-function setDuration(value: number, typed?: string) {
-    durationDraft.value = typed ?? null;
-    if (start.value !== null) form.value.end = addToClock(start.value, value);
-}
-
-// Moving the start keeps the duration
-function onStart(value: string | number) {
-    form.value.start = String(value);
-    if (start.value !== null && keptDuration.value) form.value.end = addToClock(start.value, keptDuration.value);
-}
-
-function onEnd(value: string | number) {
-    durationDraft.value = null;
-    form.value.end = String(value);
-}
-
-function onDuration(value: string | number) {
-    const typed = String(value);
-    const duration = parseDuration(typed);
-    if (duration !== null) setDuration(duration, typed);
-    else durationDraft.value = typed;
-}
+const canSave = computed(() => !!form.value.project && range.valid.value);
 
 function save() {
     if (!canSave.value) return;
     // The link left in the note becomes the entry's link: deleting it from the note removes it
-    saveEditor({ ...form.value, ...splitNoteLink(form.value.note) });
+    saveEditor({ project: form.value.project, start: range.start.value, end: range.end.value, ...splitNoteLink(form.value.note) });
 }
 </script>
 
@@ -96,27 +67,32 @@ function save() {
                                 id="entry-start"
                                 v-time-mask
                                 autocomplete="off"
-                                :model-value="form.start"
+                                :model-value="range.start.value"
                                 inputmode="numeric"
                                 maxlength="5"
                                 placeholder="HH:MM"
                                 class="font-mono"
-                                @update:model-value="onStart"
+                                @update:model-value="range.setStart(String($event))"
                             />
                         </div>
                         <div class="flex min-w-0 flex-col gap-2">
                             <Label for="entry-end">Fin</Label>
-                            <TrackerDurationPresets :start="start" :minutes="minutes" @select="setDuration">
+                            <TrackerDurationPresets
+                                :start="range.startMinutes.value"
+                                :minutes="range.durationMinutes.value ?? undefined"
+                                @duration="range.setDuration(formatMinutes($event))"
+                                @end="range.setEnd"
+                            >
                                 <Input
                                     id="entry-end"
                                     v-time-mask
                                     autocomplete="off"
-                                    :model-value="form.end"
+                                    :model-value="range.end.value"
                                     inputmode="numeric"
                                     maxlength="5"
                                     placeholder="HH:MM"
                                     class="font-mono"
-                                    @update:model-value="onEnd"
+                                    @update:model-value="range.setEnd(String($event))"
                                 />
                             </TrackerDurationPresets>
                         </div>
@@ -126,15 +102,18 @@ function save() {
                                 id="entry-duration"
                                 v-time-mask:duration
                                 autocomplete="off"
-                                :model-value="durationDraft ?? (start !== null && end !== null ? formatMinutes(minutes) : '')"
+                                :model-value="range.duration.value"
                                 inputmode="numeric"
                                 maxlength="5"
                                 placeholder="HH:MM"
                                 class="font-mono"
-                                @update:model-value="onDuration"
+                                @update:model-value="range.setDuration(String($event))"
                             />
                         </div>
                     </div>
+                    <p v-if="range.endsNextDay.value" class="text-xs text-muted-foreground">
+                        Se termine le lendemain : l’entrée sera séparée en deux à minuit.
+                    </p>
                 </div>
 
                 <div class="flex flex-col gap-2">

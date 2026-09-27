@@ -3,56 +3,30 @@ import { useEventListener } from "@vueuse/core";
 
 const { addEntry } = useTimeTracker();
 
-const empty = () => ({ project: "", note: "", start: "", end: "", duration: "" });
-const draft = ref(empty());
+const project = ref("");
+const note = ref("");
+const range = useTimeRange();
 const noteInput = ref<HTMLTextAreaElement>();
 
-// Keeps start, end and duration consistent: whichever field is typed updates the one that depends on it
-function onStart(value: string) {
-    const start = parseClock(value);
-    const duration = parseDuration(draft.value.duration);
-    const end = parseClock(draft.value.end);
-    draft.value.start = value;
-    if (start === null) return;
-    if (duration !== null) draft.value.end = addToClock(start, duration);
-    else if (end !== null) draft.value.duration = formatMinutes(Math.max(0, end - start));
-}
-
-function onEnd(value: string) {
-    const start = parseClock(draft.value.start);
-    const end = parseClock(value);
-    draft.value.end = value;
-    if (start !== null && end !== null) draft.value.duration = formatMinutes(Math.max(0, end - start));
-}
-
-function onDuration(value: string) {
-    const start = parseClock(draft.value.start);
-    const duration = parseDuration(value);
-    draft.value.duration = value;
-    if (start !== null && duration !== null) draft.value.end = addToClock(start, duration);
-}
-
 const saving = ref(false);
-
-// A project, a complete start and end with the end after the start, and no half-typed duration
-const canAdd = computed(() => {
-    const { project, start, end, duration } = draft.value;
-    const startMinutes = parseClock(start);
-    const endMinutes = parseClock(end);
-    return !!project && startMinutes !== null && endMinutes !== null && endMinutes > startMinutes && (!duration || parseDuration(duration) !== null);
-});
+const canAdd = computed(() => !!project.value && range.valid.value);
 
 async function add() {
     if (saving.value || !canAdd.value) return;
-    const start = parseClock(draft.value.start)!;
-    const end = parseClock(draft.value.end)!;
-
     // A link pasted in the description becomes the entry's link
-    const { note, url } = splitNoteLink(draft.value.note);
     saving.value = true;
-    const added = await addEntry({ project: draft.value.project, start: formatMinutes(start), end: formatMinutes(end), note, url });
+    const added = await addEntry({
+        project: project.value,
+        start: formatMinutes(range.startMinutes.value!),
+        end: formatMinutes(parseClock(range.end.value)!),
+        ...splitNoteLink(note.value),
+    });
     saving.value = false;
-    if (added) draft.value = empty();
+    if (added) {
+        project.value = "";
+        note.value = "";
+        range.reset();
+    }
 }
 
 // "/" jumps to the quick-add description from anywhere on the page
@@ -69,11 +43,11 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
 
 <template>
     <form :class="ENTRY_GRID" class="min-h-13 bg-muted/25 py-2.5" @submit.prevent="add" @keydown.capture="focusPreviousOnBackspace">
-        <TrackerProjectCombobox v-model="draft.project" variant="inline" />
+        <TrackerProjectCombobox v-model="project" variant="inline" />
         <!-- One line that grows with its content (CSS field-sizing); Enter adds the entry, Shift+Enter starts a new line -->
         <textarea
             ref="noteInput"
-            v-model="draft.note"
+            v-model="note"
             autocomplete="off"
             rows="1"
             aria-label="Description"
@@ -86,7 +60,7 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
             <input
                 v-time-mask
                 autocomplete="off"
-                :value="draft.start"
+                :value="range.start.value"
                 inputmode="numeric"
                 maxlength="5"
                 placeholder="HH:MM"
@@ -94,19 +68,20 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
                 aria-label="Début"
                 class="h-7 w-0 min-w-0 flex-1 text-center font-mono text-[13px] placeholder:text-muted-foreground"
                 :class="fieldClass"
-                @input="onStart(($event.target as HTMLInputElement).value)"
+                @input="range.setStart(($event.target as HTMLInputElement).value)"
             >
             <span class="text-[13px] text-muted-foreground">–</span>
             <TrackerDurationPresets
-                class="flex w-0 min-w-0 flex-1"
-                :start="parseClock(draft.start)"
-                :minutes="parseDuration(draft.duration) ?? undefined"
-                @select="onDuration(formatMinutes($event))"
+                class="relative flex w-0 min-w-0 flex-1"
+                :start="range.startMinutes.value"
+                :minutes="range.durationMinutes.value ?? undefined"
+                @duration="range.setDuration(formatMinutes($event))"
+                @end="range.setEnd"
             >
                 <input
                     v-time-mask
                     autocomplete="off"
-                    :value="draft.end"
+                    :value="range.end.value"
                     inputmode="numeric"
                     maxlength="5"
                     placeholder="HH:MM"
@@ -114,14 +89,19 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
                     aria-label="Fin"
                     class="h-7 w-full min-w-0 text-center font-mono text-[13px] placeholder:text-muted-foreground"
                     :class="fieldClass"
-                    @input="onEnd(($event.target as HTMLInputElement).value)"
+                    @input="range.setEnd(($event.target as HTMLInputElement).value)"
                 >
+                <span
+                    v-if="range.endsNextDay.value"
+                    title="Se termine le lendemain : l’entrée sera séparée en deux à minuit"
+                    class="absolute -top-2.5 right-0 font-mono text-[10px] text-muted-foreground"
+                >+1 j</span>
             </TrackerDurationPresets>
         </div>
         <input
             v-time-mask:duration
             autocomplete="off"
-            :value="draft.duration"
+            :value="range.duration.value"
             inputmode="numeric"
             maxlength="5"
             placeholder="HH:MM"
@@ -129,7 +109,7 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
             aria-label="Durée"
             class="h-7 w-full min-w-0 px-1 text-center font-mono text-[13px] font-medium placeholder:text-muted-foreground"
             :class="fieldClass"
-            @input="onDuration(($event.target as HTMLInputElement).value)"
+            @input="range.setDuration(($event.target as HTMLInputElement).value)"
         >
         <div class="flex justify-end">
             <Button type="submit" size="sm" class="px-2.5 text-[13px]" :disabled="saving || !canAdd">
