@@ -1,7 +1,20 @@
 <script setup lang="ts">
 import { ChevronLeft, ChevronRight, Plus } from "@lucide/vue";
+import { useEventListener } from "@vueuse/core";
 
 const { date, shiftDay, goToday, openEditor } = useTimeTracker();
+
+// ← and → move to the previous and next day, unless the keys belong to something else: a field being typed in,
+// or an open dialog, popover or list. Modifier combinations are left to the browser (Alt+← goes back).
+useEventListener(window, "keydown", (event: KeyboardEvent) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    const active = document.activeElement as HTMLElement | null;
+    if (active?.closest("input, textarea, select, [contenteditable=true]")) return;
+    if (document.querySelector("[role=dialog], [role=alertdialog], [data-slot=popover-content], [role=listbox]")) return;
+    event.preventDefault();
+    shiftDay(event.key === "ArrowLeft" ? -1 : 1);
+});
 
 const title = computed(() => `${DAY_NAMES[date.value.getDay()]} ${date.value.getDate()} ${MONTH_NAMES[date.value.getMonth()]}`);
 const subtitle = computed(() => `Semaine ${weekNumber(date.value)}`);
