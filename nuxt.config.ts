@@ -8,7 +8,7 @@ export default defineNuxtConfig({
     vite: {
         plugins: [tailwindcss()],
     },
-    modules: ["shadcn-nuxt", "@nuxtjs/supabase", "@nuxt/eslint"],
+    modules: ["shadcn-nuxt", "@nuxtjs/supabase", "@nuxt/eslint", "@nuxtjs/color-mode"],
     shadcn: {
         /**
          * Prefix for all the imported component.
@@ -28,5 +28,8 @@ export default defineNuxtConfig({
             login: "/login",
             callback: "/confirm",
         },
+    },
+    colorMode: {
+        classSuffix: "",
     },
 });
