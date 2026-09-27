@@ -93,6 +93,7 @@ const rows = computed(() => {
                         <a
                             v-if="row.entry.url"
                             :href="row.entry.url"
+                            :title="row.entry.url"
                             target="_blank"
                             rel="noopener"
                             class="inline-flex h-5.5 shrink-0 items-center gap-1 rounded-md border px-2 font-mono text-xs font-medium whitespace-nowrap text-foreground hover:bg-accent"

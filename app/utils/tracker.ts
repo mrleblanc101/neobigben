@@ -116,10 +116,17 @@ export function splitNoteLink(text: string) {
     return { note: note.trim(), url };
 }
 
-/** Jira issue key of a link ("…/browse/CDL-88" → "CDL-88"), or "Jira" */
+/** Short label for a link: the issue key of a Jira link ("…/browse/CDL-88" → "CDL-88"), else the site's host name ("docs.google.com") */
 export function linkLabel(url: string) {
-    const last = url.replace(/\?.*/, "").split("/").filter(Boolean).at(-1) ?? "";
-    return /^[A-Z0-9]+-\d+$/.test(last) ? last : "Jira";
+    let parsed: URL;
+    try {
+        parsed = new URL(url);
+    }
+    catch {
+        return "Lien";
+    }
+    const issue = parsed.pathname.match(/\/browse\/([A-Z][A-Z0-9]*-\d+)/)?.[1];
+    return issue ?? (parsed.hostname.replace(/^www\./, "") || "Lien");
 }
 
 export function dateKey(date: Date) {
