@@ -148,6 +148,14 @@ export function useTimeTracker() {
         return true;
     }
 
+    async function setProjectColor(name: string, color: string) {
+        const project = projects.value.find(p => p.name === name);
+        if (!project || project.color === color) return;
+        const { error: cause } = await supabase.from("projects").update({ color }).eq("id", project.id);
+        if (cause) return void fail("Impossible de changer la couleur du projet", cause);
+        project.color = color;
+    }
+
     async function toggleFavorite(name: string) {
         const project = projects.value.find(p => p.name === name);
         if (!project) return;
@@ -334,6 +342,7 @@ export function useTimeTracker() {
         setCopiedToNetsuite,
         addProject,
         renameProject,
+        setProjectColor,
         toggleFavorite,
         reorderProjects,
         countProjectEntries,
