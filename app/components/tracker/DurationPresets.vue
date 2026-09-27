@@ -8,7 +8,7 @@ import { PopoverArrow } from "reka-ui";
  */
 defineOptions({ inheritAttrs: false });
 
-const props = defineProps<{
+defineProps<{
     /** Start in minutes since midnight; while null a duration can't place the end, so the popover stays hidden */
     start: number | null;
     /** Current duration in minutes, to highlight the matching preset */
@@ -29,13 +29,13 @@ const PRESETS = [15, 30, 60, 90, 120].map(value => ({
 
 const focused = ref(false);
 
-// "Maintenant" ends the entry at the current time, read each time the popover opens
+// "Maintenant" ends the entry at the current time, read each time the popover opens.
+// Before the start, that end is on the next day, whichever day the entry is on.
 const now = ref(0);
 watch(focused, (value) => {
     const date = new Date();
     if (value) now.value = date.getHours() * 60 + date.getMinutes();
 });
-const untilNow = computed(() => (props.start === null ? 0 : now.value - props.start));
 </script>
 
 <template>
@@ -74,8 +74,6 @@ const untilNow = computed(() => (props.start === null ? 0 : now.value - props.st
                     size="xs"
                     tabindex="-1"
                     class="h-6.5 w-full px-2.5 font-normal"
-                    :disabled="untilNow <= 0"
-                    :title="untilNow <= 0 ? 'Il n’est pas encore passé l’heure de début' : undefined"
                     @mousedown.prevent
                     @click="emit('end', formatMinutes(now))"
                 >

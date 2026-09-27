@@ -65,7 +65,7 @@ function save() {
                             <Label for="entry-start">Début</Label>
                             <Input
                                 id="entry-start"
-                                v-time-mask
+                                v-time-mask.advance
                                 autocomplete="off"
                                 :model-value="range.start.value"
                                 inputmode="numeric"
@@ -85,7 +85,7 @@ function save() {
                             >
                                 <Input
                                     id="entry-end"
-                                    v-time-mask
+                                    v-time-mask.advance
                                     autocomplete="off"
                                     :model-value="range.end.value"
                                     inputmode="numeric"

@@ -2,6 +2,14 @@
 declare module "inputmask" {
     interface InputmaskInstance {
         mask(el: HTMLElement): void;
+        isComplete(): boolean;
+    }
+
+    global {
+        interface HTMLElement {
+            /** Set on elements the mask is applied to */
+            inputmask?: InputmaskInstance;
+        }
     }
 
     interface InputmaskStatic {

@@ -58,7 +58,7 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
         />
         <div class="-ml-1 flex items-center gap-0.5">
             <input
-                v-time-mask
+                v-time-mask.advance
                 autocomplete="off"
                 :value="range.start.value"
                 inputmode="numeric"
@@ -79,7 +79,7 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
                 @end="range.setEnd"
             >
                 <input
-                    v-time-mask
+                    v-time-mask.advance
                     autocomplete="off"
                     :value="range.end.value"
                     inputmode="numeric"
