@@ -1,18 +1,13 @@
-<script setup lang="ts">
-const supabase = useSupabaseClient();
-const user = useSupabaseUser();
-
-async function signOut() {
-    await supabase.auth.signOut();
-    await navigateTo("/login");
-}
-</script>
-
 <template>
-    <div class="flex min-h-svh flex-col items-center justify-center gap-4">
-        <p>Logged in as <strong>{{ user?.email }}</strong></p>
-        <Button variant="outline" @click="signOut">
-            Logout
-        </Button>
+    <div class="flex min-h-svh flex-col">
+        <TrackerAppHeader />
+        <div class="grid flex-1 items-start lg:grid-cols-[minmax(0,1fr)_clamp(300px,30vw,360px)]">
+            <main class="flex min-w-0 flex-col gap-4 p-6">
+                <TrackerDayToolbar />
+                <TrackerEntriesTable />
+            </main>
+            <TrackerSidePanel class="border-t lg:sticky lg:top-14 lg:min-h-[calc(100svh-3.5rem)] lg:border-t-0 lg:border-l" />
+        </div>
+        <TrackerEntryDialog />
     </div>
 </template>
