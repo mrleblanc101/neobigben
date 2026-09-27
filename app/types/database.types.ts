@@ -84,14 +84,17 @@ export type Database = {
             };
             user_settings: {
                 Row: {
+                    day_start: string;
                     user_id: string;
                     weekly_goal_hours: number;
                 };
                 Insert: {
+                    day_start?: string;
                     user_id?: string;
                     weekly_goal_hours?: number;
                 };
                 Update: {
+                    day_start?: string;
                     user_id?: string;
                     weekly_goal_hours?: number;
                 };

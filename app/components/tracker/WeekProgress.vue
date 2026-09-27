@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { Clock, Pencil } from "@lucide/vue";
+import { Clock } from "@lucide/vue";
 
-const { date, weekDates, weekGoal, dayGoal, weeklyGoalHours, minutesOn, goTo, setWeeklyGoal } = useTimeTracker();
+const { date, weekDates, weekGoal, dayGoal, minutesOn, goTo } = useTimeTracker();
 
 const open = ref(false);
-const editingGoal = ref(false);
-const goalDraft = ref(0);
 
 const days = computed(() =>
     weekDates.value.map((day) => {
@@ -32,18 +30,6 @@ const weekRange = computed(() => {
     const startMonth = first.getMonth() !== last.getMonth() ? ` ${MONTH_NAMES[first.getMonth()]}` : "";
     return `Semaine du ${first.getDate()}${startMonth} au ${last.getDate()} ${MONTH_NAMES[last.getMonth()]}`;
 });
-
-watch(open, () => (editingGoal.value = false));
-
-function editGoal() {
-    goalDraft.value = weeklyGoalHours.value;
-    editingGoal.value = true;
-}
-
-function saveGoal() {
-    setWeeklyGoal(Math.min(80, Math.max(1, Math.round(Number(goalDraft.value)) || weeklyGoalHours.value)));
-    editingGoal.value = false;
-}
 
 function selectDay(day: Date) {
     goTo(day);
@@ -87,24 +73,6 @@ function valueClass(d: (typeof days.value)[number]) {
                         <span class="text-[13px] text-muted-foreground/70">/ {{ formatMinutes(weekGoal) }}</span>
                     </div>
                 </div>
-                <form v-if="editingGoal" class="flex gap-1" @submit.prevent="saveGoal">
-                    <Input
-                        v-model="goalDraft"
-                        autocomplete="off"
-                        type="number"
-                        min="1"
-                        max="80"
-                        aria-label="Objectif hebdomadaire (heures)"
-                        class="h-8 w-14 px-2 font-mono text-[13px]"
-                    />
-                    <Button type="submit" size="sm" class="h-8 px-2.5 text-xs">
-                        OK
-                    </Button>
-                </form>
-                <Button v-else variant="outline" size="xs" class="h-7 px-2.5" @click="editGoal">
-                    <Pencil />
-                    Objectif
-                </Button>
             </div>
             <div class="flex flex-col p-2">
                 <button

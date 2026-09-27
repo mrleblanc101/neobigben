@@ -52,6 +52,8 @@ export function useTimeTracker() {
     const loadedWeeks = useState<string[]>("tracker:loaded-weeks", () => []);
     const projects = useState<Project[]>("tracker:projects", () => []);
     const weeklyGoalHours = useState("tracker:goal", () => 40);
+    /** Default start of a new entry on a day with no entries yet, as HH:MM */
+    const dayStart = useState("tracker:day-start", () => "09:30");
     const ready = useState("tracker:ready", () => false);
     const editor = useState<EntryEditor | null>("tracker:editor", () => null);
     const error = useState<string | null>("tracker:error", () => null);
@@ -89,12 +91,16 @@ export function useTimeTracker() {
         if (ready.value) return;
         const [projectsResult, settingsResult] = await Promise.all([
             supabase.from("projects").select("*").order("created_at"),
-            supabase.from("user_settings").select("weekly_goal_hours").maybeSingle(),
+            supabase.from("user_settings").select("weekly_goal_hours, day_start").maybeSingle(),
         ]);
         if (projectsResult.error) return fail("Impossible de charger les projets", projectsResult.error);
         if (settingsResult.error) return fail("Impossible de charger les préférences", settingsResult.error);
         projects.value = projectsResult.data.map(toProject);
-        if (settingsResult.data) weeklyGoalHours.value = settingsResult.data.weekly_goal_hours;
+        if (settingsResult.data) {
+            weeklyGoalHours.value = settingsResult.data.weekly_goal_hours;
+            // Postgres returns times as "HH:MM:SS"
+            dayStart.value = settingsResult.data.day_start.slice(0, 5);
+        }
         ready.value = true;
         await loadWeek(date.value);
     }
@@ -165,11 +171,15 @@ export function useTimeTracker() {
         }
     }
 
-    async function setWeeklyGoal(hours: number) {
-        if (!user.value) return;
-        const { error: cause } = await supabase.from("user_settings").upsert({ user_id: user.value.sub, weekly_goal_hours: hours });
-        if (cause) return void fail("Impossible d’enregistrer l’objectif", cause);
-        weeklyGoalHours.value = hours;
+    async function saveSettings(settings: { weeklyGoalHours: number; dayStart: string }) {
+        if (!user.value) return false;
+        const { error: cause } = await supabase
+            .from("user_settings")
+            .upsert({ user_id: user.value.sub, weekly_goal_hours: settings.weeklyGoalHours, day_start: settings.dayStart });
+        if (cause) return fail("Impossible d’enregistrer les paramètres", cause);
+        weeklyGoalHours.value = settings.weeklyGoalHours;
+        dayStart.value = settings.dayStart;
+        return true;
     }
 
     function entryColumns(draft: EntryDraft) {
@@ -236,11 +246,11 @@ export function useTimeTracker() {
     }
 
     function openEditor(entry?: Entry | Partial<EntryDraft>) {
-        // A new entry picks up where the day's last entry ends, or at 09:30 on an empty day.
+        // A new entry picks up where the day's last entry ends, or at the day start from the settings on an empty day.
         // The rest starts blank, apart from what the caller knows (a gap's range, a project row's project).
         const lastEnd = entries.value.reduce<string | null>((latest, e) => (!latest || toMinutes(e.end) > toMinutes(latest) ? e.end : latest), null);
         // After an entry ending at midnight (24:00) there's nothing left of the day to start from
-        const defaults: EntryDraft = { project: "", start: lastEnd === "24:00" ? "" : lastEnd ?? "09:30", end: "", note: "", url: "" };
+        const defaults: EntryDraft = { project: "", start: lastEnd === "24:00" ? "" : lastEnd ?? dayStart.value, end: "", note: "", url: "" };
         editor.value = entry && "id" in entry
             ? { id: entry.id, form: { project: entry.project, start: entry.start, end: entry.end, note: entry.note, url: entry.url } }
             : { id: "new", form: { ...defaults, ...entry } };
@@ -261,6 +271,7 @@ export function useTimeTracker() {
         loadedWeeks.value = [];
         projects.value = [];
         weeklyGoalHours.value = 40;
+        dayStart.value = "09:30";
         ready.value = false;
         editor.value = null;
         error.value = null;
@@ -272,6 +283,8 @@ export function useTimeTracker() {
         entries,
         projects,
         weeklyGoalHours,
+        dayStart,
+        ready,
         weekGoal,
         dayGoal,
         weekDates,
@@ -293,7 +306,7 @@ export function useTimeTracker() {
         toggleFavorite,
         countProjectEntries,
         deleteProject,
-        setWeeklyGoal,
+        saveSettings,
         goTo: (day: Date) => (date.value = startOfDay(day)),
         goToday: () => (date.value = startOfDay(new Date())),
         shiftDay: (days: number) => (date.value = addDays(date.value, days)),
