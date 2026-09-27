@@ -91,15 +91,18 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
                     :class="fieldClass"
                     @input="range.setEnd(($event.target as HTMLInputElement).value)"
                 >
-                <span
+                <Badge
                     v-if="range.endsNextDay.value"
+                    variant="outline"
                     title="Se termine le lendemain : l’entrée sera séparée en deux à minuit"
-                    class="absolute -top-2.5 right-0 font-mono text-[10px] text-muted-foreground"
-                >+1 j</span>
+                    class="absolute -top-2 -right-1.5 h-4 bg-background px-1.5 py-0 font-mono text-[10px] leading-none text-muted-foreground shadow-xs"
+                >
+                    +1 j
+                </Badge>
             </TrackerDurationPresets>
         </div>
         <input
-            v-time-mask:duration
+            v-time-mask
             autocomplete="off"
             :value="range.duration.value"
             inputmode="numeric"

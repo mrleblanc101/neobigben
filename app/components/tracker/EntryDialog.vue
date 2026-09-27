@@ -100,7 +100,7 @@ function save() {
                             <Label for="entry-duration">Durée</Label>
                             <Input
                                 id="entry-duration"
-                                v-time-mask:duration
+                                v-time-mask
                                 autocomplete="off"
                                 :model-value="range.duration.value"
                                 inputmode="numeric"

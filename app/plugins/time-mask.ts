@@ -1,24 +1,23 @@
 import type { Directive } from "vue";
 import Inputmask from "inputmask";
 
-// Hours 00–23, minutes 00–59
-const clockMask = { regex: "(?:[01]\\d|2[0-3]):[0-5]\\d", placeholder: "HH:MM" };
-// Hours 00–99, minutes 00–59
-const durationMask = { mask: "99:M9", definitions: { M: { validator: "[0-5]" } }, placeholder: "HH:MM" };
+// Hours 00–23, minutes 00–59: times of day, and durations, which stay under 24 hours
+const timeMask = { regex: "(?:[01]\\d|2[0-3]):[0-5]\\d", placeholder: "HH:MM" };
 
 /**
- * `v-time-mask` restricts an input to a valid HH:MM time of day and shows the __:__ slots while typing.
- * `v-time-mask:duration` allows hours above 23.
+ * `v-time-mask` restricts an input to HH:MM between 00:00 and 23:59, showing the HH:MM slots while typing.
+ * It serves both times of day and durations, as entries last less than 24 hours.
  * `v-time-mask.advance` moves on to the form's next field once the time is typed in full.
  */
-const timeMask: Directive<HTMLInputElement, unknown, "advance"> = {
+const timeMaskDirective: Directive<HTMLInputElement, unknown, "advance"> = {
     mounted(el, binding) {
-        Inputmask({ ...(binding.arg === "duration" ? durationMask : clockMask), showMaskOnHover: false }).mask(el);
+        Inputmask({ ...timeMask, showMaskOnHover: false }).mask(el);
         if (!binding.modifiers.advance) return;
         // The mask dispatches an input event for each typed character, while values set from code dispatch none:
-        // a complete, focused field on input has just been typed in full. Moves on once the form has handled the value.
+        // a complete, focused field on input has just been typed in full. The form's own input handler, registered
+        // before this one, has already taken the value; moving on right away keeps the next keystroke from being lost.
         el.addEventListener("input", () => {
-            if (document.activeElement === el && el.inputmask?.isComplete()) setTimeout(() => focusNextField(el));
+            if (document.activeElement === el && el.inputmask?.isComplete()) focusNextField(el);
         });
     },
     beforeUnmount(el) {
@@ -27,11 +26,11 @@ const timeMask: Directive<HTMLInputElement, unknown, "advance"> = {
 };
 
 export default defineNuxtPlugin((nuxtApp) => {
-    nuxtApp.vueApp.directive("time-mask", timeMask);
+    nuxtApp.vueApp.directive("time-mask", timeMaskDirective);
 });
 
 declare module "vue" {
     interface GlobalDirectives {
-        vTimeMask: typeof timeMask;
+        vTimeMask: typeof timeMaskDirective;
     }
 }

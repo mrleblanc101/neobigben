@@ -8,7 +8,7 @@ import { PopoverArrow } from "reka-ui";
  */
 defineOptions({ inheritAttrs: false });
 
-defineProps<{
+const props = defineProps<{
     /** Start in minutes since midnight; while null a duration can't place the end, so the popover stays hidden */
     start: number | null;
     /** Current duration in minutes, to highlight the matching preset */
@@ -29,12 +29,23 @@ const PRESETS = [15, 30, 60, 90, 120].map(value => ({
 
 const focused = ref(false);
 
-// "Maintenant" ends the entry at the current time, read each time the popover opens.
-// Before the start, that end is on the next day, whichever day the entry is on.
-const now = ref(0);
-watch(focused, (value) => {
-    const date = new Date();
-    if (value) now.value = date.getHours() * 60 + date.getMinutes();
+// "Maintenant" ends the entry at the actual current moment, read each time the popover opens.
+// It's offered only when that moment falls less than 24 hours after the start on the displayed day:
+// later today, or early today for an entry started yesterday evening (then split at midnight).
+const { date } = useTimeTracker();
+const now = ref(new Date());
+watch(focused, value => value && (now.value = new Date()));
+
+const sinceStart = computed(() => {
+    if (props.start === null) return null;
+    const started = new Date(date.value);
+    started.setHours(0, props.start, 0, 0);
+    return Math.floor((now.value.getTime() - started.getTime()) / 60_000);
+});
+const nowUnavailable = computed(() => {
+    if (sinceStart.value === null || sinceStart.value < 1) return "Il n’est pas encore passé l’heure de début";
+    if (sinceStart.value >= MINUTES_PER_DAY) return "Plus de 24 h se sont écoulées depuis le début";
+    return null;
 });
 </script>
 
@@ -68,17 +79,21 @@ watch(focused, (value) => {
                 >
                     {{ preset.label }}
                 </Button>
-                <Button
-                    type="button"
-                    variant="outline"
-                    size="xs"
-                    tabindex="-1"
-                    class="h-6.5 w-full px-2.5 font-normal"
-                    @mousedown.prevent
-                    @click="emit('end', formatMinutes(now))"
-                >
-                    Maintenant
-                </Button>
+                <!-- The tooltip sits on a wrapper: a disabled button ignores the pointer -->
+                <span class="flex" :title="nowUnavailable ?? undefined">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="xs"
+                        tabindex="-1"
+                        class="h-6.5 w-full px-2.5 font-normal"
+                        :disabled="!!nowUnavailable"
+                        @mousedown.prevent
+                        @click="emit('end', formatMinutes(now.getHours() * 60 + now.getMinutes()))"
+                    >
+                        Maintenant
+                    </Button>
+                </span>
             </div>
             <PopoverArrow :width="14" :height="7" class="fill-popover stroke-border" />
         </PopoverContent>
