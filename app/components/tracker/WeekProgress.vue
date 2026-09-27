@@ -89,6 +89,7 @@ function valueClass(d: (typeof days.value)[number]) {
                 <form v-if="editingGoal" class="flex gap-1" @submit.prevent="saveGoal">
                     <Input
                         v-model="goalDraft"
+                        autocomplete="off"
                         type="number"
                         min="1"
                         max="80"

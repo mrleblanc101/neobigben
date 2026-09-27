@@ -5,7 +5,7 @@ const { addEntry } = useTimeTracker();
 
 const empty = () => ({ project: "", note: "", start: "", end: "", duration: "" });
 const draft = ref(empty());
-const noteInput = ref<HTMLInputElement>();
+const noteInput = ref<HTMLTextAreaElement>();
 
 // Keeps start, end and duration consistent: whichever field is typed updates the one that depends on it
 function onStart(value: string) {
@@ -68,19 +68,24 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
 </script>
 
 <template>
-    <form :class="ENTRY_GRID" class="h-[52px] bg-muted/25" @submit.prevent="add">
+    <form :class="ENTRY_GRID" class="min-h-13 bg-muted/25 py-2.5" @submit.prevent="add" @keydown.capture="focusPreviousOnBackspace">
         <TrackerProjectCombobox v-model="draft.project" variant="inline" />
-        <input
+        <!-- One line that grows with its content (CSS field-sizing); Enter adds the entry, Shift+Enter starts a new line -->
+        <textarea
             ref="noteInput"
             v-model="draft.note"
+            autocomplete="off"
+            rows="1"
             aria-label="Description"
-            placeholder="Ajout rapide — description ou lien Jira…"
-            class="-ml-2.5 h-8 min-w-0 px-2.5 text-sm placeholder:text-muted-foreground"
+            placeholder="Courte description..."
+            class="-ml-2.5 field-sizing-content max-h-40 min-h-8 min-w-0 resize-none px-2.5 py-1.5 text-sm placeholder:text-muted-foreground"
             :class="fieldClass"
-        >
+            @keydown.enter.exact.prevent="add"
+        />
         <div class="-ml-1 flex items-center gap-0.5">
             <input
                 v-time-mask
+                autocomplete="off"
                 :value="draft.start"
                 inputmode="numeric"
                 maxlength="5"
@@ -92,21 +97,30 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
                 @input="onStart(($event.target as HTMLInputElement).value)"
             >
             <span class="text-[13px] text-muted-foreground">–</span>
-            <input
-                v-time-mask
-                :value="draft.end"
-                inputmode="numeric"
-                maxlength="5"
-                placeholder="HH:MM"
-                title="Fin"
-                aria-label="Fin"
-                class="h-7 w-0 min-w-0 flex-1 text-center font-mono text-[13px] placeholder:text-muted-foreground"
-                :class="fieldClass"
-                @input="onEnd(($event.target as HTMLInputElement).value)"
+            <TrackerDurationPresets
+                class="flex w-0 min-w-0 flex-1"
+                :start="parseClock(draft.start)"
+                :minutes="parseDuration(draft.duration) ?? undefined"
+                @select="onDuration(formatMinutes($event))"
             >
+                <input
+                    v-time-mask
+                    autocomplete="off"
+                    :value="draft.end"
+                    inputmode="numeric"
+                    maxlength="5"
+                    placeholder="HH:MM"
+                    title="Fin"
+                    aria-label="Fin"
+                    class="h-7 w-full min-w-0 text-center font-mono text-[13px] placeholder:text-muted-foreground"
+                    :class="fieldClass"
+                    @input="onEnd(($event.target as HTMLInputElement).value)"
+                >
+            </TrackerDurationPresets>
         </div>
         <input
             v-time-mask:duration
+            autocomplete="off"
             :value="draft.duration"
             inputmode="numeric"
             maxlength="5"

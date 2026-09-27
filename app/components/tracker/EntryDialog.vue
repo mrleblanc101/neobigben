@@ -44,11 +44,6 @@ const canSave = computed(() => !!form.value.project && minutes.value > 0 && (!du
 const keptDuration = ref(0);
 watch(minutes, value => value > 0 && (keptDuration.value = value), { immediate: true });
 
-const presets = [15, 30, 60, 90, 120].map(value => ({
-    value,
-    label: value < 60 ? `${value} min` : `${Math.floor(value / 60)} h${value % 60 ? ` ${value % 60}` : ""}`,
-}));
-
 function setDuration(value: number, typed?: string) {
     durationDraft.value = typed ?? null;
     if (start.value !== null) form.value.end = addToClock(start.value, value);
@@ -87,7 +82,7 @@ function save() {
                 <DialogDescription>Renseignez le projet, la plage horaire et une note optionnelle.</DialogDescription>
             </DialogHeader>
 
-            <form class="flex flex-col gap-[18px]" @submit.prevent="save">
+            <form class="flex flex-col gap-[18px]" @submit.prevent="save" @keydown.capture="focusPreviousOnBackspace">
                 <div class="flex flex-col gap-2">
                     <Label for="entry-project">Projet</Label>
                     <TrackerProjectCombobox id="entry-project" v-model="form.project" />
@@ -100,6 +95,7 @@ function save() {
                             <Input
                                 id="entry-start"
                                 v-time-mask
+                                autocomplete="off"
                                 :model-value="form.start"
                                 inputmode="numeric"
                                 maxlength="5"
@@ -110,23 +106,27 @@ function save() {
                         </div>
                         <div class="flex min-w-0 flex-col gap-2">
                             <Label for="entry-end">Fin</Label>
-                            <Input
-                                id="entry-end"
-                                v-time-mask
-                                :model-value="form.end"
-                                inputmode="numeric"
-                                maxlength="5"
-                                placeholder="HH:MM"
-                                class="font-mono"
-                                @update:model-value="onEnd"
-                            />
+                            <TrackerDurationPresets :start="start" :minutes="minutes" @select="setDuration">
+                                <Input
+                                    id="entry-end"
+                                    v-time-mask
+                                    autocomplete="off"
+                                    :model-value="form.end"
+                                    inputmode="numeric"
+                                    maxlength="5"
+                                    placeholder="HH:MM"
+                                    class="font-mono"
+                                    @update:model-value="onEnd"
+                                />
+                            </TrackerDurationPresets>
                         </div>
                         <div class="flex min-w-0 flex-col gap-2">
                             <Label for="entry-duration">Durée</Label>
                             <Input
                                 id="entry-duration"
                                 v-time-mask:duration
-                                :model-value="durationDraft ?? formatMinutes(minutes)"
+                                autocomplete="off"
+                                :model-value="durationDraft ?? (start !== null && end !== null ? formatMinutes(minutes) : '')"
                                 inputmode="numeric"
                                 maxlength="5"
                                 placeholder="HH:MM"
@@ -135,25 +135,18 @@ function save() {
                             />
                         </div>
                     </div>
-                    <div class="flex flex-wrap gap-1.5">
-                        <Button
-                            v-for="preset in presets"
-                            :key="preset.value"
-                            type="button"
-                            variant="outline"
-                            size="xs"
-                            class="h-[26px] px-2.5 font-mono font-normal"
-                            :class="{ 'border-muted-foreground/60 bg-accent dark:bg-accent': minutes === preset.value }"
-                            @click="setDuration(preset.value)"
-                        >
-                            {{ preset.label }}
-                        </Button>
-                    </div>
                 </div>
 
                 <div class="flex flex-col gap-2">
                     <Label for="entry-note">Note</Label>
-                    <Input id="entry-note" v-model="form.note" placeholder="Rencontre, corrections ou lien Jira…" />
+                    <!-- Grows with its content through CSS field-sizing, from 3 lines up to a max height -->
+                    <Textarea
+                        id="entry-note"
+                        v-model="form.note"
+                        autocomplete="off"
+                        placeholder="Courte description..."
+                        class="max-h-60 min-h-[calc(3lh+1rem+2px)] resize-none"
+                    />
                 </div>
 
                 <DialogFooter>

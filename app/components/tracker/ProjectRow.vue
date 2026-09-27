@@ -54,6 +54,7 @@ async function remove() {
             <input
                 ref="input"
                 v-model="draft"
+                autocomplete="off"
                 aria-label="Nom du projet"
                 class="-ml-2 h-7 min-w-0 flex-1 rounded-md border border-muted-foreground/50 bg-background px-2 font-medium outline-none ring-3 ring-ring/30"
                 @keydown.enter="commit"

@@ -223,7 +223,10 @@ export function useTimeTracker() {
     }
 
     function openEditor(entry?: Entry | Partial<EntryDraft>) {
-        const defaults: EntryDraft = { project: projects.value[0]?.name ?? "", start: "09:00", end: "10:00", note: "", url: "" };
+        // A new entry picks up where the day's last entry ends, or at 09:30 on an empty day.
+        // The rest starts blank, apart from what the caller knows (a gap's range, a project row's project).
+        const lastEnd = entries.value.reduce<string | null>((latest, e) => (!latest || toMinutes(e.end) > toMinutes(latest) ? e.end : latest), null);
+        const defaults: EntryDraft = { project: "", start: lastEnd ?? "09:30", end: "", note: "", url: "" };
         editor.value = entry && "id" in entry
             ? { id: entry.id, form: { project: entry.project, start: entry.start, end: entry.end, note: entry.note, url: entry.url } }
             : { id: "new", form: { ...defaults, ...entry } };

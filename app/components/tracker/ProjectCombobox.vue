@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Check, ChevronDown, Plus } from "@lucide/vue";
+import { Check, ChevronDown, Plus, X } from "@lucide/vue";
 import { ComboboxAnchor, ComboboxInput, ComboboxRoot, ComboboxTrigger } from "reka-ui";
 
 const props = withDefaults(defineProps<{
@@ -38,6 +38,24 @@ watch(projects, () => {
 // Keep Enter on the best match as the list changes
 watch(matches, () => nextTick(() => root.value?.highlightFirstItem?.()));
 
+function clear() {
+    project.value = "";
+    query.value = "";
+}
+
+// Backspace or Delete on the selected project's name unselects it in one go, rather than editing the name
+function onKeydown(event: KeyboardEvent) {
+    if ((event.key === "Backspace" || event.key === "Delete") && project.value && !typing.value) {
+        event.preventDefault();
+        clear();
+    }
+}
+
+// Erasing the name and leaving the field unselects the project instead of restoring it
+function onBlur() {
+    if (project.value && !query.value.trim()) nextTick(clear);
+}
+
 async function select(value: unknown) {
     const name = String(value ?? "");
     if (!projects.value.some(p => p.name === name) && !(await addProject(name))) return;
@@ -61,19 +79,38 @@ async function select(value: unknown) {
                 : '-ml-2.5'"
         >
             <span
+                v-if="project"
                 class="pointer-events-none absolute size-2 rounded-[2px]"
                 :class="variant === 'field' ? 'left-3' : 'left-2.5'"
-                :style="{ background: project ? colorOf(project) : 'transparent' }"
+                :style="{ background: colorOf(project) }"
             />
             <ComboboxInput
                 :id="props.id"
                 v-model="query"
+                autocomplete="off"
                 :display-value="value => String(value ?? '')"
                 placeholder="Projet…"
                 aria-label="Projet"
                 class="h-8 w-full min-w-0 truncate bg-transparent text-sm outline-none placeholder:text-muted-foreground/70"
-                :class="variant === 'field' ? 'pr-8 pl-7' : 'rounded-md pr-7 pl-6.5 font-medium hover:bg-muted focus:bg-muted'"
+                :class="[
+                    variant === 'inline' && 'rounded-md font-medium hover:bg-muted focus:bg-muted',
+                    // Room for the color chip on the left and the clear button on the right only once a project is picked
+                    project ? (variant === 'field' ? 'pr-13 pl-7' : 'pr-12 pl-6.5') : (variant === 'field' ? 'pr-8 pl-3' : 'pr-7 pl-2.5'),
+                ]"
+                @blur="onBlur"
+                @keydown="onKeydown"
             />
+            <button
+                v-if="project"
+                type="button"
+                aria-label="Retirer le projet"
+                title="Retirer le projet"
+                class="absolute flex size-5 items-center justify-center rounded-sm text-muted-foreground hover:bg-accent hover:text-foreground"
+                :class="variant === 'field' ? 'right-7' : 'right-6'"
+                @click="clear"
+            >
+                <X class="size-3" />
+            </button>
             <ComboboxTrigger
                 aria-label="Afficher les projets"
                 class="absolute flex items-center text-muted-foreground"

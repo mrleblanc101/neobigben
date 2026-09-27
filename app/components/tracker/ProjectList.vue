@@ -33,6 +33,7 @@ async function create() {
             <Search class="pointer-events-none absolute top-2.5 left-2.5 size-3.5 text-muted-foreground/70" />
             <Input
                 v-model="query"
+                autocomplete="off"
                 placeholder="Rechercher ou créer un projet…"
                 class="h-[34px] pl-8 text-[13px] md:text-[13px]"
                 @keydown.enter="create"
