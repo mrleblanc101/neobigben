@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Pencil, Plus, Star, X } from "@lucide/vue";
+import { Pencil, Plus, Star, Trash2, X } from "@lucide/vue";
 
 const props = defineProps<{
     project: Project;
@@ -7,7 +7,8 @@ const props = defineProps<{
     minutes: number;
 }>();
 
-const { renameProject, toggleFavorite, openEditor } = useTimeTracker();
+const { renameProject, toggleFavorite, openEditor, countProjectEntries, deleteProject } = useTimeTracker();
+const { confirm } = useConfirm();
 
 const renaming = ref(false);
 const draft = ref("");
@@ -26,6 +27,23 @@ function commit() {
     if (!renaming.value) return;
     renaming.value = false;
     renameProject(props.project.name, draft.value.trim());
+}
+
+async function remove() {
+    const { name } = props.project;
+    const count = await countProjectEntries(name);
+    const entries = count === null
+        ? "Ses entrées seront aussi supprimées."
+        : count === 0
+            ? "Aucune entrée n’y est associée."
+            : `${count} entrée${count > 1 ? "s" : ""} associée${count > 1 ? "s" : ""} ${count > 1 ? "seront" : "sera"} aussi supprimée${count > 1 ? "s" : ""}.`;
+    const confirmed = await confirm({
+        title: `Supprimer « ${name} » ?`,
+        description: `${entries} Cette action est irréversible.`,
+        confirmLabel: "Supprimer",
+        destructive: true,
+    });
+    if (confirmed) deleteProject(name);
 }
 </script>
 
@@ -59,7 +77,22 @@ function commit() {
                     {{ formatMinutes(minutes) }}
                 </span>
                 <div class="flex opacity-0 [grid-area:1/1] group-focus-within:opacity-100 group-hover:opacity-100">
-                    <Button variant="ghost" size="icon-xs" title="Renommer" class="size-7 text-muted-foreground/70" @click="startRename">
+                    <Button
+                        variant="ghost"
+                        size="icon-xs"
+                        title="Supprimer le projet"
+                        class="size-7 text-muted-foreground/70 hover:bg-red-500/12 hover:text-red-500 dark:hover:bg-red-500/12 dark:hover:text-red-400"
+                        @click="remove"
+                    >
+                        <Trash2 class="size-3.5" />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon-xs"
+                        title="Renommer"
+                        class="size-7 text-muted-foreground/70 hover:bg-blue-500/12 hover:text-blue-600 dark:hover:bg-blue-500/12 dark:hover:text-blue-400"
+                        @click="startRename"
+                    >
                         <Pencil class="size-3.5" />
                     </Button>
                     <Button
@@ -72,7 +105,13 @@ function commit() {
                     >
                         <Star class="size-3.5" :fill="project.fav ? 'currentColor' : 'none'" />
                     </Button>
-                    <Button variant="ghost" size="icon-xs" title="Nouvelle entrée" class="size-7 text-muted-foreground/70" @click="openEditor({ project: project.name })">
+                    <Button
+                        variant="ghost"
+                        size="icon-xs"
+                        title="Nouvelle entrée"
+                        class="size-7 text-muted-foreground/70 hover:bg-emerald-500/12 hover:text-emerald-600 dark:hover:bg-emerald-500/12 dark:hover:text-emerald-400"
+                        @click="openEditor({ project: project.name })"
+                    >
                         <Plus class="size-3.5" />
                     </Button>
                 </div>

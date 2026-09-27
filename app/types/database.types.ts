@@ -10,6 +10,7 @@ export type Database = {
         Tables: {
             entries: {
                 Row: {
+                    copied_to_netsuite: boolean;
                     created_at: string;
                     day: string;
                     end_time: string;
@@ -21,6 +22,7 @@ export type Database = {
                     user_id: string;
                 };
                 Insert: {
+                    copied_to_netsuite?: boolean;
                     created_at?: string;
                     day: string;
                     end_time: string;
@@ -32,6 +34,7 @@ export type Database = {
                     user_id?: string;
                 };
                 Update: {
+                    copied_to_netsuite?: boolean;
                     created_at?: string;
                     day?: string;
                     end_time?: string;

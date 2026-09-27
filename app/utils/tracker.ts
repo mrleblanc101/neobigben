@@ -1,5 +1,5 @@
-export interface Entry {
-    id: string;
+/** What the quick-add row and the entry dialog edit */
+export interface EntryDraft {
     project: string;
     start: string;
     end: string;
@@ -7,7 +7,10 @@ export interface Entry {
     url: string;
 }
 
-export type EntryDraft = Omit<Entry, "id">;
+export interface Entry extends EntryDraft {
+    id: string;
+    copiedToNetsuite: boolean;
+}
 
 export interface Project {
     id: string;

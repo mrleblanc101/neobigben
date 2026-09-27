@@ -5,7 +5,18 @@ type Row =
     | { type: "gap"; key: string; start: string; end: string; project: string }
     | { type: "entry"; key: string; entry: Entry };
 
-const { entries, weekLoaded, colorOf, openEditor, removeEntry } = useTimeTracker();
+const { entries, weekLoaded, colorOf, openEditor, removeEntry, setCopiedToNetsuite } = useTimeTracker();
+const { confirm } = useConfirm();
+
+async function remove(entry: Entry) {
+    const confirmed = await confirm({
+        title: "Supprimer l’entrée ?",
+        description: `${entry.project} · ${entry.start} – ${entry.end} sera supprimée définitivement.`,
+        confirmLabel: "Supprimer",
+        destructive: true,
+    });
+    if (confirmed) removeEntry(entry.id);
+}
 
 // Entries in chronological order, with a pause row wherever there is a hole between two entries
 const rows = computed(() => {
@@ -60,7 +71,13 @@ const rows = computed(() => {
                     </Button>
                 </div>
 
-                <div v-else :class="ENTRY_GRID" class="min-h-14 border-b text-sm hover:bg-muted/50">
+                <!-- Once copied to NetSuite, everything but the actions fades back -->
+                <div
+                    v-else
+                    :class="ENTRY_GRID"
+                    :data-copied="row.entry.copiedToNetsuite || undefined"
+                    class="min-h-14 border-b text-sm not-data-copied:hover:bg-muted/50 data-copied:*:not-last:opacity-45"
+                >
                     <div class="flex min-w-0 items-center gap-2">
                         <span class="size-2 shrink-0 rounded-[2px]" :style="{ background: colorOf(row.entry.project) }" />
                         <span class="truncate font-medium">{{ row.entry.project }}</span>
@@ -86,14 +103,23 @@ const rows = computed(() => {
                     </div>
                     <span class="text-center font-mono text-[13px] font-medium">{{ formatMinutes(entryMinutes(row.entry)) }}</span>
                     <div class="flex justify-end gap-0.5">
-                        <!-- Placeholder until the Notion integration exists -->
-                        <Button variant="ghost" size="icon-sm" title="Ouvrir dans Notion" aria-label="Ouvrir dans Notion" class="text-muted-foreground" disabled>
-                            <svg class="size-3.75" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="3" width="18" height="18" rx="2" />
-                                <path d="M8 16V8l8 8V8" />
-                            </svg>
-                        </Button>
-                        <Button variant="ghost" size="icon-sm" title="Modifier" class="text-muted-foreground" @click="openEditor(row.entry)">
+                        <label
+                            class="flex size-8 cursor-pointer items-center justify-center rounded-md hover:bg-accent dark:hover:bg-accent/50"
+                            :title="row.entry.copiedToNetsuite ? 'Copiée dans NetSuite' : 'Pas encore copiée dans NetSuite'"
+                        >
+                            <Checkbox
+                                :model-value="row.entry.copiedToNetsuite"
+                                aria-label="Copiée dans NetSuite"
+                                @update:model-value="setCopiedToNetsuite(row.entry.id, $event === true)"
+                            />
+                        </label>
+                        <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            title="Modifier"
+                            class="text-muted-foreground hover:bg-blue-500/12 hover:text-blue-600 dark:hover:bg-blue-500/12 dark:hover:text-blue-400"
+                            @click="openEditor(row.entry)"
+                        >
                             <Pencil class="size-3.75" />
                         </Button>
                         <Button
@@ -101,7 +127,7 @@ const rows = computed(() => {
                             size="icon-sm"
                             title="Supprimer"
                             class="text-muted-foreground hover:bg-red-500/12 hover:text-red-500 dark:hover:bg-red-500/12 dark:hover:text-red-400"
-                            @click="removeEntry(row.entry.id)"
+                            @click="remove(row.entry)"
                         >
                             <Trash2 class="size-3.75" />
                         </Button>

@@ -1,21 +1,37 @@
 <script setup lang="ts">
 const { editor, closeEditor, saveEditor } = useTimeTracker();
+const { confirm } = useConfirm();
 
 const form = ref<EntryDraft>({ project: "", start: "", end: "", note: "", url: "" });
 // What the user typed in the duration field, kept while it isn't a valid duration yet
 const durationDraft = ref<string | null>(null);
+// The form as opened, to tell whether closing would drop changes
+const initialForm = ref("");
+const dirty = computed(() => JSON.stringify(form.value) !== initialForm.value);
 
 watch(editor, (value) => {
     if (!value) return;
     // The link is edited inside the note, the same way it was typed in quick-add
     const { note, url } = value.form;
     form.value = { ...value.form, note: [note, url].filter(Boolean).join(" "), url: "" };
+    initialForm.value = JSON.stringify(form.value);
     durationDraft.value = null;
 }, { immediate: true });
 
+// Closing with Annuler, Escape, the close button or a click outside asks before dropping changes
+async function requestClose() {
+    const discard = !dirty.value || await confirm({
+        title: "Abandonner les modifications ?",
+        description: "Les changements apportés à cette entrée seront perdus.",
+        confirmLabel: "Abandonner",
+        destructive: true,
+    });
+    if (discard) closeEditor();
+}
+
 const open = computed({
     get: () => !!editor.value,
-    set: value => !value && closeEditor(),
+    set: value => !value && requestClose(),
 });
 
 // Start and end stay partial ("0H:MM") while being typed
@@ -141,7 +157,7 @@ function save() {
                 </div>
 
                 <DialogFooter>
-                    <Button type="button" variant="outline" @click="closeEditor">
+                    <Button type="button" variant="outline" @click="requestClose">
                         Annuler
                     </Button>
                     <Button type="submit" :disabled="!canSave">

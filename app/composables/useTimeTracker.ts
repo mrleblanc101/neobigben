@@ -32,6 +32,7 @@ const toStoredEntry = (row: EntryRow): StoredEntry => ({
     end: row.end_time.slice(0, 5),
     note: row.note,
     url: row.url,
+    copiedToNetsuite: row.copied_to_netsuite,
 });
 
 function totalsByProject(entries: Entry[]) {
@@ -144,6 +145,26 @@ export function useTimeTracker() {
         project.fav = !project.fav;
     }
 
+    /** Number of entries logged on a project across all weeks, or null if it can't be counted */
+    async function countProjectEntries(name: string) {
+        const project = projects.value.find(p => p.name === name);
+        if (!project) return null;
+        const { count, error: cause } = await supabase.from("entries").select("id", { count: "exact", head: true }).eq("project_id", project.id);
+        return cause ? null : count;
+    }
+
+    /** Deletes a project; the database deletes its entries along with it */
+    async function deleteProject(name: string) {
+        const project = projects.value.find(p => p.name === name);
+        if (!project) return;
+        const { error: cause } = await supabase.from("projects").delete().eq("id", project.id);
+        if (cause) return void fail("Impossible de supprimer le projet", cause);
+        projects.value = projects.value.filter(p => p.id !== project.id);
+        for (const [day, list] of Object.entries(byDate.value)) {
+            if (list.some(e => e.projectId === project.id)) byDate.value[day] = list.filter(e => e.projectId !== project.id);
+        }
+    }
+
     async function setWeeklyGoal(hours: number) {
         if (!user.value) return;
         const { error: cause } = await supabase.from("user_settings").upsert({ user_id: user.value.sub, weekly_goal_hours: hours });
@@ -182,6 +203,15 @@ export function useTimeTracker() {
         if (cause) return fail("Impossible de modifier l’entrée", cause);
         byDate.value[data.day] = (byDate.value[data.day] ?? []).map(e => (e.id === id ? toStoredEntry(data) : e));
         return true;
+    }
+
+    async function setCopiedToNetsuite(id: string, copied: boolean) {
+        const { error: cause } = await supabase.from("entries").update({ copied_to_netsuite: copied }).eq("id", id);
+        if (cause) return void fail("Impossible de modifier l’entrée", cause);
+        for (const list of Object.values(byDate.value)) {
+            const entry = list.find(e => e.id === id);
+            if (entry) entry.copiedToNetsuite = copied;
+        }
     }
 
     async function removeEntry(id: string) {
@@ -240,9 +270,12 @@ export function useTimeTracker() {
         reset,
         addEntry,
         removeEntry,
+        setCopiedToNetsuite,
         addProject,
         renameProject,
         toggleFavorite,
+        countProjectEntries,
+        deleteProject,
         setWeeklyGoal,
         goTo: (day: Date) => (date.value = startOfDay(day)),
         goToday: () => (date.value = startOfDay(new Date())),

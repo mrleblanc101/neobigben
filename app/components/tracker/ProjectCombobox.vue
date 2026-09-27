@@ -30,6 +30,11 @@ const matches = computed(() => {
 });
 const canCreate = computed(() => !!trimmed.value && !projects.value.some(p => p.name.toLowerCase() === trimmed.value.toLowerCase()));
 
+// Drop the selection when its project is deleted
+watch(projects, () => {
+    if (project.value && !projects.value.some(p => p.name === project.value)) project.value = "";
+}, { deep: true });
+
 // Keep Enter on the best match as the list changes
 watch(matches, () => nextTick(() => root.value?.highlightFirstItem?.()));
 

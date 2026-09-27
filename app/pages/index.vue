@@ -25,5 +25,6 @@ watch(() => dateKey(startOfWeek(date.value)), () => loadWeek(date.value));
             <TrackerSidePanel class="border-t lg:sticky lg:top-14 lg:min-h-[calc(100svh-3.5rem)] lg:border-t-0 lg:border-l" />
         </div>
         <TrackerEntryDialog />
+        <ConfirmDialog />
     </div>
 </template>
