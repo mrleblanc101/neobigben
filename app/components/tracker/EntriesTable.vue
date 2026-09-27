@@ -23,7 +23,7 @@ const rows = computed(() => {
 
 <template>
     <div class="overflow-x-auto rounded-lg border">
-        <div class="min-w-[640px]">
+        <div class="min-w-160">
             <div :class="ENTRY_GRID" class="h-10 border-b text-[13px] font-medium text-muted-foreground">
                 <span>Projet</span>
                 <span>Description</span>
@@ -42,7 +42,7 @@ const rows = computed(() => {
                     v-if="row.type === 'gap'"
                     class="flex h-9 items-center gap-3 border-b bg-[repeating-linear-gradient(135deg,transparent_0_6px,color-mix(in_oklab,var(--foreground)_3%,transparent)_6px_12px)] px-4"
                 >
-                    <span class="inline-flex h-[22px] items-center gap-1.5 rounded-md border border-dashed border-muted-foreground/40 px-2 text-xs text-muted-foreground">
+                    <span class="inline-flex h-5.5 items-center gap-1.5 rounded-md border border-dashed border-muted-foreground/40 px-2 text-xs text-muted-foreground">
                         <Pause class="size-3" />
                         Pause · <span class="font-mono">{{ formatMinutes(toMinutes(row.end) - toMinutes(row.start)) }}</span>
                     </span>
@@ -69,7 +69,7 @@ const rows = computed(() => {
                             :href="row.entry.url"
                             target="_blank"
                             rel="noopener"
-                            class="inline-flex h-[22px] shrink-0 items-center gap-1 rounded-md border px-2 font-mono text-xs font-medium whitespace-nowrap text-foreground hover:bg-accent"
+                            class="inline-flex h-5.5 shrink-0 items-center gap-1 rounded-md border px-2 font-mono text-xs font-medium whitespace-nowrap text-foreground hover:bg-accent"
                         >
                             {{ linkLabel(row.entry.url) }}
                             <ArrowUpRight class="size-3" />
@@ -83,8 +83,15 @@ const rows = computed(() => {
                     </div>
                     <span class="text-center font-mono text-[13px] font-medium">{{ formatMinutes(entryMinutes(row.entry)) }}</span>
                     <div class="flex justify-end gap-0.5">
+                        <!-- Placeholder until the Notion integration exists -->
+                        <Button variant="ghost" size="icon-sm" title="Ouvrir dans Notion" aria-label="Ouvrir dans Notion" class="text-muted-foreground" disabled>
+                            <svg class="size-3.75" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" />
+                                <path d="M8 16V8l8 8V8" />
+                            </svg>
+                        </Button>
                         <Button variant="ghost" size="icon-sm" title="Modifier" class="text-muted-foreground" @click="openEditor(row.entry)">
-                            <Pencil class="size-[15px]" />
+                            <Pencil class="size-3.75" />
                         </Button>
                         <Button
                             variant="ghost"
@@ -93,7 +100,7 @@ const rows = computed(() => {
                             class="text-muted-foreground hover:bg-red-500/12 hover:text-red-500 dark:hover:bg-red-500/12 dark:hover:text-red-400"
                             @click="removeEntry(row.entry.id)"
                         >
-                            <Trash2 class="size-[15px]" />
+                            <Trash2 class="size-3.75" />
                         </Button>
                     </div>
                 </div>

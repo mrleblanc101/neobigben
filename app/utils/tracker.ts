@@ -83,14 +83,14 @@ export function addDays(date: Date, days: number) {
     return result;
 }
 
-/** Monday of the date's week */
+/** Sunday of the date's week */
 export function startOfWeek(date: Date) {
-    return addDays(date, -((date.getDay() + 6) % 7));
+    return addDays(date, -date.getDay());
 }
 
-export function isoWeek(date: Date) {
-    const thursday = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-    thursday.setUTCDate(thursday.getUTCDate() + 4 - (thursday.getUTCDay() || 7));
-    const yearStart = Date.UTC(thursday.getUTCFullYear(), 0, 1);
-    return Math.ceil(((thursday.getTime() - yearStart) / 864e5 + 1) / 7);
+/** Week of the year, with weeks starting on Sunday and week 1 holding January 1st */
+export function weekNumber(date: Date) {
+    const jan1 = new Date(date.getFullYear(), 0, 1);
+    const dayOfYear = Math.round((startOfDay(date).getTime() - jan1.getTime()) / 864e5);
+    return Math.floor((dayOfYear + jan1.getDay()) / 7) + 1;
 }

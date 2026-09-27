@@ -30,8 +30,10 @@ function seedEntries(rows: SeedRow[]): Entry[] {
 function seedByDate() {
     const today = startOfDay(new Date());
     const byDate: Record<string, Entry[]> = { [dateKey(today)]: seedEntries(SEED_TODAY) };
-    for (let day = startOfWeek(today), i = 0; day < today; day = addDays(day, 1), i++) {
-        byDate[dateKey(day)] = seedEntries(SEED_PAST_DAYS[i % SEED_PAST_DAYS.length]!);
+    let i = 0;
+    for (let day = startOfWeek(today); day < today; day = addDays(day, 1)) {
+        if (day.getDay() === 0 || day.getDay() === 6) continue;
+        byDate[dateKey(day)] = seedEntries(SEED_PAST_DAYS[i++ % SEED_PAST_DAYS.length]!);
     }
     return byDate;
 }
@@ -72,8 +74,8 @@ export function useTimeTracker() {
     const entries = computed(() => entriesOn(date.value));
     const isToday = computed(() => dateKey(date.value) === dateKey(new Date()));
     const weekDates = computed(() => {
-        const monday = startOfWeek(date.value);
-        return Array.from({ length: 7 }, (_, i) => addDays(monday, i));
+        const sunday = startOfWeek(date.value);
+        return Array.from({ length: 7 }, (_, i) => addDays(sunday, i));
     });
     const weekGoal = computed(() => weeklyGoalHours.value * 60);
     // A workday is a fifth of the weekly goal

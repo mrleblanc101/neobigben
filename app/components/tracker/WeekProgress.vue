@@ -27,10 +27,10 @@ const weekTotal = computed(() => days.value.reduce((sum, d) => sum + d.minutes, 
 const weekPct = computed(() => `${Math.min(100, (weekTotal.value / weekGoal.value) * 100)}%`);
 const weekLeft = computed(() => (weekTotal.value >= weekGoal.value ? "Objectif atteint" : formatMinutes(weekGoal.value - weekTotal.value)));
 const weekRange = computed(() => {
-    const monday = weekDates.value[0]!;
-    const sunday = weekDates.value[6]!;
-    const startMonth = monday.getMonth() !== sunday.getMonth() ? ` ${MONTH_NAMES[monday.getMonth()]}` : "";
-    return `Semaine du ${monday.getDate()}${startMonth} au ${sunday.getDate()} ${MONTH_NAMES[sunday.getMonth()]}`;
+    const first = weekDates.value[0]!;
+    const last = weekDates.value[6]!;
+    const startMonth = first.getMonth() !== last.getMonth() ? ` ${MONTH_NAMES[first.getMonth()]}` : "";
+    return `Semaine du ${first.getDate()}${startMonth} au ${last.getDate()} ${MONTH_NAMES[last.getMonth()]}`;
 });
 
 watch(open, () => (editingGoal.value = false));

@@ -27,7 +27,7 @@ const tab = ref<(typeof tabs)[number]>("Résumé");
                 :totals="dayTotals"
                 :goal="dayGoal"
             />
-            <TrackerSummaryCard title="Cette semaine" subtitle="Lun – Dim" :totals="weekTotals" :goal="weekGoal" />
+            <TrackerSummaryCard title="Cette semaine" subtitle="Dim – Sam" :totals="weekTotals" :goal="weekGoal" />
         </template>
         <TrackerProjectList v-else />
     </aside>

@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, Plus } from "@lucide/vue";
 const { date, shiftDay, goToday, openEditor } = useTimeTracker();
 
 const title = computed(() => `${DAY_NAMES[date.value.getDay()]} ${date.value.getDate()} ${MONTH_NAMES[date.value.getMonth()]}`);
-const subtitle = computed(() => `${date.value.getFullYear()} · Semaine ${isoWeek(date.value)}`);
+const subtitle = computed(() => `${date.value.getFullYear()} · Semaine ${weekNumber(date.value)}`);
 </script>
 
 <template>
