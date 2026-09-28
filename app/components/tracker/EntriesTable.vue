@@ -98,20 +98,23 @@ const overlapping = computed(() => new Set(entries.value
                         <span class="size-2.5 shrink-0 rounded-[2px]" :style="{ background: colorOf(row.entry.project) }" />
                         <span class="truncate font-medium">{{ row.entry.project }}</span>
                     </div>
-                    <div class="flex min-w-0 items-center gap-2 overflow-hidden text-muted-foreground">
-                        <span v-if="row.entry.note" class="min-w-0 truncate text-foreground">{{ row.entry.note }}</span>
-                        <a
-                            v-if="row.entry.url"
-                            :href="row.entry.url"
-                            :title="row.entry.url"
-                            target="_blank"
-                            rel="noopener"
-                            class="inline-flex h-5.5 shrink-0 items-center gap-1 rounded-md border px-2 font-mono text-xs font-medium whitespace-nowrap text-foreground hover:bg-accent"
-                        >
-                            {{ linkLabel(row.entry.url) }}
-                            <ArrowUpRight class="size-3" />
-                        </a>
-                        <span v-if="!row.entry.note && !row.entry.url" class="text-muted-foreground/50">—</span>
+                    <!-- The note's text, with each link found in it shown as a badge in its place; badges wrap onto more lines -->
+                    <div class="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 py-2 text-muted-foreground">
+                        <template v-for="(part, index) in noteParts(row.entry.note)" :key="index">
+                            <span v-if="part.type === 'text'" class="min-w-0 truncate text-foreground">{{ part.value }}</span>
+                            <a
+                                v-else
+                                :href="part.href"
+                                :title="part.href"
+                                target="_blank"
+                                rel="noopener"
+                                class="inline-flex h-5.5 shrink-0 items-center gap-1 rounded-md border px-2 font-mono text-xs font-medium whitespace-nowrap text-foreground hover:bg-accent"
+                            >
+                                {{ linkLabel(part.href) }}
+                                <ArrowUpRight class="size-3" />
+                            </a>
+                        </template>
+                        <span v-if="!row.entry.note" class="text-muted-foreground/50">—</span>
                     </div>
                     <div class="flex justify-end gap-0.5">
                         <label

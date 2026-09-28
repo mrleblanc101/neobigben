@@ -1,10 +1,12 @@
+import * as linkify from "linkifyjs";
+
 /** What the quick-add row and the entry dialog edit */
 export interface EntryDraft {
     project: string;
     start: string;
     end: string;
+    /** Free text; links pasted in it are found when it's displayed */
     note: string;
-    url: string;
 }
 
 export interface Entry extends EntryDraft {
@@ -114,11 +116,19 @@ export function entryMinutes(entry: Pick<Entry, "start" | "end">) {
     return toMinutes(entry.end) - toMinutes(entry.start);
 }
 
-/** Splits a typed description into its text and the first link pasted in it */
-export function splitNoteLink(text: string) {
-    const url = text.match(/https?:\/\/\S+/)?.[0] ?? "";
-    const note = url ? text.replace(url, "").replace(/[:\s]+$/, "") : text;
-    return { note: note.trim(), url };
+/** A note cut into its text and the links found in it, in order, for display */
+export function noteParts(note: string) {
+    const parts: ({ type: "text"; value: string } | { type: "link"; value: string; href: string })[] = [];
+    let index = 0;
+    for (const link of linkify.find(note, "url")) {
+        const text = note.slice(index, link.start).trim();
+        if (text) parts.push({ type: "text", value: text });
+        parts.push({ type: "link", value: link.value, href: link.href });
+        index = link.end;
+    }
+    const rest = note.slice(index).trim();
+    if (rest) parts.push({ type: "text", value: rest });
+    return parts;
 }
 
 /** Short label for a link: the issue key of a Jira link ("…/browse/CDL-88" → "CDL-88"), else the site's host name ("docs.google.com") */

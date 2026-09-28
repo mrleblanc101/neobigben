@@ -18,7 +18,6 @@ export type Database = {
                     note: string;
                     project_id: string;
                     start_time: string;
-                    url: string;
                     user_id: string;
                 };
                 Insert: {
@@ -30,7 +29,6 @@ export type Database = {
                     note?: string;
                     project_id: string;
                     start_time: string;
-                    url?: string;
                     user_id?: string;
                 };
                 Update: {
@@ -42,7 +40,6 @@ export type Database = {
                     note?: string;
                     project_id?: string;
                     start_time?: string;
-                    url?: string;
                     user_id?: string;
                 };
                 Relationships: [

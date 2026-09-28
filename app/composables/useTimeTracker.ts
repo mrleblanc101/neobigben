@@ -34,7 +34,6 @@ const toStoredEntry = (row: EntryRow): StoredEntry => ({
     start: row.start_time.slice(0, 5),
     end: row.end_time.slice(0, 5),
     note: row.note,
-    url: row.url,
     copiedToNetsuite: row.copied_to_netsuite,
 });
 
@@ -219,7 +218,7 @@ export function useTimeTracker() {
     }
 
     function entryColumns(draft: EntryDraft) {
-        return { start_time: draft.start, end_time: draft.end, note: draft.note, url: draft.url };
+        return { start_time: draft.start, end_time: draft.end, note: draft.note };
     }
 
     function storeEntries(rows: EntryRow[]) {
@@ -290,9 +289,9 @@ export function useTimeTracker() {
         // The rest starts blank, apart from what the caller knows (a gap's range, a project row's project).
         const lastEnd = entries.value.reduce<string | null>((latest, e) => (!latest || toMinutes(e.end) > toMinutes(latest) ? e.end : latest), null);
         // After an entry ending at midnight (24:00) there's nothing left of the day to start from
-        const defaults: EntryDraft = { project: "", start: lastEnd === "24:00" ? "" : lastEnd ?? dayStart.value, end: "", note: "", url: "" };
+        const defaults: EntryDraft = { project: "", start: lastEnd === "24:00" ? "" : lastEnd ?? dayStart.value, end: "", note: "" };
         editor.value = entry && "id" in entry
-            ? { id: entry.id, form: { project: entry.project, start: entry.start, end: entry.end, note: entry.note, url: entry.url }, day: dateKey(date.value) }
+            ? { id: entry.id, form: { project: entry.project, start: entry.start, end: entry.end, note: entry.note }, day: dateKey(date.value) }
             : { id: "new", form: { ...defaults, ...entry } };
     }
 

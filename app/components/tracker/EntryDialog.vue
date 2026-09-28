@@ -34,9 +34,8 @@ const dirty = computed(() => snapshot() !== initialForm.value);
 
 watch(editor, (value) => {
     if (!value) return;
-    // The link is edited inside the note, the same way it was typed in quick-add
-    const { project, start, end, note, url } = value.form;
-    form.value = { project, note: [note, url].filter(Boolean).join(" ") };
+    const { project, start, end, note } = value.form;
+    form.value = { project, note };
     range.reset(start, displayClock(end));
     day.value = value.day ?? "";
     initialForm.value = snapshot();
@@ -62,9 +61,8 @@ const canSave = computed(() => !!form.value.project && range.valid.value && (!ed
 
 function save() {
     if (!canSave.value) return;
-    // The link left in the note becomes the entry's link: deleting it from the note removes it
     saveEditor(
-        { project: form.value.project, start: range.start.value, end: range.end.value, ...splitNoteLink(form.value.note) },
+        { project: form.value.project, start: range.start.value, end: range.end.value, note: form.value.note.trim() },
         editing.value ? day.value : undefined,
     );
 }

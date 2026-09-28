@@ -13,13 +13,12 @@ const canAdd = computed(() => !!project.value && range.valid.value);
 
 async function add() {
     if (saving.value || !canAdd.value) return;
-    // A link pasted in the description becomes the entry's link
     saving.value = true;
     const added = await addEntry({
         project: project.value,
         start: formatMinutes(range.startMinutes.value!),
         end: formatMinutes(parseClock(range.end.value)!),
-        ...splitNoteLink(note.value),
+        note: note.value.trim(),
     });
     saving.value = false;
     if (added) {
