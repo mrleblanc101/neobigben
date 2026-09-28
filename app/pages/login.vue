@@ -2,6 +2,7 @@
 useHead({ title: "Connexion" });
 
 const errorMessage = ref("");
+const { gitTag, gitShortSha } = useRuntimeConfig().public;
 </script>
 
 <template>
@@ -24,5 +25,8 @@ const errorMessage = ref("");
                 </AuthGoogleSignInButton>
             </CardContent>
         </Card>
+        <p class="text-center font-mono text-[11px] text-muted-foreground">
+            {{ gitTag }} · {{ gitShortSha }}
+        </p>
     </AuthLayout>
 </template>
