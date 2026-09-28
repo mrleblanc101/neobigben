@@ -4,6 +4,8 @@ const emit = defineEmits<{
 }>();
 
 const supabase = useSupabaseClient();
+// The app can be served under a path (GitHub Pages), which the callback page is under too
+const { baseURL } = useRuntimeConfig().app;
 const loading = ref(false);
 
 async function signInWithGoogle() {
@@ -12,7 +14,7 @@ async function signInWithGoogle() {
     const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-            redirectTo: `${window.location.origin}/confirm`,
+            redirectTo: `${window.location.origin}${baseURL}confirm`,
         },
     });
 

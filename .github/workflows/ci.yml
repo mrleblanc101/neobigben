@@ -18,9 +18,21 @@ jobs:
                   node-version: "20"
 
             - run: npx nypm install
+            - name: Read the short commit hash
+              id: git
+              run: echo "short_sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
             - run: npm run build
               env:
                   NITRO_PRESET: github_pages
+                  # Served at https://<owner>.github.io/<repository>/
+                  NUXT_APP_BASE_URL: /${{ github.event.repository.name }}/
+                  # Shown at the bottom of the user menu
+                  NUXT_PUBLIC_GIT_TAG: ${{ github.ref_name }}
+                  NUXT_PUBLIC_GIT_SHORT_SHA: ${{ steps.git.outputs.short_sha }}
+                  # The Supabase project, from the repository's Actions variables. Both end up in the
+                  # published app: the publishable key is meant to be public, row level security protects the data.
+                  NUXT_PUBLIC_SUPABASE_URL: ${{ vars.NUXT_PUBLIC_SUPABASE_URL }}
+                  NUXT_PUBLIC_SUPABASE_KEY: ${{ vars.NUXT_PUBLIC_SUPABASE_KEY }}
 
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v3
