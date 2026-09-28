@@ -30,6 +30,11 @@ function sortable(list: Ref<HTMLElement | undefined>, section: Ref<Project[]>) {
         filter: "button",
         preventOnFilter: false,
         animation: 150,
+        // On touch screens a drag starts after a press and hold, so swiping over the list still scrolls it
+        delay: 250,
+        delayOnTouchOnly: true,
+        // A finger moving a few pixels while held doesn't cancel the drag
+        touchStartThreshold: 5,
         onUpdate(event: SortableEvent) {
             // Put the row back where Vue rendered it, then let the new order re-render the list
             removeNode(event.item);
