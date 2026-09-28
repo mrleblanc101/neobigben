@@ -21,15 +21,23 @@ async function remove(entry: Entry) {
 // Entries in chronological order, with a pause row wherever there is a hole between two entries
 const rows = computed(() => {
     const result: Row[] = [];
-    entries.value.forEach((entry, i) => {
-        const previous = entries.value[i - 1];
-        if (previous && toMinutes(entry.start) > toMinutes(previous.end)) {
-            result.push({ type: "gap", key: `gap-${entry.id}`, start: previous.end, end: entry.start, project: entry.project });
+    // The latest end so far: an entry inside a longer one above it leaves no hole after it
+    let latestEnd: string | null = null;
+    for (const entry of entries.value) {
+        if (latestEnd && toMinutes(entry.start) > toMinutes(latestEnd)) {
+            result.push({ type: "gap", key: `gap-${entry.id}`, start: latestEnd, end: entry.start, project: entry.project });
         }
         result.push({ type: "entry", key: `entry-${entry.id}`, entry });
-    });
+        if (!latestEnd || toMinutes(entry.end) > toMinutes(latestEnd)) latestEnd = entry.end;
+    }
     return result;
 });
+
+// Entries whose time range crosses another entry's on the same day
+const overlapping = computed(() => new Set(entries.value
+    .filter(entry => entries.value.some(other => other !== entry
+        && toMinutes(entry.start) < toMinutes(other.end) && toMinutes(other.start) < toMinutes(entry.end)))
+    .map(entry => entry.id)));
 </script>
 
 <template>
@@ -71,12 +79,14 @@ const rows = computed(() => {
                     </Button>
                 </div>
 
-                <!-- Once copied to NetSuite, everything but the actions fades back -->
+                <!-- Once copied to NetSuite, everything but the actions fades back; overlapping entries get red stripes -->
                 <div
                     v-else
                     :class="ENTRY_GRID"
                     :data-copied="row.entry.copiedToNetsuite || undefined"
-                    class="min-h-14 border-b text-sm not-data-copied:hover:bg-muted/50 data-copied:*:not-last:opacity-45"
+                    :data-overlap="overlapping.has(row.entry.id) || undefined"
+                    :title="overlapping.has(row.entry.id) ? 'Chevauche une autre entrée' : undefined"
+                    class="min-h-14 border-b text-sm not-data-copied:hover:bg-muted/50 data-copied:*:not-last:opacity-45 data-overlap:bg-[repeating-linear-gradient(135deg,transparent_0_6px,color-mix(in_oklab,var(--color-red-500)_12%,transparent)_6px_12px)]"
                 >
                     <div class="-ml-1 flex items-center gap-0.5 font-mono text-[13px]">
                         <span class="flex-1 text-center">{{ row.entry.start }}</span>
