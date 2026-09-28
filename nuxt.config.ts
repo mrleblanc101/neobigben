@@ -66,4 +66,10 @@ export default defineNuxtConfig({
     colorMode: {
         classSuffix: "",
     },
+    nitro: {
+        prerender: {
+            // The prerender crawler follows the page head's manifest link and would write a page over public/manifest.json
+            ignore: [/\/manifest\.json$/],
+        },
+    },
 });
