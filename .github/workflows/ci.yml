@@ -15,7 +15,8 @@ jobs:
             - run: corepack enable
             - uses: actions/setup-node@v6
               with:
-                  node-version: "20"
+                  # Nuxt's build needs Set.prototype.difference, from Node 22
+                  node-version: "24"
 
             - run: npx nypm install
             - name: Read the short commit hash
@@ -29,10 +30,9 @@ jobs:
                   # Shown at the bottom of the user menu
                   NUXT_PUBLIC_GIT_TAG: ${{ github.ref_name }}
                   NUXT_PUBLIC_GIT_SHORT_SHA: ${{ steps.git.outputs.short_sha }}
-                  # The Supabase project, from the repository's Actions variables. Both end up in the
-                  # published app: the publishable key is meant to be public, row level security protects the data.
-                  NUXT_PUBLIC_SUPABASE_URL: ${{ vars.NUXT_PUBLIC_SUPABASE_URL }}
-                  NUXT_PUBLIC_SUPABASE_KEY: ${{ vars.NUXT_PUBLIC_SUPABASE_KEY }}
+                  # The Supabase project, from the repository's Actions secrets
+                  NUXT_PUBLIC_SUPABASE_URL: ${{ secrets.NUXT_PUBLIC_SUPABASE_URL }}
+                  NUXT_PUBLIC_SUPABASE_KEY: ${{ secrets.NUXT_PUBLIC_SUPABASE_KEY }}
 
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v3
