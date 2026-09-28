@@ -5,7 +5,7 @@
     "start_url": "/?source=pwa",
     "icons": [
         {
-            "src": "/maskable_icon.png",
+            "src": "/maskable-dark.png",
             "sizes": "1024x1024",
             "type": "image/png",
             "purpose": "any maskable"

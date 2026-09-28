@@ -5,8 +5,16 @@ export default defineNuxtConfig({
     app: {
         head: {
             link: [
-                { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
-                // Lets the app be installed, with its own icon
+                {
+                    rel: "icon",
+                    href: "/favicon-light.png",
+                    media: "(prefers-color-scheme: dark)",
+                },
+                {
+                    rel: "icon",
+                    href: "/favicon-dark.png",
+                    media: "(prefers-color-scheme: light)",
+                },
                 { rel: "manifest", href: "/manifest.json" },
             ],
         },
@@ -17,7 +25,12 @@ export default defineNuxtConfig({
     vite: {
         plugins: [tailwindcss()],
     },
-    modules: ["shadcn-nuxt", "@nuxtjs/supabase", "@nuxt/eslint", "@nuxtjs/color-mode"],
+    modules: [
+        "shadcn-nuxt",
+        "@nuxtjs/supabase",
+        "@nuxt/eslint",
+        "@nuxtjs/color-mode",
+    ],
     shadcn: {
         /**
          * Prefix for all the imported component.

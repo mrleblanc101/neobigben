@@ -31,6 +31,7 @@ const subtitle = computed(() => `Semaine ${weekNumber(date.value)}`);
             </p>
         </div>
         <div class="flex items-center gap-2">
+            <TrackerDayPicker />
             <!-- Dividers are their own elements: a translucent border on a button would tint with its hover background -->
             <div class="flex overflow-hidden rounded-md border">
                 <button type="button" aria-label="Jour précédent" class="flex size-9 items-center justify-center hover:bg-accent" @click="shiftDay(-1)">

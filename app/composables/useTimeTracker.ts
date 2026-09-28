@@ -117,6 +117,21 @@ export function useTimeTracker() {
         loadedWeeks.value.push(days[0]!);
     }
 
+    /**
+     * The days from `first` to `last` (YYYY-MM-DD) that have entries, for the calendar. Days of loaded weeks are read
+     * from what's loaded, which is up to date; the others come from the database.
+     */
+    async function daysWithEntries(first: string, last: string) {
+        const { data, error: cause } = await supabase.from("entries").select("day").gte("day", first).lte("day", last);
+        const days = new Set(cause ? [] : data.map(row => row.day));
+        for (const [day, list] of Object.entries(byDate.value)) {
+            if (day < first || day > last) continue;
+            if (list.length) days.add(day);
+            else days.delete(day);
+        }
+        return days;
+    }
+
     /** Fetches the entries of the day's week, unless they're already loaded */
     function loadWeek(day: Date) {
         const sunday = startOfWeek(day);
@@ -337,6 +352,7 @@ export function useTimeTracker() {
         colorOf,
         init,
         loadWeek,
+        daysWithEntries,
         reset,
         addEntry,
         removeEntry,
