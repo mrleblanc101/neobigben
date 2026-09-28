@@ -11,8 +11,8 @@ const trimmed = computed(() => query.value.trim());
 const canCreate = computed(() => !!trimmed.value && !projects.value.some(p => p.name.toLowerCase() === trimmed.value.toLowerCase()));
 
 const visible = computed(() => {
-    const q = trimmed.value.toLowerCase();
-    return projects.value.filter(p => p.name.toLowerCase().includes(q)).sort((a, b) => a.position - b.position);
+    const q = searchKey(trimmed.value);
+    return projects.value.filter(p => searchKey(p.name).includes(q)).sort((a, b) => a.position - b.position);
 });
 const favorites = computed(() => visible.value.filter(p => p.fav));
 const others = computed(() => visible.value.filter(p => !p.fav));

@@ -39,6 +39,11 @@ export function isLightColor(color: string) {
     return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.55;
 }
 
+/** Text to compare in searches, ignoring case and accents ("Réunion" matches "reunion") */
+export function searchKey(text: string) {
+    return text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+}
+
 export const DAY_NAMES = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
 export const MONTH_NAMES = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 

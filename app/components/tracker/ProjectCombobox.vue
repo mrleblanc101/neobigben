@@ -23,10 +23,10 @@ const trimmed = computed(() => query.value.trim());
 const typing = computed(() => trimmed.value.toLowerCase() !== project.value.toLowerCase());
 const matches = computed(() => {
     if (!typing.value) return projects.value;
-    const q = trimmed.value.toLowerCase();
+    const q = searchKey(trimmed.value);
     return projects.value
-        .filter(p => p.name.toLowerCase().includes(q))
-        .sort((a, b) => Number(b.name.toLowerCase().startsWith(q)) - Number(a.name.toLowerCase().startsWith(q)));
+        .filter(p => searchKey(p.name).includes(q))
+        .sort((a, b) => Number(searchKey(b.name).startsWith(q)) - Number(searchKey(a.name).startsWith(q)));
 });
 const canCreate = computed(() => !!trimmed.value && !projects.value.some(p => p.name.toLowerCase() === trimmed.value.toLowerCase()));
 
