@@ -2,6 +2,7 @@ import type { Database } from "~/types/database.types";
 
 type ProjectRow = Database["public"]["Tables"]["projects"]["Row"];
 type EntryRow = Database["public"]["Tables"]["entries"]["Row"];
+type SettingsRow = Database["public"]["Tables"]["user_settings"]["Row"];
 
 /** An entry as loaded, pointing at its project by id so renames don't touch entries */
 interface StoredEntry extends Omit<Entry, "project"> {
@@ -17,6 +18,8 @@ export interface EntryEditor {
 
 // Weeks being fetched, so concurrent callers share one request
 const pendingWeeks = new Map<string, Promise<void>>();
+// Changes made elsewhere (another tab or device), pushed by Supabase Realtime while signed in
+let changes: ReturnType<ReturnType<typeof useSupabaseClient>["channel"]> | null = null;
 
 const toProject = (row: ProjectRow): Project => ({
     id: row.id,
@@ -104,7 +107,47 @@ export function useTimeTracker() {
             dayStart.value = settingsResult.data.day_start.slice(0, 5);
         }
         ready.value = true;
+        subscribe();
         await loadWeek(date.value);
+    }
+
+    /**
+     * Applies the changes made to the user's data from elsewhere as they happen. Row level security limits them to
+     * the user's own rows. This tab's own changes come back too: applying them is harmless, rows are matched by id.
+     */
+    function subscribe() {
+        if (changes) return;
+        changes = supabase
+            .channel("tracker")
+            // A deleted row only carries its id (the default replica identity)
+            .on<ProjectRow>("postgres_changes", { event: "*", schema: "public", table: "projects" }, (payload) => {
+                if (payload.eventType === "DELETE") dropProject(payload.old.id!);
+                else storeProject(payload.new);
+            })
+            .on<EntryRow>("postgres_changes", { event: "*", schema: "public", table: "entries" }, (payload) => {
+                if (payload.eventType === "DELETE") dropEntry(payload.old.id!);
+                else storeEntries([payload.new]);
+            })
+            .on<SettingsRow>("postgres_changes", { event: "*", schema: "public", table: "user_settings" }, (payload) => {
+                if (payload.eventType === "DELETE") return;
+                weeklyGoalHours.value = payload.new.weekly_goal_hours;
+                dayStart.value = payload.new.day_start.slice(0, 5);
+            })
+            .subscribe();
+    }
+
+    /** Removes a project and its entries from what's loaded */
+    function dropProject(id: string) {
+        projects.value = projects.value.filter(p => p.id !== id);
+        for (const [day, list] of Object.entries(byDate.value)) {
+            if (list.some(e => e.projectId === id)) byDate.value[day] = list.filter(e => e.projectId !== id);
+        }
+    }
+
+    /** Adds a project, or replaces it if it's already there, keeping the list in its stored order */
+    function storeProject(row: ProjectRow) {
+        const others = projects.value.filter(p => p.id !== row.id);
+        projects.value = [...others, toProject(row)].sort((a, b) => a.position - b.position || b.created - a.created);
     }
 
     async function fetchWeek(sunday: Date) {
@@ -150,7 +193,7 @@ export function useTimeTracker() {
         const position = Math.min(0, ...projects.value.map(p => p.position)) - 1;
         const { data, error: cause } = await supabase.from("projects").insert({ name, color, position }).select().single();
         if (cause) return fail("Impossible de créer le projet", cause);
-        projects.value.push(toProject(data));
+        storeProject(data);
         return true;
     }
 
@@ -215,10 +258,7 @@ export function useTimeTracker() {
         if (!project) return;
         const { error: cause } = await supabase.from("projects").delete().eq("id", project.id);
         if (cause) return void fail("Impossible de supprimer le projet", cause);
-        projects.value = projects.value.filter(p => p.id !== project.id);
-        for (const [day, list] of Object.entries(byDate.value)) {
-            if (list.some(e => e.projectId === project.id)) byDate.value[day] = list.filter(e => e.projectId !== project.id);
-        }
+        dropProject(project.id);
     }
 
     async function saveSettings(settings: { weeklyGoalHours: number; dayStart: string }) {
@@ -236,8 +276,22 @@ export function useTimeTracker() {
         return { start_time: draft.start, end_time: draft.end, note: draft.note };
     }
 
+    /** Takes an entry out of whichever day holds it */
+    function dropEntry(id: string) {
+        for (const [day, list] of Object.entries(byDate.value)) {
+            if (list.some(e => e.id === id)) byDate.value[day] = list.filter(e => e.id !== id);
+        }
+    }
+
+    /**
+     * Files entries under their day, replacing them if they're already there, e.g. one moved to another day.
+     * Entries of weeks not loaded yet are left for the week's fetch.
+     */
     function storeEntries(rows: EntryRow[]) {
-        for (const row of rows) byDate.value[row.day] = [...(byDate.value[row.day] ?? []), toStoredEntry(row)];
+        for (const row of rows) {
+            dropEntry(row.id);
+            if (byDate.value[row.day]) byDate.value[row.day] = [...byDate.value[row.day]!, toStoredEntry(row)];
+        }
     }
 
     /** Adds an entry to the selected day; one ending past midnight is saved as two entries, one per day */
@@ -265,10 +319,6 @@ export function useTimeTracker() {
             .select()
             .single();
         if (cause) return fail("Impossible de modifier l’entrée", cause);
-        // The entry may have changed day: take it out of whichever day held it, then file it under its day
-        for (const [key, list] of Object.entries(byDate.value)) {
-            if (list.some(e => e.id === id)) byDate.value[key] = list.filter(e => e.id !== id);
-        }
         storeEntries([data]);
         if (!nextDay) return true;
 
@@ -294,9 +344,7 @@ export function useTimeTracker() {
     async function removeEntry(id: string) {
         const { error: cause } = await supabase.from("entries").delete().eq("id", id);
         if (cause) return void fail("Impossible de supprimer l’entrée", cause);
-        for (const [day, list] of Object.entries(byDate.value)) {
-            if (list.some(e => e.id === id)) byDate.value[day] = list.filter(e => e.id !== id);
-        }
+        dropEntry(id);
     }
 
     function openEditor(entry?: Entry | Partial<EntryDraft>) {
@@ -320,6 +368,8 @@ export function useTimeTracker() {
 
     /** Forgets everything loaded for the signed-in user */
     function reset() {
+        if (changes) void supabase.removeChannel(changes);
+        changes = null;
         pendingWeeks.clear();
         date.value = startOfDay(new Date());
         byDate.value = {};
