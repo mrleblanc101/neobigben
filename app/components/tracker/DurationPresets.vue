@@ -4,7 +4,8 @@ import { PopoverArrow } from "reka-ui";
 /**
  * Wraps the "Fin" input: while it has focus and the start is set, a popover offers common durations,
  * and "Maintenant" to end the entry at the current time.
- * The buttons never take focus, so typing in the input can go on.
+ * The buttons never take focus, so typing in the input can go on; picking one moves on to the field after the times,
+ * which closes the popover.
  */
 defineOptions({ inheritAttrs: false });
 
@@ -28,6 +29,15 @@ const PRESETS = [15, 30, 60, 90, 120].map(value => ({
 }));
 
 const focused = ref(false);
+const wrapper = ref<HTMLElement>();
+
+// Once the parent has rendered the picked time, Durée leaves the Tab order and the next field is the project
+async function pick(event: () => void) {
+    event();
+    await nextTick();
+    const input = wrapper.value?.querySelector("input");
+    if (input) focusNextField(input);
+}
 
 // "Maintenant" ends the entry at the actual current moment, read each time the popover opens.
 // It's offered only when that moment falls less than 24 hours after the start on the displayed day:
@@ -52,7 +62,7 @@ const nowUnavailable = computed(() => {
 <template>
     <Popover :open="focused && start !== null">
         <PopoverAnchor as-child>
-            <div v-bind="$attrs" @focusin="focused = true" @focusout="focused = false">
+            <div ref="wrapper" v-bind="$attrs" @focusin="focused = true" @focusout="focused = false">
                 <slot />
             </div>
         </PopoverAnchor>
@@ -75,7 +85,7 @@ const nowUnavailable = computed(() => {
                     class="h-6.5 w-full px-2.5 font-mono font-normal"
                     :class="{ 'border-muted-foreground/60 bg-accent dark:bg-accent': minutes === preset.value }"
                     @mousedown.prevent
-                    @click="emit('duration', preset.value)"
+                    @click="pick(() => emit('duration', preset.value))"
                 >
                     {{ preset.label }}
                 </Button>
@@ -89,13 +99,14 @@ const nowUnavailable = computed(() => {
                         class="h-6.5 w-full px-2.5 font-normal"
                         :disabled="!!nowUnavailable"
                         @mousedown.prevent
-                        @click="emit('end', formatMinutes(now.getHours() * 60 + now.getMinutes()))"
+                        @click="pick(() => emit('end', formatMinutes(now.getHours() * 60 + now.getMinutes())))"
                     >
                         Maintenant
                     </Button>
                 </span>
             </div>
-            <PopoverArrow :width="14" :height="7" class="fill-popover stroke-border" />
+            <!-- Moved 1px into the popover so its fill covers the popover border along its base -->
+            <PopoverArrow :width="14" :height="7" class="-translate-y-px fill-popover stroke-border" />
         </PopoverContent>
     </Popover>
 </template>

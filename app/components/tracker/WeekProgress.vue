@@ -48,13 +48,13 @@ function valueClass(d: (typeof days.value)[number]) {
         <PopoverTrigger as-child>
             <button
                 type="button"
-                class="relative flex h-10 items-center gap-2.5 overflow-hidden rounded-md border px-3 text-[13px] transition-colors hover:bg-accent data-[state=open]:bg-accent"
+                class="relative flex h-9 items-center gap-2.5 overflow-hidden rounded-md border px-3 text-[13px] transition-colors hover:bg-accent data-[state=open]:bg-accent pb-0.5"
             >
                 <Clock class="size-3.5 text-muted-foreground" />
                 <span class="font-mono font-medium">{{ formatMinutes(weekTotal) }}</span>
                 <span class="font-mono text-muted-foreground/70">/ {{ formatMinutes(weekGoal) }}</span>
                 <!-- Progress along the bottom edge, like a border; the track is a tint of the text color, which stays visible on any hover or selected background -->
-                <span class="absolute inset-x-0 bottom-0 flex h-1 bg-foreground/10">
+                <span class="absolute inset-x-0 bottom-0 flex h-0.75 bg-foreground/10">
                     <span class="bg-primary" :style="{ width: weekPct }" />
                 </span>
             </button>
