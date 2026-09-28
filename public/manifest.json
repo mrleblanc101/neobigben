@@ -1,11 +1,11 @@
 {
     "name": "NeoBigBen",
     "short_name": "NeoBigBen",
-    "id": "./?source=pwa",
+    "id": "/neobigben/",
     "start_url": "./?source=pwa",
     "icons": [
         {
-            "src": "/neobigben/maskable-dark.png",
+            "src": "maskable-dark.png",
             "sizes": "1024x1024",
             "type": "image/png",
             "purpose": "any maskable"
