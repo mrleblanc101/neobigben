@@ -5,17 +5,24 @@ const { date, weekDates, weekGoal, dayGoal, minutesOn, goTo } = useTimeTracker()
 
 const open = ref(false);
 
+/** How a day's time compares with the day's goal: none, short of it, within 30 minutes, reached, or beyond it */
+function dayStatus(minutes: number) {
+    if (minutes === 0) return "none";
+    if (minutes > dayGoal.value) return "over";
+    if (minutes === dayGoal.value) return "goal";
+    return minutes >= dayGoal.value - 30 ? "close" : "short";
+}
+
 const days = computed(() =>
     weekDates.value.map((day) => {
         const minutes = minutesOn(day);
         const weekend = day.getDay() === 0 || day.getDay() === 6;
-        const reached = minutes >= dayGoal.value;
         return {
             day,
             label: DAY_NAMES[day.getDay()],
             minutes,
             weekend,
-            reached,
+            status: dayStatus(minutes),
             selected: dateKey(day) === dateKey(date.value),
             pct: `${Math.min(100, (minutes / dayGoal.value) * 100)}%`,
         };
@@ -31,15 +38,29 @@ function selectDay(day: Date) {
     open.value = false;
 }
 
+// Weekend days have no goal: their time stays neutral
+const BAR_CLASSES = {
+    none: "",
+    short: "bg-red-500",
+    close: "bg-yellow-500",
+    goal: "bg-green-500",
+    over: "bg-lime-500",
+};
+const VALUE_CLASSES = {
+    none: "text-muted-foreground/50",
+    short: "text-red-500 dark:text-red-400",
+    close: "text-yellow-600 dark:text-yellow-400",
+    goal: "text-green-600 dark:text-green-400",
+    over: "text-lime-600 dark:text-lime-400",
+};
+
 function barClass(d: (typeof days.value)[number]) {
-    if (d.weekend) return "bg-muted-foreground/70";
-    return d.reached ? "bg-emerald-500" : "bg-red-400";
+    return d.weekend ? "bg-muted-foreground/70" : BAR_CLASSES[d.status];
 }
 
 function valueClass(d: (typeof days.value)[number]) {
-    if (d.minutes === 0) return "text-muted-foreground/50";
-    if (d.weekend) return "text-muted-foreground";
-    return d.reached ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400";
+    if (d.status === "none") return VALUE_CLASSES.none;
+    return d.weekend ? "text-muted-foreground" : VALUE_CLASSES[d.status];
 }
 </script>
 
