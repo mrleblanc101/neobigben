@@ -1,0 +1,43 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_10_2)">
+<rect width="256" height="256" fill="#122739"/>
+<path d="M256 0H0V256H256V0Z" fill="url(#paint0_linear_10_2)"/>
+<g filter="url(#filter0_d_10_2)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M180.502 135.355C182.93 138.175 184.953 141.397 186.572 145.023C188.191 148.648 189 152.676 189 157.107C189 165.163 187.381 171.608 184.144 176.845C180.906 182.082 176.86 186.513 171.599 189.735C166.338 193.361 160.672 195.375 153.793 196.986C146.913 198.194 140.033 199 133.154 199H68V56H127.084C132.749 56 138.819 56.4028 144.89 56.8056C151.365 57.6113 157.435 59.2225 163.1 62.0423C168.766 64.862 173.217 68.4873 176.86 73.7239C180.502 78.5577 182.525 85.4056 182.525 93.462C182.525 101.115 180.906 107.561 176.86 112.394C172.813 117.631 167.957 121.256 161.482 123.673V124.479C165.124 125.285 168.361 126.493 171.599 128.507C174.836 130.118 178.074 132.535 180.502 135.355Z" fill="#102A3E"/>
+<circle cx="124" cy="102" r="12" fill="#E3BD6F"/>
+<circle cx="124" cy="152" r="12" fill="#E3BD6F"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_d_10_2" x="29" y="20" width="201" height="223" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="1" dy="4"/>
+<feGaussianBlur stdDeviation="20"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.890196 0 0 0 0 0.741176 0 0 0 0 0.435294 0 0 0 0.18 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_10_2"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_10_2" result="shape"/>
+</filter>
+<linearGradient id="paint0_linear_10_2" x1="96" y1="5.66244e-07" x2="74.5" y2="264" gradientUnits="userSpaceOnUse">
+<stop stop-color="#182D40"/>
+<stop offset="0.0111798" stop-color="#192E41"/>
+<stop offset="0.20678" stop-color="#25394D"/>
+<stop offset="0.294915" stop-color="#2E3E53"/>
+<stop offset="0.40339" stop-color="#34445A"/>
+<stop offset="0.467797" stop-color="#374A5E"/>
+<stop offset="0.545763" stop-color="#3D5065"/>
+<stop offset="0.647458" stop-color="#49586F"/>
+<stop offset="0.664407" stop-color="#4C5A70"/>
+<stop offset="0.705085" stop-color="#515F75"/>
+<stop offset="0.762712" stop-color="#5C677C"/>
+<stop offset="0.8" stop-color="#666D80"/>
+<stop offset="0.827119" stop-color="#6D7384"/>
+<stop offset="0.894915" stop-color="#82818A"/>
+<stop offset="0.938983" stop-color="#90888C"/>
+<stop offset="1" stop-color="#A0938B"/>
+</linearGradient>
+<clipPath id="clip0_10_2">
+<rect width="256" height="256" fill="white"/>
+</clipPath>
+</defs>
+</svg>

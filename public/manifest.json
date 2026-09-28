@@ -1,0 +1,17 @@
+{
+    "name": "Neobig Ben",
+    "short_name": "Neobig Ben",
+    "id": "/?source=pwa",
+    "start_url": "/?source=pwa",
+    "icons": [
+        {
+            "src": "/maskable_icon.png",
+            "sizes": "1024x1024",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "theme_color": "#0a0a0a",
+    "background_color": "#0a0a0a",
+    "display": "standalone"
+}

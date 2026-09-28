@@ -4,7 +4,11 @@ export default defineNuxtConfig({
     ssr: false,
     app: {
         head: {
-            link: [{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
+            link: [
+                { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+                // Lets the app be installed, with its own icon
+                { rel: "manifest", href: "/manifest.json" },
+            ],
         },
     },
     compatibilityDate: "2025-07-15",
