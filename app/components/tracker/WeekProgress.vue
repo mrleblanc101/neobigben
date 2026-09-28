@@ -70,9 +70,9 @@ function valueClass(d: (typeof days.value)[number]) {
             <button type="button" class="relative flex h-9 items-center gap-2.5 overflow-hidden rounded-md border px-3 text-[13px] transition-colors hover:bg-accent data-[state=open]:bg-accent pb-0.5">
                 <Clock class="size-3.5 text-muted-foreground" />
                 <!-- On small screens, only what's left to do this week -->
-                <span class="font-medium sm:hidden" :class="{ 'font-mono': weekTotal < weekGoal }">{{ weekLeft }}</span>
-                <span class="hidden font-mono font-medium sm:inline">{{ formatMinutes(weekTotal) }}</span>
-                <span class="hidden font-mono text-muted-foreground/70 sm:inline">/ {{ formatMinutes(weekGoal) }}</span>
+                <span class="font-medium md:hidden" :class="{ 'font-mono': weekTotal < weekGoal }">{{ weekLeft }}</span>
+                <span class="hidden font-mono font-medium md:inline">{{ formatMinutes(weekTotal) }}</span>
+                <span class="hidden font-mono text-muted-foreground/70 md:inline">/ {{ formatMinutes(weekGoal) }}</span>
                 <span class="absolute inset-x-0 bottom-0 flex h-0.75 bg-foreground/10">
                     <span class="bg-primary" :style="{ width: weekPct }" />
                 </span>

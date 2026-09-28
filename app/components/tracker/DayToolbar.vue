@@ -30,8 +30,8 @@ const subtitle = computed(() => `Semaine ${weekNumber(date.value)}`);
                 {{ subtitle }}
             </p>
         </div>
-        <div class="flex items-center gap-2">
-            <TrackerDayPicker />
+        <!-- The actions take their own full-width row, the add button pushed to its end and showing only its icon on small screens -->
+        <div class="flex w-full items-center gap-2">
             <!-- Dividers are their own elements: a translucent border on a button would tint with its hover background -->
             <div class="flex overflow-hidden rounded-md border">
                 <button type="button" aria-label="Jour précédent" class="flex size-9 items-center justify-center hover:bg-accent" @click="shiftDay(-1)">
@@ -46,9 +46,11 @@ const subtitle = computed(() => `Semaine ${weekNumber(date.value)}`);
                     <ChevronRight class="size-4" />
                 </button>
             </div>
-            <Button class="px-3.5" @click="openEditor()">
+            <TrackerDayPicker />
+
+            <Button class="ml-auto w-9 md:w-auto md:px-3.5" aria-label="Nouvelle entrée" @click="openEditor()">
                 <Plus />
-                Nouvelle entrée
+                <span class="hidden md:inline">Nouvelle entrée</span>
             </Button>
         </div>
     </div>
