@@ -72,7 +72,7 @@ async function remove() {
 <template>
     <div
         :data-draggable="draggable && !renaming ? '' : undefined"
-        class="group flex h-11 items-center gap-2.5 border-b pr-2 pl-3.5 text-sm last:border-b-0 hover:bg-muted/50 data-draggable:cursor-grab data-draggable:active:cursor-grabbing"
+        class="group flex h-11 items-center gap-2.5 border-b pr-2 pl-3.5 text-sm last:border-b-0 hover:bg-muted/50 data-draggable:cursor-grab data-draggable:select-none data-draggable:active:cursor-grabbing"
     >
         <!-- The color chip turns into a grip while a draggable row is hovered; its three variants take the same 10px in the row -->
         <span v-if="draggable && !renaming" class="-mx-[3px] grid size-4 shrink-0 place-items-center text-muted-foreground">
