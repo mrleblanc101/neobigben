@@ -3,6 +3,9 @@ import { X } from "@lucide/vue";
 
 const { date, error, init, loadWeek } = useTimeTracker();
 
+// "Mercredi 30 septembre · NeoBigBen", following the selected day
+useHead({ title: () => `${DAY_NAMES[date.value.getDay()]} ${date.value.getDate()} ${MONTH_NAMES[date.value.getMonth()]}` });
+
 onMounted(init);
 // Moving to another week fetches its entries
 watch(() => dateKey(startOfWeek(date.value)), () => loadWeek(date.value));

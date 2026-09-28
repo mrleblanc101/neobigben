@@ -1,7 +1,5 @@
 import tailwindcss from "@tailwindcss/vite";
 
-// The path the app is served under: "/" locally, "/neobigben/" on GitHub Pages (NUXT_APP_BASE_URL, set by the CI).
-// Nuxt applies it on its own; it's read here too for the links in the page head.
 const baseURL = process.env.NUXT_APP_BASE_URL || "/";
 
 export default defineNuxtConfig({
@@ -9,6 +7,9 @@ export default defineNuxtConfig({
     app: {
         baseURL,
         head: {
+            htmlAttrs: { lang: "fr" },
+            titleTemplate: "%s %separator %siteName",
+            templateParams: { separator: "|", siteName: "NeoBigBen" },
             link: [
                 {
                     rel: "icon",
@@ -58,7 +59,6 @@ export default defineNuxtConfig({
     },
     runtimeConfig: {
         public: {
-            // Placeholders until the build sets NUXT_PUBLIC_GIT_TAG and NUXT_PUBLIC_GIT_SHORT_SHA
             gitTag: "0.0.0",
             gitShortSha: "0000000",
         },

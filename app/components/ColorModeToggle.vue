@@ -5,6 +5,7 @@ const colorMode = useColorMode();
 
 const modes = ["light", "dark", "system"] as const;
 const icons = { light: Sun, dark: Moon, system: Monitor };
+const labels = { light: "clair", dark: "sombre", system: "système" };
 
 const current = computed(() =>
     modes.includes(colorMode.preference as typeof modes[number])
@@ -18,7 +19,7 @@ function toggle() {
 </script>
 
 <template>
-    <Button variant="ghost" size="icon" :aria-label="`Color mode: ${current}`" @click="toggle">
+    <Button variant="ghost" size="icon" :aria-label="`Thème : ${labels[current]}`" @click="toggle">
         <component :is="icons[current]" class="size-5" />
     </Button>
 </template>

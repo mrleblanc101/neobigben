@@ -1,4 +1,6 @@
 <script setup lang="ts">
+useHead({ title: "Connexion" });
+
 const errorMessage = ref("");
 </script>
 
@@ -7,10 +9,10 @@ const errorMessage = ref("");
         <Card class="bg-background shadow-none">
             <CardHeader>
                 <CardTitle class="text-2xl">
-                    Login
+                    Connexion
                 </CardTitle>
                 <CardDescription>
-                    Sign in with your Google account
+                    Connectez-vous avec votre compte Google
                 </CardDescription>
             </CardHeader>
             <CardContent class="grid gap-4">
@@ -18,7 +20,7 @@ const errorMessage = ref("");
                     <AlertDescription>{{ errorMessage }}</AlertDescription>
                 </Alert>
                 <AuthGoogleSignInButton @error="errorMessage = $event">
-                    Login with Google
+                    Se connecter avec Google
                 </AuthGoogleSignInButton>
             </CardContent>
         </Card>

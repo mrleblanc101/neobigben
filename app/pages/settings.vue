@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ArrowLeft, X } from "@lucide/vue";
 
+useHead({ title: "Paramètres" });
+
 const colorMode = useColorMode();
 const { weeklyGoalHours, dayStart, ready, error, init, saveSettings } = useTimeTracker();
 
