@@ -4,7 +4,7 @@ const errorMessage = ref("");
 
 <template>
     <AuthLayout>
-        <Card>
+        <Card class="bg-background shadow-none">
             <CardHeader>
                 <CardTitle class="text-2xl">
                     Login
