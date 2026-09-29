@@ -70,7 +70,10 @@ function save() {
 
 <template>
     <Dialog v-model:open="open">
-        <DialogContent class="gap-[18px] sm:max-w-[460px]">
+        <!-- Below sm, a bottom sheet: pinned to the bottom edge, full width, sliding up instead of zooming in -->
+        <DialogContent
+            class="gap-[18px] sm:max-w-[460px] max-sm:top-auto max-sm:bottom-0 max-sm:left-0 max-sm:max-h-[90svh] max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:overflow-y-auto max-sm:rounded-b-none max-sm:border-x-0 max-sm:border-b-0 max-sm:pb-[max(1.5rem,env(safe-area-inset-bottom))] max-sm:duration-300 max-sm:data-[state=closed]:zoom-out-100 max-sm:data-[state=closed]:fade-out-100 max-sm:data-[state=closed]:slide-out-to-bottom max-sm:data-[state=open]:zoom-in-100 max-sm:data-[state=open]:fade-in-100 max-sm:data-[state=open]:slide-in-from-bottom"
+        >
             <DialogHeader>
                 <DialogTitle>{{ editor?.id === "new" ? "Nouvelle entrée" : "Modifier l’entrée" }}</DialogTitle>
                 <DialogDescription>Renseignez la plage horaire, le projet et une note optionnelle.</DialogDescription>
