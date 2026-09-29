@@ -40,9 +40,11 @@ const toStoredEntry = (row: EntryRow): StoredEntry => ({
     copiedToNetsuite: row.copied_to_netsuite,
 });
 
+// Entries already copied to NetSuite are left out: the totals show what remains to copy
 function totalsByProject(entries: Entry[]) {
     const totals: Record<string, number> = {};
     for (const entry of entries) {
+        if (entry.copiedToNetsuite) continue;
         totals[entry.project] = (totals[entry.project] ?? 0) + entryMinutes(entry);
     }
     return totals;
