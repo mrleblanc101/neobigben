@@ -1,17 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 256 256">
-    <title>Neobig Ben</title>
+    <title>NeoBigBen</title>
     <!-- Built from neobigben.icon: full-bleed square for a maskable icon; the B and dots stay inside the 80% safe zone -->
     <defs>
         <linearGradient id="bg" x1="96" y1="0" x2="74.5" y2="264" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#FAFAFA" />
-            <stop offset="0.25" stop-color="#EEF2FA" />
-            <stop offset="0.5" stop-color="#BCD0F8" />
-            <stop offset="0.8" stop-color="#7AA6F7" />
+            <stop offset="0" stop-color="#18181B" />
+            <stop offset="0.25" stop-color="#1C2233" />
+            <stop offset="0.5" stop-color="#1E3A8A" />
+            <stop offset="0.8" stop-color="#2563EB" />
             <stop offset="1" stop-color="#3B82F6" />
         </linearGradient>
         <linearGradient id="letter" x1="0" y1="56" x2="0" y2="199" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#3F3F46" />
-            <stop offset="1" stop-color="#18181B" />
+            <stop offset="0" stop-color="#D4E0F3" />
+            <stop offset="1" stop-color="#A9B4C5" />
         </linearGradient>
     </defs>
     <rect width="256" height="256" fill="url(#bg)" />
