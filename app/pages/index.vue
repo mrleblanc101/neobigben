@@ -14,7 +14,7 @@ watch(() => dateKey(startOfWeek(date.value)), () => loadWeek(date.value));
 <template>
     <div class="flex min-h-svh flex-col">
         <TrackerAppHeader />
-        <div class="grid flex-1 items-start lg:grid-cols-[minmax(0,1fr)_clamp(300px,30vw,360px)]">
+        <div class="grid flex-1 items-start lg:grid-cols-[minmax(0,1fr)_390px]">
             <main class="flex min-w-0 flex-col gap-4 p-6">
                 <Alert v-if="error" variant="destructive" class="pr-10">
                     <AlertDescription>{{ error }}</AlertDescription>

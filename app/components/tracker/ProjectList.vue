@@ -3,7 +3,7 @@ import { Plus, Search } from "@lucide/vue";
 import { insertNodeAt, removeNode, useSortable } from "@vueuse/integrations/useSortable";
 import type { SortableEvent } from "sortablejs";
 
-const { projects, dayTotals, addProject, reorderProjects } = useTimeTracker();
+const { projects, addProject, reorderProjects } = useTimeTracker();
 
 const query = ref("");
 
@@ -76,13 +76,15 @@ async function create() {
     </button>
 
     <div v-if="favorites.length" class="flex flex-col gap-1.5">
-        <span class="text-xs font-medium text-muted-foreground">Favoris</span>
+        <div class="flex items-center justify-between gap-2 text-xs">
+            <span class="font-medium text-muted-foreground">Favoris</span>
+            <Badge variant="secondary" class="h-4 px-1.5 py-0 font-mono text-[10px] leading-none text-muted-foreground">{{ favorites.length }}</Badge>
+        </div>
         <div ref="favoritesList" class="flex flex-col overflow-hidden rounded-lg border">
             <TrackerProjectRow
                 v-for="project in favorites"
                 :key="project.id"
                 :project="project"
-                :minutes="dayTotals[project.name] ?? 0"
                 :draggable="draggable"
             />
         </div>
@@ -91,14 +93,13 @@ async function create() {
     <div v-if="others.length || !visible.length" class="flex flex-col gap-1.5">
         <div v-if="others.length" class="flex items-center justify-between gap-2 text-xs">
             <span class="font-medium text-muted-foreground">Projets</span>
-            <span class="font-mono text-muted-foreground/70">{{ others.length }}</span>
+            <Badge variant="secondary" class="h-4 px-1.5 py-0 font-mono text-[10px] leading-none text-muted-foreground">{{ others.length }}</Badge>
         </div>
         <div ref="othersList" class="flex flex-col overflow-hidden rounded-lg border">
             <TrackerProjectRow
                 v-for="project in others"
                 :key="project.id"
                 :project="project"
-                :minutes="dayTotals[project.name] ?? 0"
                 :draggable="draggable"
             />
             <div v-if="!visible.length" class="px-3.5 py-6 text-center text-[13px] text-muted-foreground">
