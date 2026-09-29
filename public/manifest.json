@@ -1,7 +1,7 @@
 {
     "name": "NeoBigBen",
     "short_name": "NeoBigBen",
-    "id": "/neobigben/",
+    "id": "neobigben/v2",
     "start_url": "./?source=pwa",
     "icons": [
         {
