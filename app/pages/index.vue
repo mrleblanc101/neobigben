@@ -1,10 +1,18 @@
 <script setup lang="ts">
 import { X } from "@lucide/vue";
+import { useMediaQuery } from "@vueuse/core";
 
 const { date, error, init, loadWeek } = useTimeTracker();
 
 // "Mercredi 30 septembre · NeoBigBen", following the selected day
 useHead({ title: () => `${DAY_NAMES[date.value.getDay()]} ${date.value.getDate()} ${MONTH_NAMES[date.value.getMonth()]}` });
+
+// The side panel sits beside the entries from lg up; below that it's an off-canvas opened from the header
+const isDesktop = useMediaQuery("(min-width: 1024px)");
+const panelOpen = useState("tracker:panel-open", () => false);
+watch(isDesktop, (desktop) => {
+    if (desktop) panelOpen.value = false;
+});
 
 onMounted(init);
 // Moving to another week fetches its entries
@@ -25,8 +33,17 @@ watch(() => dateKey(startOfWeek(date.value)), () => loadWeek(date.value));
                 <TrackerDayToolbar />
                 <TrackerEntriesTable />
             </main>
-            <TrackerSidePanel class="border-t lg:sticky lg:top-14 lg:min-h-[calc(100svh-3.5rem)] lg:border-t-0 lg:border-l" />
+            <TrackerSidePanel v-if="isDesktop" class="sticky top-14 min-h-[calc(100svh-3.5rem)] border-l" />
         </div>
+        <Sheet v-if="!isDesktop" v-model:open="panelOpen">
+            <SheetContent class="w-[390px] max-w-[calc(100vw-3rem)] gap-0 overflow-y-auto sm:max-w-none">
+                <SheetHeader class="h-14 shrink-0 justify-center border-b px-5 py-0">
+                    <SheetTitle class="text-sm">Résumé et projets</SheetTitle>
+                    <SheetDescription class="sr-only">Temps par projet et liste des projets</SheetDescription>
+                </SheetHeader>
+                <TrackerSidePanel />
+            </SheetContent>
+        </Sheet>
         <TrackerEntryDialog />
         <ConfirmDialog />
     </div>

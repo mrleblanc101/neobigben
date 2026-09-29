@@ -2,7 +2,8 @@
 const { date, isToday, dayTotals, weekTotals, dayGoal, weekGoal } = useTimeTracker();
 
 const tabs = ["Résumé", "Projets"] as const;
-const tab = ref<(typeof tabs)[number]>("Résumé");
+// Shared state, so the tab survives the off-canvas closing
+const tab = useState<(typeof tabs)[number]>("tracker:panel-tab", () => "Résumé");
 </script>
 
 <template>
