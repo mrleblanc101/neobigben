@@ -1,0 +1,117 @@
+{
+  "fill" : {
+    "automatic-gradient" : "extended-srgb:0.00000,0.53333,1.00000,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "glass" : false,
+          "image-name" : "layer-2-dots 6.svg",
+          "name" : "layer-2-dots"
+        }
+      ],
+      "name" : "common",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.3
+      }
+    },
+    {
+      "hidden" : false,
+      "layers" : [
+        {
+          "fill-specializations" : [
+            {
+              "value" : {
+                "automatic-gradient" : "display-p3:0.83922,0.88627,0.96078,1.00000"
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "automatic-gradient" : "display-p3:0.84961,0.88379,0.95361,1.00000",
+                "orientation" : {
+                  "start" : {
+                    "x" : 0.5,
+                    "y" : 1
+                  },
+                  "stop" : {
+                    "x" : 0.5,
+                    "y" : 0
+                  }
+                }
+              }
+            }
+          ],
+          "hidden" : false,
+          "image-name" : "layer-1-letter-B 6.svg",
+          "name" : "letter-b-light"
+        },
+        {
+          "glass" : false,
+          "hidden" : false,
+          "image-name" : "background-deep-dark 6.svg",
+          "name" : "background-deep-dark"
+        }
+      ],
+      "name" : "dark",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.3
+      }
+    },
+    {
+      "hidden" : false,
+      "layers" : [
+        {
+          "fill-specializations" : [
+            {
+              "value" : {
+                "automatic-gradient" : "srgb:0.15294,0.15294,0.16471,1.00000"
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "automatic-gradient" : "srgb:0.15294,0.15294,0.16471,1.00000"
+              }
+            }
+          ],
+          "hidden" : false,
+          "image-name" : "layer-1-letter-B 6.svg",
+          "name" : "letter-b-dark"
+        },
+        {
+          "glass" : false,
+          "hidden" : false,
+          "image-name" : "background-deep-light 9.svg",
+          "name" : "background-deep-light"
+        }
+      ],
+      "name" : "light",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.3
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

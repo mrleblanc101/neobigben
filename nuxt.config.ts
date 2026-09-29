@@ -1,131 +1,75 @@
-import ViteSvgLoader from 'vite-svg-loader';
+import tailwindcss from "@tailwindcss/vite";
 
-const vueFireConfig =
-    process.env.NODE_ENV === 'development'
-        ? {
-              apiKey: 'AIzaSyDYaC0AbDjuzAsQ4t2-QzbYgYMIWHNWHmc',
-              authDomain: 'neobigben-dev.firebaseapp.com',
-              projectId: 'neobigben-dev',
-              storageBucket: 'neobigben-dev.appspot.com',
-              messagingSenderId: '325271235170',
-              appId: '1:325271235170:web:398500c92cc2664e44bf3b',
-          }
-        : {
-              apiKey: 'AIzaSyArKefxLB6DdSkXhewC3_EzcOplCGGhuRs',
-              authDomain: 'neobigben.firebaseapp.com',
-              projectId: 'neobigben',
-              storageBucket: 'neobigben.appspot.com',
-              messagingSenderId: '681397227646',
-              appId: '1:681397227646:web:fdc164818213b9f80cc82f',
-          };
+const baseURL = process.env.NUXT_APP_BASE_URL || "/";
 
 export default defineNuxtConfig({
-    srcDir: 'src/',
-
-    devtools: { enabled: true },
-
     ssr: false,
-
     app: {
-        baseURL: '/neobigben/',
+        baseURL,
+        head: {
+            htmlAttrs: { lang: "fr" },
+            titleTemplate: "%s %separator %siteName",
+            templateParams: { separator: "|", siteName: "NeoBigBen" },
+            link: [
+                {
+                    rel: "icon",
+                    href: `${baseURL}favicon-light.png`,
+                    media: "(prefers-color-scheme: dark)",
+                },
+                {
+                    rel: "icon",
+                    href: `${baseURL}favicon-dark.png`,
+                    media: "(prefers-color-scheme: light)",
+                },
+                { rel: "manifest", href: `${baseURL}manifest.json` },
+            ],
+        },
     },
-
+    compatibilityDate: "2025-07-15",
+    devtools: { enabled: true },
+    css: ["~/assets/css/main.css"],
+    vite: {
+        plugins: [tailwindcss()],
+    },
+    modules: [
+        "shadcn-nuxt",
+        "@nuxtjs/supabase",
+        "@nuxt/eslint",
+        "@nuxtjs/color-mode",
+    ],
+    shadcn: {
+        /**
+         * Prefix for all the imported component.
+         * @default "Ui"
+         */
+        prefix: "",
+        /**
+         * Directory that the component lives in.
+         * Will respect the Nuxt aliases.
+         * @link https://nuxt.com/docs/api/nuxt-config#alias
+         * @default "@/components/ui"
+         */
+        componentDir: "@/components/ui",
+    },
+    supabase: {
+        redirectOptions: {
+            login: "/login",
+            callback: "/confirm",
+        },
+    },
     runtimeConfig: {
         public: {
-            commitTag: process.env.COMMIT_TAG,
-            commitShortSha: process.env.COMMIT_SHORT_SHA,
+            gitTag: "0.0.0",
+            gitShortSha: "0000000",
         },
     },
-
-    modules: [
-        '@nuxtjs/i18n',
-        '@nuxtjs/tailwindcss',
-        '@nuxtjs/color-mode',
-        '@nuxtjs/google-fonts',
-        '@pinia/nuxt',
-        '@vueuse/nuxt',
-        'nuxt-vuefire',
-    ],
-
-    vuefire: {
-        auth: {
-            enabled: true,
-        },
-        config: vueFireConfig,
-    },
-
-    i18n: {
-        strategy: 'prefix_except_default',
-        defaultLocale: 'fr',
-        langDir: 'i18n/',
-        locales: [
-            {
-                code: 'fr',
-                name: 'Français',
-                iso: 'fr-CA',
-                file: 'fr.json',
-            },
-            {
-                code: 'en',
-                name: 'English',
-                iso: 'en-CA',
-                file: 'en.json',
-            },
-        ],
-    },
-
-    googleFonts: {
-        download: true,
-        families: {
-            'DM+Sans': {
-                wght: [400, 500, 700, 900],
-                ital: [400],
-            },
-        },
-    },
-
     colorMode: {
-        preference: 'system',
-        fallback: 'dark',
-        classSuffix: '',
+        classSuffix: "",
     },
-
-    postcss: {
-        plugins: {
-            'postcss-import': {},
-            'tailwindcss/nesting': {},
-            tailwindcss: {},
-            autoprefixer: {},
+    nitro: {
+        prerender: {
+            // The prerender crawler follows the page head's manifest link and would write a page over public/manifest.json
+            ignore: [/\/manifest\.json$/],
         },
     },
-
-    build: {
-        transpile: ['moment'],
-    },
-
-    vite: {
-        define: {
-            __VUE_PROD_DEVTOOLS__: true,
-        },
-        plugins: [
-            ViteSvgLoader({
-                svgoConfig: {
-                    plugins: [
-                        { name: 'prefixIds' },
-                        { name: 'removeTitle' },
-                        { name: 'removeDesc' },
-                        { name: 'removeDimensions' },
-                        {
-                            name: 'removeAttrs',
-                            params: {
-                                attrs: '(fill|stroke)',
-                            },
-                        },
-                    ],
-                },
-            }),
-        ],
-    },
-
-    compatibilityDate: '2024-07-31',
 });

@@ -1,0 +1,23 @@
+{
+    "name": "NeoBigBen",
+    "short_name": "NeoBigBen",
+    "id": "neobigben/v3",
+    "start_url": "./?source=pwa",
+    "icons": [
+        {
+            "src": "maskable-1024-dark.png",
+            "sizes": "1024x1024",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "any-1024-dark.png",
+            "sizes": "1024x1024",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ],
+    "theme_color": "#0a0a0a",
+    "background_color": "#0a0a0a",
+    "display": "standalone"
+}
