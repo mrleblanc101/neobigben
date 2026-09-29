@@ -16,6 +16,8 @@ const rows = computed(() =>
         .sort((a, b) => b[1] - a[1])
         .map(([name, minutes]) => ({ name, minutes, color: colorOf(name), share: (minutes / total.value) * 100 })),
 );
+
+const hovered = ref<string | null>(null);
 </script>
 
 <template>
@@ -29,11 +31,26 @@ const rows = computed(() =>
                 <span class="pb-1 text-xs whitespace-nowrap text-muted-foreground/70">{{ subtitle }}</span>
             </div>
             <div class="flex h-2 gap-0.5 overflow-hidden rounded-full bg-muted">
-                <span v-for="row in rows" :key="row.name" :style="{ width: `${row.share}%`, background: row.color }" />
+                <span
+                    v-for="row in rows"
+                    :key="row.name"
+                    class="transition-opacity"
+                    :class="{ 'opacity-30': hovered && hovered !== row.name }"
+                    :style="{ width: `${row.share}%`, background: row.color }"
+                    @mouseenter="hovered = row.name"
+                    @mouseleave="hovered = null"
+                />
             </div>
         </div>
         <div class="flex flex-col border-t">
-            <div v-for="row in rows" :key="row.name" class="flex items-center gap-2.5 border-b px-5 py-2.5 text-sm">
+            <div
+                v-for="row in rows"
+                :key="row.name"
+                class="flex items-center gap-2.5 border-b px-5 py-2.5 text-sm transition-colors"
+                :class="{ 'bg-muted/50': hovered === row.name }"
+                @mouseenter="hovered = row.name"
+                @mouseleave="hovered = null"
+            >
                 <span class="size-2.5 rounded-[2px]" :style="{ background: row.color }" />
                 <span class="min-w-0 flex-1 truncate font-medium">{{ row.name }}</span>
                 <span class="text-xs text-muted-foreground/70">{{ Math.round(row.share) }} %</span>
