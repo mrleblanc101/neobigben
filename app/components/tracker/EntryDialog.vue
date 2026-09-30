@@ -52,8 +52,17 @@ async function requestClose() {
     if (discard) closeEditor();
 }
 
-// Focus the first field once the open animation is over rather than on mount: iOS Safari only scrolls
-// a focused field above its keyboard when the field is at rest, not while the sheet is still sliding up
+// iOS Safari only scrolls a focused field above its keyboard when the field is at rest, not while the
+// sheet is still sliding up, but it only opens the keyboard for a focus made during the tap itself.
+// So the tap focuses a hidden stand-in, which brings the keyboard up, and the first field takes over
+// once the open animation is over; the keyboard is already shown by then, so it stays.
+const focusProxy = useTemplateRef("focusProxy");
+
+function focusProxyOnOpen(event: Event) {
+    event.preventDefault();
+    focusProxy.value?.focus({ preventScroll: true });
+}
+
 function focusFirstField(event: AnimationEvent) {
     const content = event.currentTarget as HTMLElement;
     if (event.target !== content || content.dataset.state !== "open") return;
@@ -81,9 +90,18 @@ function save() {
         <!-- Below sm, a bottom sheet: pinned to the bottom edge, full width, sliding up instead of zooming in -->
         <DialogContent
             class="gap-[18px] sm:max-w-[460px] max-sm:top-auto max-sm:bottom-0 max-sm:left-0 max-sm:max-h-[90svh] max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:overflow-y-auto max-sm:rounded-b-none max-sm:border-x-0 max-sm:border-b-0 max-sm:pb-[calc(1.5rem+env(safe-area-inset-bottom))] max-sm:duration-300 max-sm:data-[state=closed]:zoom-out-100 max-sm:data-[state=closed]:fade-out-100 max-sm:data-[state=closed]:slide-out-to-bottom max-sm:data-[state=open]:zoom-in-100 max-sm:data-[state=open]:fade-in-100 max-sm:data-[state=open]:slide-in-from-bottom"
-            @open-auto-focus.prevent
+            @open-auto-focus="focusProxyOnOpen"
             @animationend="focusFirstField"
         >
+            <!-- Numeric, like the first field, so the keyboard doesn't switch layouts when it takes over -->
+            <input
+                ref="focusProxy"
+                aria-hidden="true"
+                tabindex="-1"
+                inputmode="numeric"
+                class="pointer-events-none absolute top-0 left-0 size-px text-base opacity-0"
+            >
+
             <DialogHeader>
                 <DialogTitle>{{ editor?.id === "new" ? "Nouvelle entrée" : "Modifier l’entrée" }}</DialogTitle>
                 <DialogDescription>Renseignez la plage horaire, le projet et une note optionnelle.</DialogDescription>
