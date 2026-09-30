@@ -60,7 +60,7 @@ async function create() {
             v-model="query"
             autocomplete="off"
             placeholder="Rechercher ou créer un projet…"
-            class="h-[34px] pl-8 text-[13px] md:text-[13px]"
+            class="h-[34px] pl-8 text-base"
             @keydown.enter="create"
         />
     </div>

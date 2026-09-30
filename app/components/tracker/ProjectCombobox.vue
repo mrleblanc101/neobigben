@@ -91,7 +91,7 @@ async function select(value: unknown) {
                 :display-value="value => String(value ?? '')"
                 placeholder="Projet…"
                 aria-label="Projet"
-                class="h-8 w-full min-w-0 truncate bg-transparent text-sm outline-none placeholder:text-muted-foreground/70"
+                class="h-8 w-full min-w-0 truncate bg-transparent text-base outline-none placeholder:text-muted-foreground/70 placeholder:text-sm"
                 :class="[
                     variant === 'inline' && 'rounded-md font-medium hover:bg-muted focus:bg-muted',
                     // Room for the color chip on the left and the clear button on the right only once a project is picked

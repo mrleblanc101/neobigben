@@ -141,7 +141,7 @@ async function remove() {
                 v-model="draft"
                 autocomplete="off"
                 aria-label="Nom du projet"
-                class="-ml-0.5 h-7 min-w-0 flex-1 rounded-md border border-muted-foreground/50 bg-background px-2 font-medium outline-none ring-3 ring-ring/30"
+                class="-ml-0.5 h-7 min-w-0 flex-1 rounded-md border border-muted-foreground/50 bg-background px-2 text-base font-medium outline-none ring-3 ring-ring/30"
                 @keydown.enter="commit"
                 @keydown.esc="picking ? (picking = false) : (renaming = false)"
                 @blur="onBlur"
