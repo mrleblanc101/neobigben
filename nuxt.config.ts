@@ -8,6 +8,8 @@ export default defineNuxtConfig({
         baseURL,
         head: {
             htmlAttrs: { lang: "fr" },
+            // Lets env(safe-area-inset-*) report the notch and home indicator areas instead of 0
+            viewport: "width=device-width, initial-scale=1, viewport-fit=cover",
             titleTemplate: "%s %separator %siteName",
             templateParams: { separator: "|", siteName: "NeoBigBen" },
             link: [
