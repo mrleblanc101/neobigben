@@ -52,6 +52,14 @@ async function requestClose() {
     if (discard) closeEditor();
 }
 
+// Focus the first field once the open animation is over rather than on mount: iOS Safari only scrolls
+// a focused field above its keyboard when the field is at rest, not while the sheet is still sliding up
+function focusFirstField(event: AnimationEvent) {
+    const content = event.currentTarget as HTMLElement;
+    if (event.target !== content || content.dataset.state !== "open") return;
+    content.querySelector<HTMLElement>("#entry-start")?.focus();
+}
+
 const open = computed({
     get: () => !!editor.value,
     set: value => !value && requestClose(),
@@ -73,6 +81,8 @@ function save() {
         <!-- Below sm, a bottom sheet: pinned to the bottom edge, full width, sliding up instead of zooming in -->
         <DialogContent
             class="gap-[18px] sm:max-w-[460px] max-sm:top-auto max-sm:bottom-0 max-sm:left-0 max-sm:max-h-[90svh] max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:overflow-y-auto max-sm:rounded-b-none max-sm:border-x-0 max-sm:border-b-0 max-sm:pb-[max(1.5rem,env(safe-area-inset-bottom))] max-sm:duration-300 max-sm:data-[state=closed]:zoom-out-100 max-sm:data-[state=closed]:fade-out-100 max-sm:data-[state=closed]:slide-out-to-bottom max-sm:data-[state=open]:zoom-in-100 max-sm:data-[state=open]:fade-in-100 max-sm:data-[state=open]:slide-in-from-bottom"
+            @open-auto-focus.prevent
+            @animationend="focusFirstField"
         >
             <DialogHeader>
                 <DialogTitle>{{ editor?.id === "new" ? "Nouvelle entrée" : "Modifier l’entrée" }}</DialogTitle>
