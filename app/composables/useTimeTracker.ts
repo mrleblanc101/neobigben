@@ -1,8 +1,12 @@
+import { useLocalStorage } from "@vueuse/core";
 import type { Database } from "~/types/database.types";
 
 type ProjectRow = Database["public"]["Tables"]["projects"]["Row"];
 type EntryRow = Database["public"]["Tables"]["entries"]["Row"];
 type SettingsRow = Database["public"]["Tables"]["user_settings"]["Row"];
+
+/** Whether the summary leaves out entries copied to NetSuite; a display preference kept in this browser */
+const excludeCopied = useLocalStorage("tracker:exclude-copied", true);
 
 /** An entry as loaded, pointing at its project by id so renames don't touch entries */
 interface StoredEntry extends Omit<Entry, "project"> {
@@ -40,11 +44,11 @@ const toStoredEntry = (row: EntryRow): StoredEntry => ({
     copiedToNetsuite: row.copied_to_netsuite,
 });
 
-// Entries already copied to NetSuite are left out: the totals show what remains to copy
-function totalsByProject(entries: Entry[]) {
+// With `excludeCopied`, entries already copied to NetSuite are left out: the totals show what remains to copy
+function totalsByProject(entries: Entry[], excludeCopied: boolean) {
     const totals: Record<string, number> = {};
     for (const entry of entries) {
-        if (entry.copiedToNetsuite) continue;
+        if (excludeCopied && entry.copiedToNetsuite) continue;
         totals[entry.project] = (totals[entry.project] ?? 0) + entryMinutes(entry);
     }
     return totals;
@@ -90,8 +94,8 @@ export function useTimeTracker() {
     const weekGoal = computed(() => weeklyGoalHours.value * 60);
     // A workday is a fifth of the weekly goal
     const dayGoal = computed(() => weekGoal.value / 5);
-    const dayTotals = computed(() => totalsByProject(entries.value));
-    const weekTotals = computed(() => totalsByProject(weekDates.value.flatMap(entriesOn)));
+    const dayTotals = computed(() => totalsByProject(entries.value, excludeCopied.value));
+    const weekTotals = computed(() => totalsByProject(weekDates.value.flatMap(entriesOn), excludeCopied.value));
 
     /** Loads projects, settings and the selected week, once per session */
     async function init() {
@@ -398,6 +402,7 @@ export function useTimeTracker() {
         weekLoaded,
         dayTotals,
         weekTotals,
+        excludeCopied,
         editor,
         error,
         minutesOn,
