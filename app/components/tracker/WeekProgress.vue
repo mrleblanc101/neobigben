@@ -68,7 +68,7 @@ function valueClass(d: (typeof days.value)[number]) {
     <Popover v-model:open="open">
         <PopoverTrigger as-child>
             <button type="button" class="relative flex h-9 items-center gap-2.5 overflow-hidden rounded-md border px-3 text-base transition-colors hover:bg-accent data-[state=open]:bg-accent pb-0.5">
-                <Clock class="size-3.5 text-muted-foreground" />
+                <Clock class="size-4 text-muted-foreground" />
                 <!-- On small screens, only what's left to do this week -->
                 <span class="font-medium md:hidden" :class="{ 'font-mono': weekTotal < weekGoal }">{{ weekLeft }}</span>
                 <span class="hidden font-mono font-medium md:inline">{{ formatMinutes(weekTotal) }}</span>
@@ -86,7 +86,7 @@ function valueClass(d: (typeof days.value)[number]) {
                 </div>
                 <div class="flex items-baseline justify-between gap-3 font-mono">
                     <div class="flex items-baseline gap-1.5">
-                        <span class="text-[26px] leading-none font-semibold tracking-tight">{{ formatMinutes(weekTotal) }}</span>
+                        <span class="text-3xl leading-none font-semibold tracking-tight">{{ formatMinutes(weekTotal) }}</span>
                         <span class="text-base text-muted-foreground/70">/ {{ formatMinutes(weekGoal) }}</span>
                     </div>
                     <span class="text-base text-muted-foreground">{{ weekPercent }} %</span>

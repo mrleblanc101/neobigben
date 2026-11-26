@@ -147,7 +147,7 @@ async function remove() {
                 @blur="onBlur"
             >
             <Button variant="ghost" size="icon-xs" title="Annuler" class="size-7 text-muted-foreground" @mousedown.prevent="renaming = false">
-                <X class="size-3.5" />
+                <X class="size-4" />
             </Button>
         </template>
         <template v-else>
@@ -162,7 +162,7 @@ async function remove() {
                     class="size-7 text-muted-foreground/70 hover:bg-red-500/12 hover:text-red-500 dark:hover:bg-red-500/12 dark:hover:text-red-400"
                     @click="remove"
                 >
-                    <Trash2 class="size-3.5" />
+                    <Trash2 class="size-4" />
                 </Button>
                 <Button
                     variant="ghost"
@@ -171,7 +171,7 @@ async function remove() {
                     class="size-7 text-muted-foreground/70 hover:bg-blue-500/12 hover:text-blue-600 dark:hover:bg-blue-500/12 dark:hover:text-blue-400"
                     @click="startRename"
                 >
-                    <Pencil class="size-3.5" />
+                    <Pencil class="size-4" />
                 </Button>
                 <Button
                     variant="ghost"
@@ -181,7 +181,7 @@ async function remove() {
                     :class="project.fav ? 'text-amber-400' : 'text-muted-foreground/70'"
                     @click="toggleFavorite(project.name)"
                 >
-                    <Star class="size-3.5" :fill="project.fav ? 'currentColor' : 'none'" />
+                    <Star class="size-4" :fill="project.fav ? 'currentColor' : 'none'" />
                 </Button>
                 <Button
                     variant="ghost"
@@ -190,7 +190,7 @@ async function remove() {
                     class="size-7 text-muted-foreground/70 hover:bg-emerald-500/12 hover:text-emerald-600 dark:hover:bg-emerald-500/12 dark:hover:text-emerald-400"
                     @click="openEditor({ project: project.name })"
                 >
-                    <Plus class="size-3.5" />
+                    <Plus class="size-4" />
                 </Button>
             </div>
         </template>

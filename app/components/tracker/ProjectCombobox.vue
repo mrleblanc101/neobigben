@@ -117,14 +117,14 @@ async function select(value: unknown) {
                 :class="variant === 'field' ? 'right-7' : 'right-6'"
                 @click="clear"
             >
-                <X class="size-3" />
+                <X class="size-4" />
             </button>
             <ComboboxTrigger
                 aria-label="Afficher les projets"
                 class="absolute flex items-center text-muted-foreground"
                 :class="variant === 'field' ? 'right-2.5' : 'right-2'"
             >
-                <ChevronDown class="size-3" />
+                <ChevronDown class="size-4" />
             </ComboboxTrigger>
         </ComboboxAnchor>
 

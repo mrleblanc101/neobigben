@@ -55,7 +55,7 @@ async function create() {
 
 <template>
     <div class="relative">
-        <Search class="pointer-events-none absolute top-2.5 left-2.5 size-3.5 text-muted-foreground/70" />
+        <Search class="pointer-events-none absolute top-2.25 left-2.5 size-4 text-muted-foreground/70" />
         <Input
             v-model="query"
             autocomplete="off"
@@ -71,7 +71,7 @@ async function create() {
         class="flex h-9 items-center gap-2 rounded-md border border-dashed border-muted-foreground/40 px-3 text-left text-base hover:bg-accent"
         @click="create"
     >
-        <Plus class="size-3.5" />
+        <Plus class="size-4" />
         <span>Créer « {{ trimmed }} »</span>
     </button>
 

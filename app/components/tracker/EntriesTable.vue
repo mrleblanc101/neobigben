@@ -62,7 +62,7 @@ const OVERLAP_STRIPES = "data-overlap:bg-[repeating-linear-gradient(135deg,trans
                 <template v-for="row in rows" :key="row.key">
                     <div v-if="row.type === 'gap'" :class="PAUSE_STRIPES" class="flex h-9 items-center gap-3 border-b px-4">
                         <span class="inline-flex h-5.5 items-center gap-1.5 rounded-md border border-dashed border-muted-foreground/40 px-2 text-base text-muted-foreground">
-                            <Pause class="size-3" />
+                            <Pause class="size-4" />
                             Pause · <span class="font-mono">{{ formatMinutes(toMinutes(row.end) - toMinutes(row.start)) }}</span>
                         </span>
                         <span class="font-mono text-base text-muted-foreground/70">{{ row.start }} – {{ row.end }}</span>
@@ -104,7 +104,7 @@ const OVERLAP_STRIPES = "data-overlap:bg-[repeating-linear-gradient(135deg,trans
             <template v-for="row in rows" :key="row.key">
                 <div v-if="row.type === 'gap'" :class="PAUSE_STRIPES" class="flex h-9 items-center gap-3 rounded-lg border border-dashed border-muted-foreground/30 pr-1.5 pl-3">
                     <span class="inline-flex items-center gap-1.5 text-base text-muted-foreground">
-                        <Pause class="size-3" />
+                        <Pause class="size-4" />
                         Pause · <span class="font-mono">{{ formatMinutes(toMinutes(row.end) - toMinutes(row.start)) }}</span>
                     </span>
                     <span class="font-mono text-base text-muted-foreground/70">{{ row.start }} – {{ row.end }}</span>
