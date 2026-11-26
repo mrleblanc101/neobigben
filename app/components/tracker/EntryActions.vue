@@ -37,7 +37,7 @@ async function remove() {
             class="text-muted-foreground hover:bg-blue-500/12 hover:text-blue-600 dark:hover:bg-blue-500/12 dark:hover:text-blue-400"
             @click="openEditor(entry)"
         >
-            <Pencil class="size-3.75" />
+            <Pencil class="size-4" />
         </Button>
         <Button
             variant="ghost"
@@ -46,7 +46,7 @@ async function remove() {
             class="text-muted-foreground hover:bg-red-500/12 hover:text-red-500 dark:hover:bg-red-500/12 dark:hover:text-red-400"
             @click="remove"
         >
-            <Trash2 class="size-3.75" />
+            <Trash2 class="size-4" />
         </Button>
     </div>
 </template>

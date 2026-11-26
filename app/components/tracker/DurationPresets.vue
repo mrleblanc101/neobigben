@@ -82,7 +82,7 @@ const nowUnavailable = computed(() => {
                     variant="outline"
                     size="xs"
                     tabindex="-1"
-                    class="h-6.5 w-full px-2.5 font-mono font-normal"
+                    class="h-7 w-full px-2 font-mono font-normal"
                     :class="{ 'border-muted-foreground/60 bg-accent dark:bg-accent': minutes === preset.value }"
                     @mousedown.prevent
                     @click="pick(() => emit('duration', preset.value))"
@@ -96,7 +96,7 @@ const nowUnavailable = computed(() => {
                         variant="outline"
                         size="xs"
                         tabindex="-1"
-                        class="h-6.5 w-full px-2.5 font-normal"
+                        class="h-7 w-full px-2 font-normal"
                         :disabled="!!nowUnavailable"
                         @mousedown.prevent
                         @click="pick(() => emit('end', formatMinutes(now.getHours() * 60 + now.getMinutes())))"

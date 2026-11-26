@@ -55,12 +55,12 @@ async function create() {
 
 <template>
     <div class="relative">
-        <Search class="pointer-events-none absolute top-2.25 left-2.5 size-4 text-muted-foreground/70" />
+        <Search class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 size-4 text-muted-foreground/70" />
         <Input
             v-model="query"
             autocomplete="off"
             placeholder="Rechercher ou créer un projet…"
-            class="h-[34px] pl-8 text-base"
+            class="h-9 pl-8 text-base"
             @keydown.enter="create"
         />
     </div>
@@ -78,7 +78,7 @@ async function create() {
     <div v-if="favorites.length" class="flex flex-col gap-1.5">
         <div class="flex items-center justify-between gap-2 text-base">
             <span class="font-medium text-muted-foreground">Favoris</span>
-            <Badge variant="secondary" class="h-4 px-1.5 py-0 font-mono text-base leading-none text-muted-foreground">{{ favorites.length }}</Badge>
+            <Badge variant="secondary" class="h-4 px-1.5 py-0 font-mono text-sm leading-none text-muted-foreground">{{ favorites.length }}</Badge>
         </div>
         <div ref="favoritesList" class="flex flex-col overflow-hidden rounded-lg border">
             <TrackerProjectRow
@@ -93,7 +93,7 @@ async function create() {
     <div v-if="others.length || !visible.length" class="flex flex-col gap-1.5">
         <div v-if="others.length" class="flex items-center justify-between gap-2 text-base">
             <span class="font-medium text-muted-foreground">Projets</span>
-            <Badge variant="secondary" class="h-4 px-1.5 py-0 font-mono text-base leading-none text-muted-foreground">{{ others.length }}</Badge>
+            <Badge variant="secondary" class="h-4 px-1.5 py-0 font-mono text-sm leading-none text-muted-foreground">{{ others.length }}</Badge>
         </div>
         <div ref="othersList" class="flex flex-col overflow-hidden rounded-lg border">
             <TrackerProjectRow
@@ -102,7 +102,7 @@ async function create() {
                 :project="project"
                 :draggable="draggable"
             />
-            <div v-if="!visible.length" class="px-3.5 py-6 text-center text-base text-muted-foreground">
+            <div v-if="!visible.length" class="px-3 py-6 text-center text-base text-muted-foreground">
                 Aucun projet trouvé
             </div>
         </div>

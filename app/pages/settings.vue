@@ -67,7 +67,7 @@ async function save() {
                     <CardDescription>Le thème s’applique immédiatement et est mémorisé sur cet appareil.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div class="grid w-full max-w-xs grid-cols-3 gap-0.5 rounded-md bg-muted p-[3px]" role="radiogroup" aria-label="Thème">
+                    <div class="grid w-full max-w-xs grid-cols-3 gap-0.5 rounded-md bg-muted p-1" role="radiogroup" aria-label="Thème">
                         <button
                             v-for="option in themes"
                             :key="option.value"

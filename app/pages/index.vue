@@ -22,7 +22,7 @@ watch(() => dateKey(startOfWeek(date.value)), () => loadWeek(date.value));
 <template>
     <div class="flex min-h-svh flex-col">
         <TrackerAppHeader />
-        <div class="grid flex-1 items-start lg:grid-cols-[minmax(0,1fr)_390px]">
+        <div class="grid flex-1 items-start lg:grid-cols-[minmax(0,1fr)_--spacing(96)]">
             <main class="flex min-w-0 flex-col gap-4 p-6">
                 <Alert v-if="error" variant="destructive" class="pr-10">
                     <AlertDescription>{{ error }}</AlertDescription>
@@ -36,7 +36,7 @@ watch(() => dateKey(startOfWeek(date.value)), () => loadWeek(date.value));
             <TrackerSidePanel v-if="isDesktop" class="sticky top-14 min-h-[calc(100svh-3.5rem)] border-l" />
         </div>
         <Sheet v-if="!isDesktop" v-model:open="panelOpen">
-            <SheetContent class="w-[390px] max-w-[calc(100vw-3rem)] gap-0 overflow-y-auto sm:max-w-none">
+            <SheetContent class="w-96 max-w-[calc(100vw-3rem)] gap-0 overflow-y-auto sm:max-w-none">
                 <SheetHeader class="h-14 shrink-0 justify-center border-b px-5 py-0">
                     <SheetTitle class="text-base">Résumé et projets</SheetTitle>
                     <SheetDescription class="sr-only">Temps par projet et liste des projets</SheetDescription>

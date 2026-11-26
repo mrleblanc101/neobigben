@@ -46,17 +46,17 @@ const hovered = ref<string | null>(null);
             <div
                 v-for="row in rows"
                 :key="row.name"
-                class="flex items-center gap-2.5 border-b px-5 py-2.5 text-base transition-colors"
+                class="flex items-center gap-2 border-b px-5 py-2 text-base transition-colors"
                 :class="{ 'bg-muted/50': hovered === row.name }"
                 @mouseenter="hovered = row.name"
                 @mouseleave="hovered = null"
             >
-                <span class="size-2.5 rounded-[2px]" :style="{ background: row.color }" />
+                <span class="size-3 rounded-xs" :style="{ background: row.color }" />
                 <span class="min-w-0 flex-1 truncate font-medium">{{ row.name }}</span>
-                <span class="text-base text-muted-foreground/70">{{ Math.round(row.share) }} %</span>
+                <span class="text-sm text-muted-foreground/70">{{ Math.round(row.share) }} %</span>
                 <span class="min-w-11 text-right font-mono text-base">{{ formatMinutes(row.minutes) }}</span>
             </div>
-            <div class="flex justify-between px-5 py-2.5 text-base text-muted-foreground">
+            <div class="flex justify-between px-5 py-2 text-base text-muted-foreground">
                 <span>Objectif {{ formatMinutes(goal) }}</span>
                 <span class="font-mono">{{ formatSignedMinutes(total - goal) }}</span>
             </div>

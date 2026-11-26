@@ -41,7 +41,7 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
 </script>
 
 <template>
-    <form :class="ENTRY_GRID" class="min-h-13 bg-muted/25 py-2.5" @submit.prevent="add" @keydown.capture="focusPreviousOnBackspace">
+    <form :class="ENTRY_GRID" class="min-h-13 bg-muted/25 py-2" @submit.prevent="add" @keydown.capture="focusPreviousOnBackspace">
         <div class="-ml-1 flex items-center gap-0.5">
             <input
                 v-time-mask.advance
@@ -110,14 +110,14 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
             rows="1"
             aria-label="Description"
             placeholder="Courte description..."
-            class="-ml-2.5 field-sizing-content max-h-40 min-h-8 min-w-0 resize-none px-2.5 py-1.5 text-base wrap-anywhere placeholder:text-muted-foreground"
+            class="-ml-2 field-sizing-content max-h-40 min-h-8 min-w-0 resize-none px-2 py-1.5 text-base wrap-anywhere placeholder:text-muted-foreground"
             :class="fieldClass"
             @keydown.enter.exact.prevent="add"
         />
         <div class="flex justify-end">
-            <Button type="submit" size="sm" class="px-2.5 text-base" :disabled="saving || !canAdd">
+            <Button type="submit" size="sm" class="text-base" :disabled="saving || !canAdd">
                 Ajouter
-                <kbd class="rounded-[3px] bg-primary-foreground/15 px-1 py-px font-mono text-base text-primary-foreground/70">↵</kbd>
+                <kbd class="rounded-xs bg-primary-foreground/15 px-1 py-px font-mono text-base text-primary-foreground/70">↵</kbd>
             </Button>
         </div>
     </form>

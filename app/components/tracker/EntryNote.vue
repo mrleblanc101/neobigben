@@ -15,7 +15,7 @@ defineProps<{ note: string }>();
                 :title="part.href"
                 target="_blank"
                 rel="noopener"
-                class="inline-flex h-5.5 shrink-0 items-center gap-1 rounded-md border px-2 font-mono text-base font-medium whitespace-nowrap text-foreground hover:bg-accent"
+                class="inline-flex h-6 shrink-0 items-center gap-1 rounded-md border px-2 font-mono text-base font-medium whitespace-nowrap text-foreground hover:bg-accent"
             >
                 {{ linkLabel(part.href) }}
                 <ArrowUpRight class="size-4" />

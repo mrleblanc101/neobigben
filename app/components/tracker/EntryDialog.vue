@@ -89,7 +89,7 @@ function save() {
     <Dialog v-model:open="open">
         <!-- Below sm, a bottom sheet: pinned to the bottom edge, full width, sliding up instead of zooming in -->
         <DialogContent
-            class="gap-[18px] sm:max-w-[460px] max-sm:top-auto max-sm:bottom-0 max-sm:left-0 max-sm:max-h-[90svh] max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:overflow-y-auto max-sm:rounded-b-none max-sm:border-x-0 max-sm:border-b-0 max-sm:pb-[calc(1.5rem+env(safe-area-inset-bottom))] max-sm:duration-300 max-sm:data-[state=closed]:zoom-out-100 max-sm:data-[state=closed]:fade-out-100 max-sm:data-[state=closed]:slide-out-to-bottom max-sm:data-[state=open]:zoom-in-100 max-sm:data-[state=open]:fade-in-100 max-sm:data-[state=open]:slide-in-from-bottom"
+            class="gap-4 sm:max-w-[460px] max-sm:top-auto max-sm:bottom-0 max-sm:left-0 max-sm:max-h-[90svh] max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:overflow-y-auto max-sm:rounded-b-none max-sm:border-x-0 max-sm:border-b-0 max-sm:pb-[calc(1.5rem+env(safe-area-inset-bottom))] max-sm:duration-300 max-sm:data-[state=closed]:zoom-out-100 max-sm:data-[state=closed]:fade-out-100 max-sm:data-[state=closed]:slide-out-to-bottom max-sm:data-[state=open]:zoom-in-100 max-sm:data-[state=open]:fade-in-100 max-sm:data-[state=open]:slide-in-from-bottom"
             @open-auto-focus="focusProxyOnOpen"
             @animationend="focusFirstField"
         >
@@ -107,7 +107,7 @@ function save() {
                 <DialogDescription>Renseignez la plage horaire, le projet et une note optionnelle.</DialogDescription>
             </DialogHeader>
 
-            <form class="flex flex-col gap-[18px]" @submit.prevent="save" @keydown.capture="focusPreviousOnBackspace">
+            <form class="flex flex-col gap-4" @submit.prevent="save" @keydown.capture="focusPreviousOnBackspace">
                 <div v-if="editing" class="flex flex-col gap-2">
                     <Label for="entry-day">Jour</Label>
                     <Popover v-model:open="pickingDay">
@@ -130,7 +130,7 @@ function save() {
                     </Popover>
                 </div>
 
-                <div class="flex flex-col gap-2.5">
+                <div class="flex flex-col gap-2">
                     <div class="grid grid-cols-3 gap-3">
                         <div class="flex min-w-0 flex-col gap-2">
                             <Label for="entry-start">Début</Label>

@@ -34,9 +34,6 @@ const overlapping = computed(() => new Set(entries.value
     .filter(entry => entries.value.some(other => other !== entry
         && toMinutes(entry.start) < toMinutes(other.end) && toMinutes(other.start) < toMinutes(entry.end)))
     .map(entry => entry.id)));
-
-const PAUSE_STRIPES = "bg-[repeating-linear-gradient(135deg,transparent_0_6px,color-mix(in_oklab,var(--foreground)_3%,transparent)_6px_12px)]";
-const OVERLAP_STRIPES = "data-overlap:bg-[repeating-linear-gradient(135deg,transparent_0_6px,color-mix(in_oklab,var(--color-red-500)_12%,transparent)_6px_12px)]";
 </script>
 
 <template>
@@ -60,8 +57,8 @@ const OVERLAP_STRIPES = "data-overlap:bg-[repeating-linear-gradient(135deg,trans
                 </div>
 
                 <template v-for="row in rows" :key="row.key">
-                    <div v-if="row.type === 'gap'" :class="PAUSE_STRIPES" class="flex h-9 items-center gap-3 border-b px-4">
-                        <span class="inline-flex h-5.5 items-center gap-1.5 rounded-md border border-dashed border-muted-foreground/40 px-2 text-base text-muted-foreground">
+                    <div v-if="row.type === 'gap'" class="stripes flex h-9 items-center gap-3 border-b px-4">
+                        <span class="inline-flex h-6 items-center gap-1.5 rounded-md border border-dashed border-muted-foreground/40 px-2 text-base text-muted-foreground">
                             <Pause class="size-4" />
                             Pause · <span class="font-mono">{{ formatMinutes(toMinutes(row.end) - toMinutes(row.start)) }}</span>
                         </span>
@@ -72,7 +69,7 @@ const OVERLAP_STRIPES = "data-overlap:bg-[repeating-linear-gradient(135deg,trans
                     </div>
 
                     <!-- Once copied to NetSuite, everything but the actions fades back; overlapping entries get red stripes -->
-                    <div v-else :class="[ENTRY_GRID, OVERLAP_STRIPES]" :data-copied="row.entry.copiedToNetsuite || undefined" :data-overlap="overlapping.has(row.entry.id) || undefined" :title="overlapping.has(row.entry.id) ? 'Chevauche une autre entrée' : undefined" class="min-h-14 border-b text-base not-data-copied:hover:bg-muted/50 data-copied:*:not-last:opacity-45">
+                    <div v-else :class="ENTRY_GRID" :data-copied="row.entry.copiedToNetsuite || undefined" :data-overlap="overlapping.has(row.entry.id) || undefined" :title="overlapping.has(row.entry.id) ? 'Chevauche une autre entrée' : undefined" class="min-h-14 data-overlap:stripes-danger border-b text-base not-data-copied:hover:bg-muted/50 data-copied:*:not-last:opacity-45">
                         <div class="-ml-1 flex items-center gap-0.5 font-mono text-base">
                             <span class="flex-1 text-center">{{ row.entry.start }}</span>
                             <span class="text-muted-foreground">–</span>
@@ -80,7 +77,7 @@ const OVERLAP_STRIPES = "data-overlap:bg-[repeating-linear-gradient(135deg,trans
                         </div>
                         <span class="text-center font-mono text-base font-medium">{{ formatMinutes(entryMinutes(row.entry)) }}</span>
                         <div class="flex min-w-0 items-center gap-2">
-                            <span class="size-2.5 shrink-0 rounded-[2px]" :style="{ background: colorOf(row.entry.project) }" />
+                            <span class="size-3 shrink-0 rounded-xs" :style="{ background: colorOf(row.entry.project) }" />
                             <span class="truncate font-medium">{{ row.entry.project }}</span>
                         </div>
                         <TrackerEntryNote :note="row.entry.note" class="py-2" />
@@ -102,7 +99,7 @@ const OVERLAP_STRIPES = "data-overlap:bg-[repeating-linear-gradient(135deg,trans
             </div>
 
             <template v-for="row in rows" :key="row.key">
-                <div v-if="row.type === 'gap'" :class="PAUSE_STRIPES" class="flex h-9 items-center gap-3 rounded-lg border border-dashed border-muted-foreground/30 pr-1.5 pl-3">
+                <div v-if="row.type === 'gap'" class="stripes flex h-9 items-center gap-3 rounded-lg border border-dashed border-muted-foreground/30 pr-1.5 pl-3">
                     <span class="inline-flex items-center gap-1.5 text-base text-muted-foreground">
                         <Pause class="size-4" />
                         Pause · <span class="font-mono">{{ formatMinutes(toMinutes(row.end) - toMinutes(row.start)) }}</span>
@@ -114,10 +111,10 @@ const OVERLAP_STRIPES = "data-overlap:bg-[repeating-linear-gradient(135deg,trans
                 </div>
 
                 <!-- Project and actions, then the range and duration, then the note; copied and overlapping as in the table -->
-                <div v-else :class="OVERLAP_STRIPES" :data-copied="row.entry.copiedToNetsuite || undefined" :data-overlap="overlapping.has(row.entry.id) || undefined" :title="overlapping.has(row.entry.id) ? 'Chevauche une autre entrée' : undefined" class="group flex flex-col gap-1.5 rounded-lg border py-2 pr-1.5 pl-3 text-base">
+                <div v-else :data-copied="row.entry.copiedToNetsuite || undefined" :data-overlap="overlapping.has(row.entry.id) || undefined" :title="overlapping.has(row.entry.id) ? 'Chevauche une autre entrée' : undefined" class="group data-overlap:stripes-danger flex flex-col gap-1.5 rounded-lg border py-2 pr-1.5 pl-3 text-base">
                     <div class="flex items-center gap-2">
                         <div class="flex min-w-0 flex-1 items-center gap-2 group-data-copied:opacity-45">
-                            <span class="size-2.5 shrink-0 rounded-[2px]" :style="{ background: colorOf(row.entry.project) }" />
+                            <span class="size-3 shrink-0 rounded-xs" :style="{ background: colorOf(row.entry.project) }" />
                             <span class="truncate font-medium">{{ row.entry.project }}</span>
                         </div>
                         <TrackerEntryActions :entry="row.entry" />
