@@ -126,3 +126,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Diagonal hatching: pauses between entries, and entries overlapping another one */
+@utility stripes {
+  background-image: repeating-linear-gradient(135deg, transparent 0 6px, color-mix(in oklab, var(--foreground) 3%, transparent) 6px 12px);
+}
+
+@utility stripes-danger {
+  background-image: repeating-linear-gradient(135deg, transparent 0 6px, color-mix(in oklab, var(--color-red-500) 12%, transparent) 6px 12px);
+}

@@ -39,29 +39,29 @@ async function signOut() {
                 <Avatar class="size-9">
                     <!-- Google refuses to serve profile photos to requests carrying a referrer -->
                     <AvatarImage v-if="picture" :src="picture" referrer-policy="no-referrer" :alt="name" />
-                    <AvatarFallback class="text-xs font-semibold">
+                    <AvatarFallback class="text-base font-semibold">
                         {{ initials }}
                     </AvatarFallback>
                 </Avatar>
             </button>
         </PopoverTrigger>
         <PopoverContent align="end" :side-offset="8" class="flex w-60 flex-col bg-background p-1">
-            <div class="flex flex-col gap-0.5 px-2.5 py-2">
-                <span class="text-sm font-semibold">{{ name }}</span>
-                <span class="text-xs text-muted-foreground">{{ user?.email }}</span>
+            <div class="flex flex-col gap-0.5 px-2 py-2">
+                <span class="text-base font-semibold">{{ name }}</span>
+                <span class="text-base text-muted-foreground">{{ user?.email }}</span>
             </div>
             <div class="-mx-1 my-1 h-px bg-border" />
             <PopoverClose as-child>
-                <NuxtLink to="/settings" class="flex h-8 items-center gap-2 rounded-sm px-2.5 text-[13px] hover:bg-accent">
-                    <Settings class="size-3.5 text-muted-foreground" />
+                <NuxtLink to="/settings" class="flex h-8 items-center gap-2 rounded-sm px-2 text-base hover:bg-accent">
+                    <Settings class="size-4 text-muted-foreground" />
                     Paramètres
                 </NuxtLink>
             </PopoverClose>
-            <button type="button" class="flex h-8 items-center gap-2 rounded-sm px-2.5 text-left text-[13px] text-red-500 hover:bg-red-500/12 dark:text-red-400" @click="signOut">
-                <LogOut class="size-3.5" />
+            <button type="button" class="flex h-8 items-center gap-2 rounded-sm px-2 text-left text-base text-red-500 hover:bg-red-500/12 dark:text-red-400" @click="signOut">
+                <LogOut class="size-4" />
                 Déconnexion
             </button>
-            <div class="-mx-1 mt-1 -mb-1 flex justify-between rounded-b-md border-t bg-muted/50 px-3.5 py-2 font-mono text-[11px] text-muted-foreground">
+            <div class="-mx-1 mt-1 -mb-1 flex justify-between rounded-b-md border-t bg-muted/50 px-3 py-2 font-mono text-base text-muted-foreground">
                 <span>{{ gitTag }}</span>
                 <span>{{ gitShortSha }}</span>
             </div>

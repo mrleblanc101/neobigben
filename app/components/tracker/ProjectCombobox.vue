@@ -82,12 +82,12 @@ async function select(value: unknown) {
             class="relative flex min-w-0 items-center"
             :class="variant === 'field'
                 ? 'h-9 rounded-md border bg-transparent shadow-xs focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 dark:bg-input/30'
-                : '-ml-2.5'"
+                : '-ml-2'"
         >
             <span
                 v-if="project"
-                class="pointer-events-none absolute size-2.5 rounded-[2px]"
-                :class="variant === 'field' ? 'left-3' : 'left-2.5'"
+                class="pointer-events-none absolute size-3 rounded-xs"
+                :class="variant === 'field' ? 'left-3' : 'left-2'"
                 :style="{ background: colorOf(project) }"
             />
             <ComboboxInput
@@ -98,12 +98,12 @@ async function select(value: unknown) {
                 placeholder="Projet…"
                 aria-label="Projet"
                 :readonly="!!project"
-                class="h-8 w-full min-w-0 truncate bg-transparent text-base outline-none placeholder:text-muted-foreground/70 placeholder:text-sm"
+                class="h-8 w-full min-w-0 truncate bg-transparent text-base outline-none placeholder:text-muted-foreground/70 placeholder:text-base"
                 :class="[
                     variant === 'inline' && 'rounded-md font-medium hover:bg-muted focus:bg-muted',
                     project && 'cursor-pointer caret-transparent select-none',
                     // Room for the color chip on the left and the clear button on the right only once a project is picked
-                    project ? (variant === 'field' ? 'pr-13 pl-7.5' : 'pr-12 pl-7') : (variant === 'field' ? 'pr-8 pl-3' : 'pr-7 pl-2.5'),
+                    project ? (variant === 'field' ? 'pr-13 pl-8' : 'pr-12 pl-7') : (variant === 'field' ? 'pr-8 pl-3' : 'pr-7 pl-2'),
                 ]"
                 @keydown="onKeydown"
                 @mousedown="onMousedown"
@@ -117,21 +117,21 @@ async function select(value: unknown) {
                 :class="variant === 'field' ? 'right-7' : 'right-6'"
                 @click="clear"
             >
-                <X class="size-3" />
+                <X class="size-4" />
             </button>
             <ComboboxTrigger
                 aria-label="Afficher les projets"
                 class="absolute flex items-center text-muted-foreground"
-                :class="variant === 'field' ? 'right-2.5' : 'right-2'"
+                :class="variant === 'field' ? 'right-3' : 'right-2'"
             >
-                <ChevronDown class="size-3" />
+                <ChevronDown class="size-4" />
             </ComboboxTrigger>
         </ComboboxAnchor>
 
         <ComboboxList align="start" class="w-(--reka-combobox-trigger-width) min-w-56 p-1">
             <ComboboxViewport>
                 <ComboboxItem v-for="p in matches" :key="p.name" :value="p.name">
-                    <span class="size-2.5 shrink-0 rounded-[2px]" :style="{ background: colorOf(p.name) }" />
+                    <span class="size-3 shrink-0 rounded-xs" :style="{ background: colorOf(p.name) }" />
                     <span class="truncate">{{ p.name }}</span>
                     <ComboboxItemIndicator>
                         <Check />
@@ -141,7 +141,7 @@ async function select(value: unknown) {
                     <Plus />
                     <span class="truncate">Créer « {{ trimmed }} »</span>
                 </ComboboxItem>
-                <div v-if="!matches.length && !canCreate" class="px-2 py-6 text-center text-[13px] text-muted-foreground">
+                <div v-if="!matches.length && !canCreate" class="px-2 py-6 text-center text-base text-muted-foreground">
                     Tapez un nom pour créer un projet
                 </div>
             </ComboboxViewport>

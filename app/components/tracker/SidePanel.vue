@@ -13,7 +13,7 @@ const tab = useState<(typeof tabs)[number]>("tracker:panel-tab", () => "Résumé
                 v-for="label in tabs"
                 :key="label"
                 type="button"
-                class="h-[30px] truncate rounded-md px-1 text-xs font-medium"
+                class="h-8 truncate rounded-md px-1 text-base font-medium"
                 :class="tab === label ? 'bg-background text-foreground shadow-xs' : 'text-muted-foreground'"
                 @click="tab = label"
             >
@@ -22,7 +22,7 @@ const tab = useState<(typeof tabs)[number]>("tracker:panel-tab", () => "Résumé
         </div>
 
         <template v-if="tab === 'Résumé'">
-            <label class="flex cursor-pointer items-center gap-2.5 text-[13px] text-muted-foreground">
+            <label class="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground">
                 <Switch v-model="excludeCopied" />
                 Exclure les entrées copiées dans NetSuite
             </label>

@@ -26,7 +26,7 @@ const subtitle = computed(() => `Semaine ${weekNumber(date.value)}`);
             <h1 class="text-2xl font-semibold tracking-tight">
                 {{ title }}
             </h1>
-            <p class="text-sm text-muted-foreground">
+            <p class="text-base text-muted-foreground">
                 {{ subtitle }}
             </p>
         </div>
@@ -38,7 +38,7 @@ const subtitle = computed(() => `Semaine ${weekNumber(date.value)}`);
                     <ChevronLeft class="size-4" />
                 </button>
                 <span class="w-px bg-border" aria-hidden="true" />
-                <button type="button" class="h-9 px-3.5 text-sm font-medium hover:bg-accent" @click="goToday">
+                <button type="button" class="h-9 px-3 text-base font-medium hover:bg-accent" @click="goToday">
                     Aujourd’hui
                 </button>
                 <span class="w-px bg-border" aria-hidden="true" />
@@ -48,7 +48,7 @@ const subtitle = computed(() => `Semaine ${weekNumber(date.value)}`);
             </div>
             <TrackerDayPicker />
 
-            <Button class="ml-auto w-9 md:w-auto md:px-3.5" aria-label="Nouvelle entrée" @click="openEditor()">
+            <Button class="ml-auto w-9 md:w-auto md:px-3" aria-label="Nouvelle entrée" @click="openEditor()">
                 <Plus />
                 <span class="hidden md:inline">Nouvelle entrée</span>
             </Button>

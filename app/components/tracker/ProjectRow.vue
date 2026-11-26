@@ -70,7 +70,7 @@ async function remove() {
 <template>
     <div
         :data-draggable="draggable && !renaming ? '' : undefined"
-        class="group flex h-11 items-center gap-2.5 border-b pr-2 pl-3.5 text-sm last:border-b-0 hover:bg-muted/50 data-draggable:cursor-grab data-draggable:select-none data-draggable:active:cursor-grabbing"
+        class="group flex h-11 items-center gap-2 border-b pr-2 pl-3 text-base last:border-b-0 hover:bg-muted/50 data-draggable:cursor-grab data-draggable:select-none data-draggable:active:cursor-grabbing"
     >
         <!-- Kept while it can't be used, so the chips stay aligned with the other rows -->
         <GripVertical class="-mr-1 -ml-1.5 size-4 shrink-0 text-muted-foreground/70" :class="{ invisible: !draggable || renaming }" />
@@ -81,10 +81,10 @@ async function remove() {
                     type="button"
                     title="Changer la couleur"
                     aria-label="Changer la couleur"
-                    class="-mx-[5px] grid size-5 shrink-0 place-items-center rounded-sm hover:bg-muted data-[state=open]:bg-muted"
+                    class="-mx-1 grid size-5 shrink-0 place-items-center rounded-sm hover:bg-muted data-[state=open]:bg-muted"
                     @mousedown.prevent
                 >
-                    <span class="size-2.5 rounded-[2px] ring-2 ring-background" :style="{ background: draftColor }" />
+                    <span class="size-3 rounded-xs ring-2 ring-background" :style="{ background: draftColor }" />
                 </button>
             </PopoverTrigger>
             <PopoverContent
@@ -109,14 +109,14 @@ async function remove() {
                         >
                             <Check
                                 v-if="color === draftColor"
-                                class="size-3.5"
+                                class="size-4"
                                 :class="isLightColor(color) ? 'text-black/70' : 'text-white'"
                                 :stroke-width="3"
                             />
                         </button>
                     </div>
                     <!-- Any other color, from the browser's color picker -->
-                    <label class="relative flex h-7 cursor-pointer items-center justify-center gap-2 rounded-md border px-2 text-xs font-medium shadow-xs hover:bg-accent has-focus-visible:ring-3 has-focus-visible:ring-ring/50">
+                    <label class="relative flex h-7 cursor-pointer items-center justify-center gap-2 rounded-md border px-2 text-base font-medium shadow-xs hover:bg-accent has-focus-visible:ring-3 has-focus-visible:ring-ring/50">
                         <span v-if="customColor" class="grid size-4 place-items-center rounded-sm" :style="{ background: draftColor }">
                             <Check class="size-3" :class="isLightColor(draftColor) ? 'text-black/70' : 'text-white'" :stroke-width="3" />
                         </span>
@@ -134,7 +134,7 @@ async function remove() {
                 </div>
             </PopoverContent>
         </Popover>
-        <span v-else class="size-2.5 shrink-0 rounded-[2px]" :style="{ background: project.color }" />
+        <span v-else class="size-3 shrink-0 rounded-xs" :style="{ background: project.color }" />
         <template v-if="renaming">
             <input
                 ref="input"
@@ -147,7 +147,7 @@ async function remove() {
                 @blur="onBlur"
             >
             <Button variant="ghost" size="icon-xs" title="Annuler" class="size-7 text-muted-foreground" @mousedown.prevent="renaming = false">
-                <X class="size-3.5" />
+                <X class="size-4" />
             </Button>
         </template>
         <template v-else>
@@ -162,7 +162,7 @@ async function remove() {
                     class="size-7 text-muted-foreground/70 hover:bg-red-500/12 hover:text-red-500 dark:hover:bg-red-500/12 dark:hover:text-red-400"
                     @click="remove"
                 >
-                    <Trash2 class="size-3.5" />
+                    <Trash2 class="size-4" />
                 </Button>
                 <Button
                     variant="ghost"
@@ -171,7 +171,7 @@ async function remove() {
                     class="size-7 text-muted-foreground/70 hover:bg-blue-500/12 hover:text-blue-600 dark:hover:bg-blue-500/12 dark:hover:text-blue-400"
                     @click="startRename"
                 >
-                    <Pencil class="size-3.5" />
+                    <Pencil class="size-4" />
                 </Button>
                 <Button
                     variant="ghost"
@@ -181,7 +181,7 @@ async function remove() {
                     :class="project.fav ? 'text-amber-400' : 'text-muted-foreground/70'"
                     @click="toggleFavorite(project.name)"
                 >
-                    <Star class="size-3.5" :fill="project.fav ? 'currentColor' : 'none'" />
+                    <Star class="size-4" :fill="project.fav ? 'currentColor' : 'none'" />
                 </Button>
                 <Button
                     variant="ghost"
@@ -190,7 +190,7 @@ async function remove() {
                     class="size-7 text-muted-foreground/70 hover:bg-emerald-500/12 hover:text-emerald-600 dark:hover:bg-emerald-500/12 dark:hover:text-emerald-400"
                     @click="openEditor({ project: project.name })"
                 >
-                    <Plus class="size-3.5" />
+                    <Plus class="size-4" />
                 </Button>
             </div>
         </template>
