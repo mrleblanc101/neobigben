@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Check, GripVertical, Pencil, Plus, Star, Trash2, X } from "@lucide/vue";
+import { Check, Ellipsis, GripVertical, Palette, Pencil, Plus, Star, Trash2, X } from "@lucide/vue";
 
 const props = defineProps<{
     project: Project;
@@ -12,41 +12,35 @@ const { confirm } = useConfirm();
 
 const renaming = ref(false);
 const draft = ref("");
-const draftColor = ref("");
-const picking = ref(false);
 const input = ref<HTMLInputElement>();
-const palette = ref<HTMLElement>();
-const customColor = computed(() => !PROJECT_PALETTE.includes(draftColor.value));
+const menuOpen = ref(false);
+const colorInput = ref<HTMLInputElement>();
+const customColor = computed(() => !PROJECT_PALETTE.includes(props.project.color));
 
 async function startRename() {
     draft.value = props.project.name;
-    draftColor.value = props.project.color;
     renaming.value = true;
     await nextTick();
     input.value?.focus();
     input.value?.select();
 }
 
-// Focus moving between the name field and the palette (the custom color's picker) keeps the edit open
-function onBlur(event: FocusEvent) {
-    const next = event.relatedTarget as Node | null;
-    if (next && (next === input.value || palette.value?.contains(next))) return;
-    commit();
-}
-
-function pickCustom() {
-    picking.value = false;
-    input.value?.focus();
-}
-
 // Also runs on blur, so it must be a no-op once Enter or Escape already ended the rename
 function commit() {
     if (!renaming.value) return;
     renaming.value = false;
-    picking.value = false;
-    // The color first: it finds the project by its current name
-    setProjectColor(props.project.name, draftColor.value);
     renameProject(props.project.name, draft.value.trim());
+}
+
+// Opens the browser's color picker; the menu stays open until a color is picked
+function pickCustomColor(event: Event) {
+    event.preventDefault();
+    colorInput.value?.click();
+}
+
+function setCustomColor(event: Event) {
+    setProjectColor(props.project.name, (event.target as HTMLInputElement).value);
+    menuOpen.value = false;
 }
 
 async function remove() {
@@ -74,67 +68,7 @@ async function remove() {
     >
         <!-- Kept while it can't be used, so the chips stay aligned with the other rows -->
         <GripVertical class="-mr-1 -ml-1.5 size-4 shrink-0 text-muted-foreground/70" :class="{ invisible: !draggable || renaming }" />
-        <!-- While editing, the chip opens the palette; the name field keeps the focus so the edit stays open -->
-        <Popover v-if="renaming" v-model:open="picking">
-            <PopoverTrigger as-child>
-                <button
-                    type="button"
-                    title="Changer la couleur"
-                    aria-label="Changer la couleur"
-                    class="-mx-1 grid size-5 shrink-0 place-items-center rounded-sm hover:bg-muted data-[state=open]:bg-muted"
-                    @mousedown.prevent
-                >
-                    <span class="size-3 rounded-xs ring-2 ring-background" :style="{ background: draftColor }" />
-                </button>
-            </PopoverTrigger>
-            <PopoverContent
-                align="start"
-                :side-offset="6"
-                class="w-auto bg-background p-2"
-                @open-auto-focus.prevent
-                @close-auto-focus.prevent
-            >
-                <div ref="palette" class="flex flex-col gap-2">
-                    <div class="grid grid-cols-5 gap-1">
-                        <button
-                            v-for="color in PROJECT_PALETTE"
-                            :key="color"
-                            type="button"
-                            :aria-label="color"
-                            :aria-pressed="color === draftColor"
-                            class="grid size-6 place-items-center rounded-sm hover:scale-110"
-                            :style="{ background: color }"
-                            @mousedown.prevent
-                            @click="draftColor = color; picking = false"
-                        >
-                            <Check
-                                v-if="color === draftColor"
-                                class="size-4"
-                                :class="isLightColor(color) ? 'text-black/70' : 'text-white'"
-                                :stroke-width="3"
-                            />
-                        </button>
-                    </div>
-                    <!-- Any other color, from the browser's color picker -->
-                    <label class="relative flex h-7 cursor-pointer items-center justify-center gap-2 rounded-md border px-2 text-base font-medium shadow-xs hover:bg-accent has-focus-visible:ring-3 has-focus-visible:ring-ring/50">
-                        <span v-if="customColor" class="grid size-4 place-items-center rounded-sm" :style="{ background: draftColor }">
-                            <Check class="size-3" :class="isLightColor(draftColor) ? 'text-black/70' : 'text-white'" :stroke-width="3" />
-                        </span>
-                        Personnalisée
-                        <input
-                            type="color"
-                            :value="draftColor"
-                            aria-label="Couleur personnalisée"
-                            class="absolute inset-0 size-full cursor-pointer opacity-0"
-                            @input="draftColor = ($event.target as HTMLInputElement).value"
-                            @change="pickCustom"
-                            @blur="onBlur"
-                        >
-                    </label>
-                </div>
-            </PopoverContent>
-        </Popover>
-        <span v-else class="size-3 shrink-0 rounded-xs" :style="{ background: project.color }" />
+        <span class="size-3 shrink-0 rounded-xs" :style="{ background: project.color }" />
         <template v-if="renaming">
             <input
                 ref="input"
@@ -143,8 +77,8 @@ async function remove() {
                 aria-label="Nom du projet"
                 class="-ml-0.5 h-7 min-w-0 flex-1 rounded-md border border-muted-foreground/50 bg-background px-2 text-base font-medium outline-none ring-3 ring-ring/30"
                 @keydown.enter="commit"
-                @keydown.esc="picking ? (picking = false) : (renaming = false)"
-                @blur="onBlur"
+                @keydown.esc="renaming = false"
+                @blur="commit"
             >
             <Button variant="ghost" size="icon-xs" title="Annuler" class="size-7 text-muted-foreground" @mousedown.prevent="renaming = false">
                 <X class="size-4" />
@@ -155,34 +89,77 @@ async function remove() {
                 {{ project.name }}
             </span>
             <div class="flex">
-                <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    title="Supprimer le projet"
-                    class="size-7 text-muted-foreground/70 hover:bg-red-500/12 hover:text-red-500 dark:hover:bg-red-500/12 dark:hover:text-red-400"
-                    @click="remove"
+                <DropdownMenu v-model:open="menuOpen">
+                    <DropdownMenuTrigger as-child>
+                        <Button
+                            variant="ghost"
+                            size="icon-xs"
+                            title="Plus d’actions"
+                            aria-label="Plus d’actions"
+                            class="size-7 text-muted-foreground/70 data-[state=open]:bg-accent"
+                        >
+                            <Ellipsis class="size-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <!-- No focus back on the trigger when closing: Renommer moves it to the name field -->
+                    <DropdownMenuContent align="end" @close-auto-focus.prevent>
+                        <DropdownMenuItem @select="toggleFavorite(project.name)">
+                            <Star :class="project.fav && 'text-amber-400'" :fill="project.fav ? 'currentColor' : 'none'" />
+                            {{ project.fav ? "Retirer des favoris" : "Ajouter aux favoris" }}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @select="startRename">
+                            <Pencil />
+                            Renommer
+                        </DropdownMenuItem>
+                        <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>
+                                <Palette class="size-4 text-muted-foreground" />
+                                Couleur
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuSubContent class="flex flex-col gap-1 p-2">
+                                <div class="grid grid-cols-5 gap-1">
+                                    <DropdownMenuItem
+                                        v-for="color in PROJECT_PALETTE"
+                                        :key="color"
+                                        :aria-label="color"
+                                        class="grid size-6 place-items-center rounded-sm p-0 hover:scale-110 focus:ring-2 focus:ring-ring"
+                                        :style="{ background: color }"
+                                        @select="setProjectColor(project.name, color)"
+                                    >
+                                        <Check
+                                            v-if="color === project.color"
+                                            class="size-4"
+                                            :class="isLightColor(color) ? 'text-black/70' : 'text-white'"
+                                            :stroke-width="3"
+                                        />
+                                    </DropdownMenuItem>
+                                </div>
+                                <!-- Any other color, from the browser's color picker -->
+                                <DropdownMenuItem class="justify-center" @select="pickCustomColor">
+                                    <span v-if="customColor" class="grid size-4 place-items-center rounded-xs" :style="{ background: project.color }">
+                                        <Check class="size-3" :class="isLightColor(project.color) ? 'text-black/70' : 'text-white'" :stroke-width="3" />
+                                    </span>
+                                    Personnalisée
+                                </DropdownMenuItem>
+                            </DropdownMenuSubContent>
+                        </DropdownMenuSub>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem variant="destructive" @select="remove">
+                            <Trash2 />
+                            Supprimer
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+                <!-- Outside the menu so it outlives it while the browser's picker is open -->
+                <input
+                    ref="colorInput"
+                    type="color"
+                    tabindex="-1"
+                    aria-hidden="true"
+                    :value="project.color"
+                    class="sr-only"
+                    @change="setCustomColor"
                 >
-                    <Trash2 class="size-4" />
-                </Button>
-                <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    title="Renommer"
-                    class="size-7 text-muted-foreground/70 hover:bg-blue-500/12 hover:text-blue-600 dark:hover:bg-blue-500/12 dark:hover:text-blue-400"
-                    @click="startRename"
-                >
-                    <Pencil class="size-4" />
-                </Button>
-                <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    :title="project.fav ? 'Retirer des favoris' : 'Ajouter aux favoris'"
-                    class="size-7 hover:text-amber-400 dark:hover:text-amber-400"
-                    :class="project.fav ? 'text-amber-400' : 'text-muted-foreground/70'"
-                    @click="toggleFavorite(project.name)"
-                >
-                    <Star class="size-4" :fill="project.fav ? 'currentColor' : 'none'" />
-                </Button>
                 <Button
                     variant="ghost"
                     size="icon-xs"
