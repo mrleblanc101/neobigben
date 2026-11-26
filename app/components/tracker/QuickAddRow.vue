@@ -117,7 +117,7 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
         <div class="flex justify-end">
             <Button type="submit" size="sm" class="text-base" :disabled="saving || !canAdd">
                 Ajouter
-                <kbd class="rounded-xs bg-primary-foreground/15 px-1 py-px font-mono text-base text-primary-foreground/70">↵</kbd>
+                <kbd class="flex h-5 items-center leading-none font-mono text-base text-primary-foreground/70">↵</kbd>
             </Button>
         </div>
     </form>

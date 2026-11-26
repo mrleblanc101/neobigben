@@ -33,10 +33,10 @@ watch(() => dateKey(startOfWeek(date.value)), () => loadWeek(date.value));
                 <TrackerDayToolbar />
                 <TrackerEntriesTable />
             </main>
-            <TrackerSidePanel v-if="isDesktop" class="sticky top-14 min-h-[calc(100svh-3.5rem)] border-l" />
+            <TrackerSidePanel v-if="isDesktop" class="sticky top-14 min-h-[calc(100svh-(--spacing(14)))] border-l" />
         </div>
         <Sheet v-if="!isDesktop" v-model:open="panelOpen">
-            <SheetContent class="w-96 max-w-[calc(100vw-3rem)] gap-0 overflow-y-auto sm:max-w-none">
+            <SheetContent class="w-96 max-w-[calc(100vw-(--spacing(12)))] gap-0 overflow-y-auto sm:max-w-none">
                 <SheetHeader class="h-14 shrink-0 justify-center border-b px-5 py-0">
                     <SheetTitle class="text-base">Résumé et projets</SheetTitle>
                     <SheetDescription class="sr-only">Temps par projet et liste des projets</SheetDescription>

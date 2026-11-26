@@ -81,7 +81,7 @@ async function remove() {
                     type="button"
                     title="Changer la couleur"
                     aria-label="Changer la couleur"
-                    class="-mx-[5px] grid size-5 shrink-0 place-items-center rounded-sm hover:bg-muted data-[state=open]:bg-muted"
+                    class="-mx-1 grid size-5 shrink-0 place-items-center rounded-sm hover:bg-muted data-[state=open]:bg-muted"
                     @mousedown.prevent
                 >
                     <span class="size-3 rounded-xs ring-2 ring-background" :style="{ background: draftColor }" />
