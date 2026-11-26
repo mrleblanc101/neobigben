@@ -68,7 +68,7 @@ async function create() {
     <button
         v-if="canCreate"
         type="button"
-        class="flex h-9 items-center gap-2 rounded-md border border-dashed border-muted-foreground/40 px-3 text-left text-[13px] hover:bg-accent"
+        class="flex h-9 items-center gap-2 rounded-md border border-dashed border-muted-foreground/40 px-3 text-left text-sm hover:bg-accent"
         @click="create"
     >
         <Plus class="size-3.5" />
@@ -102,7 +102,7 @@ async function create() {
                 :project="project"
                 :draggable="draggable"
             />
-            <div v-if="!visible.length" class="px-3.5 py-6 text-center text-[13px] text-muted-foreground">
+            <div v-if="!visible.length" class="px-3.5 py-6 text-center text-sm text-muted-foreground">
                 Aucun projet trouvé
             </div>
         </div>

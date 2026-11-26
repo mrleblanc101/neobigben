@@ -52,12 +52,12 @@ async function signOut() {
             </div>
             <div class="-mx-1 my-1 h-px bg-border" />
             <PopoverClose as-child>
-                <NuxtLink to="/settings" class="flex h-8 items-center gap-2 rounded-sm px-2.5 text-[13px] hover:bg-accent">
+                <NuxtLink to="/settings" class="flex h-8 items-center gap-2 rounded-sm px-2.5 text-sm hover:bg-accent">
                     <Settings class="size-3.5 text-muted-foreground" />
                     Paramètres
                 </NuxtLink>
             </PopoverClose>
-            <button type="button" class="flex h-8 items-center gap-2 rounded-sm px-2.5 text-left text-[13px] text-red-500 hover:bg-red-500/12 dark:text-red-400" @click="signOut">
+            <button type="button" class="flex h-8 items-center gap-2 rounded-sm px-2.5 text-left text-sm text-red-500 hover:bg-red-500/12 dark:text-red-400" @click="signOut">
                 <LogOut class="size-3.5" />
                 Déconnexion
             </button>

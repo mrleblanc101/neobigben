@@ -141,7 +141,7 @@ async function select(value: unknown) {
                     <Plus />
                     <span class="truncate">Créer « {{ trimmed }} »</span>
                 </ComboboxItem>
-                <div v-if="!matches.length && !canCreate" class="px-2 py-6 text-center text-[13px] text-muted-foreground">
+                <div v-if="!matches.length && !canCreate" class="px-2 py-6 text-center text-sm text-muted-foreground">
                     Tapez un nom pour créer un projet
                 </div>
             </ComboboxViewport>
