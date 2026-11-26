@@ -43,17 +43,12 @@ function clear() {
     query.value = "";
 }
 
-// Backspace or Delete on the selected project's name unselects it in one go, rather than editing the name
+// The selected project's name is read-only: Backspace or Delete unselects it in one go
 function onKeydown(event: KeyboardEvent) {
-    if ((event.key === "Backspace" || event.key === "Delete") && project.value && !typing.value) {
+    if ((event.key === "Backspace" || event.key === "Delete") && project.value) {
         event.preventDefault();
         clear();
     }
-}
-
-// Erasing the name and leaving the field unselects the project instead of restoring it
-function onBlur() {
-    if (project.value && !query.value.trim()) nextTick(clear);
 }
 
 async function select(value: unknown) {
@@ -91,13 +86,14 @@ async function select(value: unknown) {
                 :display-value="value => String(value ?? '')"
                 placeholder="Projet…"
                 aria-label="Projet"
+                :readonly="!!project"
                 class="h-8 w-full min-w-0 truncate bg-transparent text-base outline-none placeholder:text-muted-foreground/70 placeholder:text-sm"
                 :class="[
                     variant === 'inline' && 'rounded-md font-medium hover:bg-muted focus:bg-muted',
+                    project && 'cursor-pointer',
                     // Room for the color chip on the left and the clear button on the right only once a project is picked
                     project ? (variant === 'field' ? 'pr-13 pl-7.5' : 'pr-12 pl-7') : (variant === 'field' ? 'pr-8 pl-3' : 'pr-7 pl-2.5'),
                 ]"
-                @blur="onBlur"
                 @keydown="onKeydown"
             />
             <button
