@@ -43,17 +43,23 @@ function clear() {
     query.value = "";
 }
 
-// Backspace or Delete on the selected project's name unselects it in one go, rather than editing the name
+// The selected project's name behaves like a select's value, not text: no caret to move, nothing to select.
+// Backspace or Delete unselects it in one go.
+const caretKeys = new Set(["ArrowLeft", "ArrowRight", "Home", "End"]);
 function onKeydown(event: KeyboardEvent) {
-    if ((event.key === "Backspace" || event.key === "Delete") && project.value && !typing.value) {
+    if (!project.value) return;
+    if (event.key === "Backspace" || event.key === "Delete") {
         event.preventDefault();
         clear();
     }
+    else if (caretKeys.has(event.key) || ((event.metaKey || event.ctrlKey) && event.key === "a")) {
+        event.preventDefault();
+    }
 }
 
-// Erasing the name and leaving the field unselects the project instead of restoring it
-function onBlur() {
-    if (project.value && !query.value.trim()) nextTick(clear);
+// Double/triple click would highlight the name; a single click still focuses and opens the list
+function onMousedown(event: MouseEvent) {
+    if (project.value && event.detail > 1) event.preventDefault();
 }
 
 async function select(value: unknown) {
@@ -91,14 +97,16 @@ async function select(value: unknown) {
                 :display-value="value => String(value ?? '')"
                 placeholder="Projet…"
                 aria-label="Projet"
+                :readonly="!!project"
                 class="h-8 w-full min-w-0 truncate bg-transparent text-base outline-none placeholder:text-muted-foreground/70 placeholder:text-sm"
                 :class="[
                     variant === 'inline' && 'rounded-md font-medium hover:bg-muted focus:bg-muted',
+                    project && 'cursor-pointer caret-transparent select-none',
                     // Room for the color chip on the left and the clear button on the right only once a project is picked
                     project ? (variant === 'field' ? 'pr-13 pl-7.5' : 'pr-12 pl-7') : (variant === 'field' ? 'pr-8 pl-3' : 'pr-7 pl-2.5'),
                 ]"
-                @blur="onBlur"
                 @keydown="onKeydown"
+                @mousedown="onMousedown"
             />
             <button
                 v-if="project"
