@@ -69,11 +69,11 @@ const nowUnavailable = computed(() => {
         <PopoverContent
             align="center"
             :side-offset="2"
-            class="flex w-44 flex-col gap-1.5 p-2"
+            class="flex w-48 flex-col gap-1.5 p-2"
             @open-auto-focus.prevent
             @close-auto-focus.prevent
         >
-            <span class="px-0.5 text-center text-base text-muted-foreground">Durée</span>
+            <span class="px-0.5 text-center text-sm text-muted-foreground">Durée</span>
             <div class="grid grid-cols-2 gap-1">
                 <Button
                     v-for="preset in PRESETS"
@@ -82,7 +82,7 @@ const nowUnavailable = computed(() => {
                     variant="outline"
                     size="xs"
                     tabindex="-1"
-                    class="h-7 w-full px-2 font-mono font-normal"
+                    class="h-7 w-full px-2 font-mono text-sm font-normal"
                     :class="{ 'border-muted-foreground/60 bg-accent dark:bg-accent': minutes === preset.value }"
                     @mousedown.prevent
                     @click="pick(() => emit('duration', preset.value))"
@@ -96,7 +96,7 @@ const nowUnavailable = computed(() => {
                         variant="outline"
                         size="xs"
                         tabindex="-1"
-                        class="h-7 w-full px-2 font-normal"
+                        class="h-7 w-full px-2 text-sm font-normal"
                         :disabled="!!nowUnavailable"
                         @mousedown.prevent
                         @click="pick(() => emit('end', formatMinutes(now.getHours() * 60 + now.getMinutes())))"
