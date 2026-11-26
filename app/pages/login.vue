@@ -25,7 +25,7 @@ const { gitTag, gitShortSha } = useRuntimeConfig().public;
                 </AuthGoogleSignInButton>
             </CardContent>
         </Card>
-        <p class="text-center font-mono text-[11px] text-muted-foreground">
+        <p class="text-center font-mono text-base text-muted-foreground">
             {{ gitTag }} · {{ gitShortSha }}
         </p>
     </AuthLayout>

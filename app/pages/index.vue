@@ -38,7 +38,7 @@ watch(() => dateKey(startOfWeek(date.value)), () => loadWeek(date.value));
         <Sheet v-if="!isDesktop" v-model:open="panelOpen">
             <SheetContent class="w-[390px] max-w-[calc(100vw-3rem)] gap-0 overflow-y-auto sm:max-w-none">
                 <SheetHeader class="h-14 shrink-0 justify-center border-b px-5 py-0">
-                    <SheetTitle class="text-sm">Résumé et projets</SheetTitle>
+                    <SheetTitle class="text-base">Résumé et projets</SheetTitle>
                     <SheetDescription class="sr-only">Temps par projet et liste des projets</SheetDescription>
                 </SheetHeader>
                 <TrackerSidePanel />

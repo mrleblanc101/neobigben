@@ -98,7 +98,7 @@ async function select(value: unknown) {
                 placeholder="Projet…"
                 aria-label="Projet"
                 :readonly="!!project"
-                class="h-8 w-full min-w-0 truncate bg-transparent text-base outline-none placeholder:text-muted-foreground/70 placeholder:text-sm"
+                class="h-8 w-full min-w-0 truncate bg-transparent text-base outline-none placeholder:text-muted-foreground/70 placeholder:text-base"
                 :class="[
                     variant === 'inline' && 'rounded-md font-medium hover:bg-muted focus:bg-muted',
                     project && 'cursor-pointer caret-transparent select-none',
@@ -141,7 +141,7 @@ async function select(value: unknown) {
                     <Plus />
                     <span class="truncate">Créer « {{ trimmed }} »</span>
                 </ComboboxItem>
-                <div v-if="!matches.length && !canCreate" class="px-2 py-6 text-center text-sm text-muted-foreground">
+                <div v-if="!matches.length && !canCreate" class="px-2 py-6 text-center text-base text-muted-foreground">
                     Tapez un nom pour créer un projet
                 </div>
             </ComboboxViewport>

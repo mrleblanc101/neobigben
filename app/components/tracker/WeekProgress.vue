@@ -67,7 +67,7 @@ function valueClass(d: (typeof days.value)[number]) {
 <template>
     <Popover v-model:open="open">
         <PopoverTrigger as-child>
-            <button type="button" class="relative flex h-9 items-center gap-2.5 overflow-hidden rounded-md border px-3 text-sm transition-colors hover:bg-accent data-[state=open]:bg-accent pb-0.5">
+            <button type="button" class="relative flex h-9 items-center gap-2.5 overflow-hidden rounded-md border px-3 text-base transition-colors hover:bg-accent data-[state=open]:bg-accent pb-0.5">
                 <Clock class="size-3.5 text-muted-foreground" />
                 <!-- On small screens, only what's left to do this week -->
                 <span class="font-medium md:hidden" :class="{ 'font-mono': weekTotal < weekGoal }">{{ weekLeft }}</span>
@@ -81,29 +81,29 @@ function valueClass(d: (typeof days.value)[number]) {
         <PopoverContent align="end" :side-offset="8" class="flex w-[300px] flex-col bg-background p-0">
             <div class="flex flex-col gap-3 border-b p-4">
                 <div class="flex items-baseline justify-between gap-3">
-                    <span class="text-sm font-semibold">{{ weekTitle(date) }}</span>
-                    <span class="text-xs text-muted-foreground">{{ weekRange(date) }}</span>
+                    <span class="text-base font-semibold">{{ weekTitle(date) }}</span>
+                    <span class="text-base text-muted-foreground">{{ weekRange(date) }}</span>
                 </div>
                 <div class="flex items-baseline justify-between gap-3 font-mono">
                     <div class="flex items-baseline gap-1.5">
                         <span class="text-[26px] leading-none font-semibold tracking-tight">{{ formatMinutes(weekTotal) }}</span>
-                        <span class="text-sm text-muted-foreground/70">/ {{ formatMinutes(weekGoal) }}</span>
+                        <span class="text-base text-muted-foreground/70">/ {{ formatMinutes(weekGoal) }}</span>
                     </div>
-                    <span class="text-sm text-muted-foreground">{{ weekPercent }} %</span>
+                    <span class="text-base text-muted-foreground">{{ weekPercent }} %</span>
                 </div>
             </div>
             <div class="flex flex-col gap-0.5 p-2">
                 <button v-for="d in days" :key="d.label" type="button" class="grid h-8 grid-cols-[72px_minmax(0,1fr)_48px] items-center gap-2.5 rounded-md px-2 text-left hover:bg-muted/60" :class="{ 'bg-muted': d.selected }" @click="selectDay(d.day)">
-                    <span class="text-sm" :class="d.selected ? 'font-semibold text-foreground' : d.weekend ? 'text-muted-foreground/70' : 'text-foreground/80'">
+                    <span class="text-base" :class="d.selected ? 'font-semibold text-foreground' : d.weekend ? 'text-muted-foreground/70' : 'text-foreground/80'">
                         {{ d.label }}
                     </span>
                     <span class="flex h-1.5 overflow-hidden rounded-full bg-foreground/10">
                         <span class="rounded-full" :class="barClass(d)" :style="{ width: d.pct }" />
                     </span>
-                    <span class="text-right font-mono text-sm" :class="valueClass(d)">{{ formatMinutes(d.minutes) }}</span>
+                    <span class="text-right font-mono text-base" :class="valueClass(d)">{{ formatMinutes(d.minutes) }}</span>
                 </button>
             </div>
-            <div class="flex justify-between border-t px-4 py-3 text-sm">
+            <div class="flex justify-between border-t px-4 py-3 text-base">
                 <span class="text-muted-foreground">Reste à faire</span>
                 <span class="font-mono font-medium">{{ weekLeft }}</span>
             </div>

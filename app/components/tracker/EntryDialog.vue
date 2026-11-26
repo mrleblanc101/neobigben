@@ -183,7 +183,7 @@ function save() {
                             />
                         </div>
                     </div>
-                    <p v-if="range.endsNextDay.value" class="text-xs text-muted-foreground">
+                    <p v-if="range.endsNextDay.value" class="text-base text-muted-foreground">
                         Se termine le lendemain : l’entrée sera séparée en deux à minuit.
                     </p>
                 </div>

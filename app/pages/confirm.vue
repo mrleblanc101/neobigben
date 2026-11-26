@@ -13,7 +13,7 @@ watch(user, () => {
 
 <template>
     <AuthLayout>
-        <p class="text-center text-sm text-muted-foreground">
+        <p class="text-center text-base text-muted-foreground">
             Connexion en cours…
         </p>
     </AuthLayout>

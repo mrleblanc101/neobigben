@@ -52,11 +52,11 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
                 placeholder="HH:MM"
                 title="Début"
                 aria-label="Début"
-                class="h-7 w-0 min-w-0 flex-1 text-center font-mono text-sm placeholder:text-muted-foreground"
+                class="h-7 w-0 min-w-0 flex-1 text-center font-mono text-base placeholder:text-muted-foreground"
                 :class="fieldClass"
                 @input="range.setStart(($event.target as HTMLInputElement).value)"
             >
-            <span class="text-sm text-muted-foreground">–</span>
+            <span class="text-base text-muted-foreground">–</span>
             <TrackerDurationPresets
                 class="relative flex w-0 min-w-0 flex-1"
                 :start="range.startMinutes.value"
@@ -73,7 +73,7 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
                     placeholder="HH:MM"
                     title="Fin"
                     aria-label="Fin"
-                    class="h-7 w-full min-w-0 text-center font-mono text-sm placeholder:text-muted-foreground"
+                    class="h-7 w-full min-w-0 text-center font-mono text-base placeholder:text-muted-foreground"
                     :class="fieldClass"
                     @input="range.setEnd(($event.target as HTMLInputElement).value)"
                 >
@@ -81,7 +81,7 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
                     v-if="range.endsNextDay.value"
                     variant="outline"
                     title="Se termine le lendemain : l’entrée sera séparée en deux à minuit"
-                    class="absolute -top-2 -right-1.5 h-4 bg-background px-1.5 py-0 font-mono text-[10px] leading-none text-muted-foreground shadow-xs"
+                    class="absolute -top-2 -right-1.5 h-4 bg-background px-1.5 py-0 font-mono text-base leading-none text-muted-foreground shadow-xs"
                 >
                     +1 j
                 </Badge>
@@ -97,7 +97,7 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
             title="Durée"
             aria-label="Durée"
             :tabindex="range.endMinutes.value === null ? 0 : -1"
-            class="h-7 w-full min-w-0 px-1 text-center font-mono text-sm font-medium placeholder:text-muted-foreground"
+            class="h-7 w-full min-w-0 px-1 text-center font-mono text-base font-medium placeholder:text-muted-foreground"
             :class="fieldClass"
             @input="range.setDuration(($event.target as HTMLInputElement).value)"
         >
@@ -110,14 +110,14 @@ const fieldClass = "rounded-sm bg-transparent outline-none hover:bg-muted focus:
             rows="1"
             aria-label="Description"
             placeholder="Courte description..."
-            class="-ml-2.5 field-sizing-content max-h-40 min-h-8 min-w-0 resize-none px-2.5 py-1.5 text-sm wrap-anywhere placeholder:text-muted-foreground"
+            class="-ml-2.5 field-sizing-content max-h-40 min-h-8 min-w-0 resize-none px-2.5 py-1.5 text-base wrap-anywhere placeholder:text-muted-foreground"
             :class="fieldClass"
             @keydown.enter.exact.prevent="add"
         />
         <div class="flex justify-end">
-            <Button type="submit" size="sm" class="px-2.5 text-sm" :disabled="saving || !canAdd">
+            <Button type="submit" size="sm" class="px-2.5 text-base" :disabled="saving || !canAdd">
                 Ajouter
-                <kbd class="rounded-[3px] bg-primary-foreground/15 px-1 py-px font-mono text-[11px] text-primary-foreground/70">↵</kbd>
+                <kbd class="rounded-[3px] bg-primary-foreground/15 px-1 py-px font-mono text-base text-primary-foreground/70">↵</kbd>
             </Button>
         </div>
     </form>

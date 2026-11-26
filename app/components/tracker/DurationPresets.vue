@@ -73,7 +73,7 @@ const nowUnavailable = computed(() => {
             @open-auto-focus.prevent
             @close-auto-focus.prevent
         >
-            <span class="px-0.5 text-center text-xs text-muted-foreground">Durée</span>
+            <span class="px-0.5 text-center text-base text-muted-foreground">Durée</span>
             <div class="grid grid-cols-2 gap-1">
                 <Button
                     v-for="preset in PRESETS"

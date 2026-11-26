@@ -70,7 +70,7 @@ async function remove() {
 <template>
     <div
         :data-draggable="draggable && !renaming ? '' : undefined"
-        class="group flex h-11 items-center gap-2.5 border-b pr-2 pl-3.5 text-sm last:border-b-0 hover:bg-muted/50 data-draggable:cursor-grab data-draggable:select-none data-draggable:active:cursor-grabbing"
+        class="group flex h-11 items-center gap-2.5 border-b pr-2 pl-3.5 text-base last:border-b-0 hover:bg-muted/50 data-draggable:cursor-grab data-draggable:select-none data-draggable:active:cursor-grabbing"
     >
         <!-- Kept while it can't be used, so the chips stay aligned with the other rows -->
         <GripVertical class="-mr-1 -ml-1.5 size-4 shrink-0 text-muted-foreground/70" :class="{ invisible: !draggable || renaming }" />
@@ -116,7 +116,7 @@ async function remove() {
                         </button>
                     </div>
                     <!-- Any other color, from the browser's color picker -->
-                    <label class="relative flex h-7 cursor-pointer items-center justify-center gap-2 rounded-md border px-2 text-xs font-medium shadow-xs hover:bg-accent has-focus-visible:ring-3 has-focus-visible:ring-ring/50">
+                    <label class="relative flex h-7 cursor-pointer items-center justify-center gap-2 rounded-md border px-2 text-base font-medium shadow-xs hover:bg-accent has-focus-visible:ring-3 has-focus-visible:ring-ring/50">
                         <span v-if="customColor" class="grid size-4 place-items-center rounded-sm" :style="{ background: draftColor }">
                             <Check class="size-3" :class="isLightColor(draftColor) ? 'text-black/70' : 'text-white'" :stroke-width="3" />
                         </span>

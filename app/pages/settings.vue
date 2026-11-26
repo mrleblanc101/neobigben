@@ -45,7 +45,7 @@ async function save() {
         <TrackerAppHeader />
         <main class="mx-auto flex w-full max-w-2xl flex-col gap-6 p-6">
             <div class="flex flex-col gap-3">
-                <NuxtLink to="/" class="flex w-fit items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+                <NuxtLink to="/" class="flex w-fit items-center gap-1.5 text-base text-muted-foreground hover:text-foreground">
                     <ArrowLeft class="size-4" />
                     Retour
                 </NuxtLink>
@@ -74,7 +74,7 @@ async function save() {
                             type="button"
                             role="radio"
                             :aria-checked="colorMode.preference === option.value"
-                            class="h-8 rounded-sm text-sm font-medium"
+                            class="h-8 rounded-sm text-base font-medium"
                             :class="colorMode.preference === option.value ? 'bg-background text-foreground shadow-xs' : 'text-muted-foreground'"
                             @click="colorMode.preference = option.value"
                         >
@@ -104,9 +104,9 @@ async function save() {
                                     :aria-invalid="!goalValid"
                                     :disabled="!ready"
                                 />
-                                <span class="text-sm text-muted-foreground">heures par semaine</span>
+                                <span class="text-base text-muted-foreground">heures par semaine</span>
                             </div>
-                            <p class="text-xs text-muted-foreground">
+                            <p class="text-base text-muted-foreground">
                                 Entre 1 et 80 heures. L’objectif d’une journée de semaine en est le cinquième.
                             </p>
                         </div>
@@ -126,7 +126,7 @@ async function save() {
                                 :disabled="!ready"
                                 @update:model-value="start = maskedValue(String($event))"
                             />
-                            <p class="text-xs text-muted-foreground">
+                            <p class="text-base text-muted-foreground">
                                 Début proposé pour une nouvelle entrée sur une journée encore vide.
                             </p>
                         </div>
@@ -138,7 +138,7 @@ async function save() {
                             <Button v-if="dirty" type="button" variant="ghost" @click="fill">
                                 Annuler
                             </Button>
-                            <span v-if="saved" class="text-sm text-muted-foreground">Paramètres enregistrés.</span>
+                            <span v-if="saved" class="text-base text-muted-foreground">Paramètres enregistrés.</span>
                         </div>
                     </form>
                 </CardContent>

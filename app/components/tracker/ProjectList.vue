@@ -68,7 +68,7 @@ async function create() {
     <button
         v-if="canCreate"
         type="button"
-        class="flex h-9 items-center gap-2 rounded-md border border-dashed border-muted-foreground/40 px-3 text-left text-sm hover:bg-accent"
+        class="flex h-9 items-center gap-2 rounded-md border border-dashed border-muted-foreground/40 px-3 text-left text-base hover:bg-accent"
         @click="create"
     >
         <Plus class="size-3.5" />
@@ -76,9 +76,9 @@ async function create() {
     </button>
 
     <div v-if="favorites.length" class="flex flex-col gap-1.5">
-        <div class="flex items-center justify-between gap-2 text-xs">
+        <div class="flex items-center justify-between gap-2 text-base">
             <span class="font-medium text-muted-foreground">Favoris</span>
-            <Badge variant="secondary" class="h-4 px-1.5 py-0 font-mono text-[10px] leading-none text-muted-foreground">{{ favorites.length }}</Badge>
+            <Badge variant="secondary" class="h-4 px-1.5 py-0 font-mono text-base leading-none text-muted-foreground">{{ favorites.length }}</Badge>
         </div>
         <div ref="favoritesList" class="flex flex-col overflow-hidden rounded-lg border">
             <TrackerProjectRow
@@ -91,9 +91,9 @@ async function create() {
     </div>
 
     <div v-if="others.length || !visible.length" class="flex flex-col gap-1.5">
-        <div v-if="others.length" class="flex items-center justify-between gap-2 text-xs">
+        <div v-if="others.length" class="flex items-center justify-between gap-2 text-base">
             <span class="font-medium text-muted-foreground">Projets</span>
-            <Badge variant="secondary" class="h-4 px-1.5 py-0 font-mono text-[10px] leading-none text-muted-foreground">{{ others.length }}</Badge>
+            <Badge variant="secondary" class="h-4 px-1.5 py-0 font-mono text-base leading-none text-muted-foreground">{{ others.length }}</Badge>
         </div>
         <div ref="othersList" class="flex flex-col overflow-hidden rounded-lg border">
             <TrackerProjectRow
@@ -102,7 +102,7 @@ async function create() {
                 :project="project"
                 :draggable="draggable"
             />
-            <div v-if="!visible.length" class="px-3.5 py-6 text-center text-sm text-muted-foreground">
+            <div v-if="!visible.length" class="px-3.5 py-6 text-center text-base text-muted-foreground">
                 Aucun projet trouvé
             </div>
         </div>

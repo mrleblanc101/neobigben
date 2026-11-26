@@ -43,7 +43,7 @@ const OVERLAP_STRIPES = "data-overlap:bg-[repeating-linear-gradient(135deg,trans
     <div ref="root">
         <div v-if="asTable" class="overflow-x-auto rounded-lg border">
             <div class="min-w-160">
-                <div :class="ENTRY_GRID" class="h-10 border-b text-sm font-medium text-muted-foreground">
+                <div :class="ENTRY_GRID" class="h-10 border-b text-base font-medium text-muted-foreground">
                     <span>Plage</span>
                     <span class="text-center">Durée</span>
                     <span>Projet</span>
@@ -51,34 +51,34 @@ const OVERLAP_STRIPES = "data-overlap:bg-[repeating-linear-gradient(135deg,trans
                     <span />
                 </div>
 
-                <div v-if="!weekLoaded" class="px-4 py-12 text-center text-sm text-muted-foreground">
+                <div v-if="!weekLoaded" class="px-4 py-12 text-center text-base text-muted-foreground">
                     Chargement…
                 </div>
                 <div v-else-if="!entries.length" class="flex flex-col items-center gap-2 px-4 py-12 text-center">
-                    <span class="text-sm font-medium">Aucune entrée pour cette journée</span>
-                    <span class="text-sm text-muted-foreground">Ajoutez une entrée pour commencer à suivre votre temps.</span>
+                    <span class="text-base font-medium">Aucune entrée pour cette journée</span>
+                    <span class="text-base text-muted-foreground">Ajoutez une entrée pour commencer à suivre votre temps.</span>
                 </div>
 
                 <template v-for="row in rows" :key="row.key">
                     <div v-if="row.type === 'gap'" :class="PAUSE_STRIPES" class="flex h-9 items-center gap-3 border-b px-4">
-                        <span class="inline-flex h-5.5 items-center gap-1.5 rounded-md border border-dashed border-muted-foreground/40 px-2 text-xs text-muted-foreground">
+                        <span class="inline-flex h-5.5 items-center gap-1.5 rounded-md border border-dashed border-muted-foreground/40 px-2 text-base text-muted-foreground">
                             <Pause class="size-3" />
                             Pause · <span class="font-mono">{{ formatMinutes(toMinutes(row.end) - toMinutes(row.start)) }}</span>
                         </span>
-                        <span class="font-mono text-xs text-muted-foreground/70">{{ row.start }} – {{ row.end }}</span>
+                        <span class="font-mono text-base text-muted-foreground/70">{{ row.start }} – {{ row.end }}</span>
                         <Button variant="ghost" size="xs" class="ml-auto font-normal text-muted-foreground" @click="openEditor({ project: row.project, start: row.start, end: row.end })">
                             Combler
                         </Button>
                     </div>
 
                     <!-- Once copied to NetSuite, everything but the actions fades back; overlapping entries get red stripes -->
-                    <div v-else :class="[ENTRY_GRID, OVERLAP_STRIPES]" :data-copied="row.entry.copiedToNetsuite || undefined" :data-overlap="overlapping.has(row.entry.id) || undefined" :title="overlapping.has(row.entry.id) ? 'Chevauche une autre entrée' : undefined" class="min-h-14 border-b text-sm not-data-copied:hover:bg-muted/50 data-copied:*:not-last:opacity-45">
-                        <div class="-ml-1 flex items-center gap-0.5 font-mono text-sm">
+                    <div v-else :class="[ENTRY_GRID, OVERLAP_STRIPES]" :data-copied="row.entry.copiedToNetsuite || undefined" :data-overlap="overlapping.has(row.entry.id) || undefined" :title="overlapping.has(row.entry.id) ? 'Chevauche une autre entrée' : undefined" class="min-h-14 border-b text-base not-data-copied:hover:bg-muted/50 data-copied:*:not-last:opacity-45">
+                        <div class="-ml-1 flex items-center gap-0.5 font-mono text-base">
                             <span class="flex-1 text-center">{{ row.entry.start }}</span>
                             <span class="text-muted-foreground">–</span>
                             <span class="flex-1 text-center">{{ displayClock(row.entry.end) }}</span>
                         </div>
-                        <span class="text-center font-mono text-sm font-medium">{{ formatMinutes(entryMinutes(row.entry)) }}</span>
+                        <span class="text-center font-mono text-base font-medium">{{ formatMinutes(entryMinutes(row.entry)) }}</span>
                         <div class="flex min-w-0 items-center gap-2">
                             <span class="size-2.5 shrink-0 rounded-[2px]" :style="{ background: colorOf(row.entry.project) }" />
                             <span class="truncate font-medium">{{ row.entry.project }}</span>
@@ -93,28 +93,28 @@ const OVERLAP_STRIPES = "data-overlap:bg-[repeating-linear-gradient(135deg,trans
         </div>
 
         <div v-else class="flex flex-col gap-2">
-            <div v-if="!weekLoaded" class="rounded-lg border px-4 py-12 text-center text-sm text-muted-foreground">
+            <div v-if="!weekLoaded" class="rounded-lg border px-4 py-12 text-center text-base text-muted-foreground">
                 Chargement…
             </div>
             <div v-else-if="!entries.length" class="flex flex-col items-center gap-2 rounded-lg border px-4 py-12 text-center">
-                <span class="text-sm font-medium">Aucune entrée pour cette journée</span>
-                <span class="text-sm text-muted-foreground">Ajoutez une entrée avec le bouton +.</span>
+                <span class="text-base font-medium">Aucune entrée pour cette journée</span>
+                <span class="text-base text-muted-foreground">Ajoutez une entrée avec le bouton +.</span>
             </div>
 
             <template v-for="row in rows" :key="row.key">
                 <div v-if="row.type === 'gap'" :class="PAUSE_STRIPES" class="flex h-9 items-center gap-3 rounded-lg border border-dashed border-muted-foreground/30 pr-1.5 pl-3">
-                    <span class="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <span class="inline-flex items-center gap-1.5 text-base text-muted-foreground">
                         <Pause class="size-3" />
                         Pause · <span class="font-mono">{{ formatMinutes(toMinutes(row.end) - toMinutes(row.start)) }}</span>
                     </span>
-                    <span class="font-mono text-xs text-muted-foreground/70">{{ row.start }} – {{ row.end }}</span>
+                    <span class="font-mono text-base text-muted-foreground/70">{{ row.start }} – {{ row.end }}</span>
                     <Button variant="ghost" size="xs" class="ml-auto font-normal text-muted-foreground" @click="openEditor({ project: row.project, start: row.start, end: row.end })">
                         Combler
                     </Button>
                 </div>
 
                 <!-- Project and actions, then the range and duration, then the note; copied and overlapping as in the table -->
-                <div v-else :class="OVERLAP_STRIPES" :data-copied="row.entry.copiedToNetsuite || undefined" :data-overlap="overlapping.has(row.entry.id) || undefined" :title="overlapping.has(row.entry.id) ? 'Chevauche une autre entrée' : undefined" class="group flex flex-col gap-1.5 rounded-lg border py-2 pr-1.5 pl-3 text-sm">
+                <div v-else :class="OVERLAP_STRIPES" :data-copied="row.entry.copiedToNetsuite || undefined" :data-overlap="overlapping.has(row.entry.id) || undefined" :title="overlapping.has(row.entry.id) ? 'Chevauche une autre entrée' : undefined" class="group flex flex-col gap-1.5 rounded-lg border py-2 pr-1.5 pl-3 text-base">
                     <div class="flex items-center gap-2">
                         <div class="flex min-w-0 flex-1 items-center gap-2 group-data-copied:opacity-45">
                             <span class="size-2.5 shrink-0 rounded-[2px]" :style="{ background: colorOf(row.entry.project) }" />
@@ -122,7 +122,7 @@ const OVERLAP_STRIPES = "data-overlap:bg-[repeating-linear-gradient(135deg,trans
                         </div>
                         <TrackerEntryActions :entry="row.entry" />
                     </div>
-                    <div class="flex items-center gap-2 pr-1.5 font-mono text-sm group-data-copied:opacity-45">
+                    <div class="flex items-center gap-2 pr-1.5 font-mono text-base group-data-copied:opacity-45">
                         <span class="text-muted-foreground">{{ row.entry.start }} – {{ displayClock(row.entry.end) }}</span>
                         <span class="ml-auto font-medium">{{ formatMinutes(entryMinutes(row.entry)) }}</span>
                     </div>
